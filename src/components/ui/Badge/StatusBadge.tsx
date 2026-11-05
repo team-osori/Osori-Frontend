@@ -9,10 +9,11 @@ export function StatusDot({ tone, size = 7 }: { tone: StatusTone; size?: number 
   return <span className={cx(styles.dot, styles[tone])} style={{ width: size, height: size }} />
 }
 
-export function StatusBadge({ tone, children }: { tone: StatusTone; children: ReactNode }) {
+/** tone을 주지 않으면 점 없이 글자만 있는 알약으로 표시 */
+export function StatusBadge({ tone, children }: { tone?: StatusTone; children: ReactNode }) {
   return (
     <span className={styles.badge}>
-      <StatusDot tone={tone} />
+      {tone && <StatusDot tone={tone} />}
       {children}
     </span>
   )
