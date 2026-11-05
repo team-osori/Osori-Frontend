@@ -16,8 +16,7 @@
 .contained .slot { position: relative; height: 100%; }
 
 .content { display: flex; flex: 1; flex-direction: column; min-width: 0; }
-.contained .content { overflow-y: auto; scrollbar-width: none; }
-.contained .content::-webkit-scrollbar { display: none; }
+.contained .content { overflow-y: auto; }
 
 /* 본문 안의 페이지가 남은 높이를 채울 수 있게 (빈 상태 안내를 가운데 놓는 용도) */
 .main { display: flex; flex: 1; flex-direction: column; padding: var(--page-padding-y) var(--page-padding-x); }

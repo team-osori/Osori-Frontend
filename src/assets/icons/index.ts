@@ -1,10 +1,13 @@
 import arrowLeft from './arrow-left.svg'
+import arrowRight from './arrow-right.svg'
 import checkDark from './check-dark.svg'
 import checkSuccess from './check-success.svg'
 import chevronDown from './chevron-down.svg'
 import chevronDownSm from './chevron-down-sm.svg'
 import chevronRight from './chevron-right.svg'
 import chevronUpDown from './chevron-up-down.svg'
+import file from './file.svg'
+import fileSm from './file-sm.svg'
 import fileXs from './file-xs.svg'
 import grid from './grid.svg'
 import gridLg from './grid-lg.svg'
@@ -22,17 +25,21 @@ import sparkle from './sparkle.svg'
 import sparkleSm from './sparkle-sm.svg'
 import trashDanger from './trash-danger.svg'
 import trashSm from './trash-sm.svg'
+import upload from './upload.svg'
 import uploadLg from './upload-lg.svg'
 import warning from './warning.svg'
 
 export const icons = {
   arrowLeft,
+  arrowRight,
   checkDark,
   checkSuccess,
   chevronDown,
   chevronDownSm,
   chevronRight,
   chevronUpDown,
+  file,
+  fileSm,
   fileXs,
   grid,
   gridLg,
@@ -50,6 +57,7 @@ export const icons = {
   sparkleSm,
   trashDanger,
   trashSm,
+  upload,
   uploadLg,
   warning,
 }

@@ -1,0 +1,23 @@
+.view {
+  margin: 0;
+  padding: 12px 0;
+  overflow-x: auto;
+  list-style: none;
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+ 
+}
+
+.line {
+  display: flex;
+  gap: 12px;
+  min-width: max-content;
+  padding: 0 16px;
+  font: var(--text-code);
+  color: rgba(255, 255, 255, 0.8);
+  white-space: pre;
+}
+.number { flex-shrink: 0; width: 28px; text-align: right; opacity: 0.55; user-select: none; }
+
+.added { background: rgba(74, 222, 128, 0.12); color: #a7f3c0; }
+.removed { background: rgba(255, 107, 107, 0.12); color: #ffb3b3; }

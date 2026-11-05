@@ -24,6 +24,7 @@
   --color-neutral: #9ca3af;
   --color-danger: #ff6b6b;
   --color-danger-border: rgba(255, 107, 107, 0.4);
+  --color-caution: #f5b544; /* 주의 (라벨 없음 등) */
 
   /* Gradient */
   --gradient-sidebar: linear-gradient(180deg, #3a3a44 0%, #3a3a44 50%, #4a3550 100%);
@@ -35,10 +36,12 @@
 
   /* Typography */
   --font-family: 'Noto Sans KR', system-ui, sans-serif;
+  --font-mono: 'Roboto Mono', 'Noto Sans KR', ui-monospace, monospace;
   --font-weight-regular: 400;
   --font-weight-bold: 700;
 
   --text-caption: 12px / 14px var(--font-family);   /* 배지 */
+  --text-code: 13px / 23.5px var(--font-mono);       /* 코드·프롬프트 */
   --text-label: 13px / 15px var(--font-family);     /* 보조 라벨, 메트릭 */
   --text-body-sm: 14px / 16px var(--font-family);   /* 입력, 작은 버튼 */
   --text-body: 15px / 18px var(--font-family);      /* 내비게이션, 버튼 */

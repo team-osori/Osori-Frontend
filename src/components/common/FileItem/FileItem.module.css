@@ -1,0 +1,15 @@
+.item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  height: 48px;
+  padding: 0 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+}
+.name { flex: 1; min-width: 0; overflow: hidden; font: var(--text-body-sm); text-overflow: ellipsis; white-space: nowrap; }
+.meta { flex-shrink: 0; font: var(--text-caption); color: var(--color-text-secondary); }
+
+/* 작은 목록형 (연결 테스트의 근거 청크) */
+.inline { display: flex; align-items: center; gap: 8px; font: var(--text-label); }

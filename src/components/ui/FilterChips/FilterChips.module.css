@@ -1,0 +1,17 @@
+.group { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.chip {
+  height: 32px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 16px;
+  background: var(--color-surface);
+  font: var(--text-label);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  white-space: nowrap;
+  transition: background-color 0.15s;
+}
+.chip:hover { background: var(--color-surface-strong); }
+.active,
+.active:hover { background: var(--color-text); color: var(--color-on-primary); }
