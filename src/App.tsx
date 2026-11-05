@@ -4,6 +4,7 @@ import { MOCK_PROJECTS, MOCK_USER, ProjectListPage } from './pages/ProjectList'
 import ConnectionSetupPage from './pages/ConnectionSetupPage'
 import QuestionSetPage from './pages/QuestionSetPage'
 import AbRunPage from './pages/AbRunPage'
+import ProjectSettingsPage from './pages/ProjectSettingsPage'
 
 export default function App() {
   const [route, navigate] = useHashRoute('/login')
@@ -21,6 +22,8 @@ export default function App() {
       return <QuestionSetPage onBack={() => navigate('/projects')} onConfirm={() => navigate('/ab-run')} />
     case '/ab-run':
       return <AbRunPage onBack={() => navigate('/projects')} />
+    case '/settings':
+      return <ProjectSettingsPage onBack={() => navigate('/projects')} onDeleted={() => navigate('/projects')} />
     default:
       return <LoginPage onLogin={() => navigate('/projects')} />
   }
