@@ -5,8 +5,8 @@ import { Icon } from '../Icon/Icon'
 import styles from './Button.module.css'
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  /** primary 핑크 · secondary 표면색 · tonal 한 단계 밝은 표면색 · success 연한 초록 · danger 빨간 테두리 */
-  variant?: 'primary' | 'secondary' | 'tonal' | 'success' | 'danger'
+  /** primary 핑크 · secondary 표면색 · tonal 밝은 표면색 · success 연한 초록 · danger 빨간 테두리 · dangerFill 빨간 채움 · dangerText 빨간 글자 · outline 흰 테두리 */
+  variant?: 'primary' | 'secondary' | 'tonal' | 'success' | 'danger' | 'dangerFill' | 'dangerText' | 'outline'
   /** md 44px · sm 40px · xs 34px · xxs 32px(표 안 버튼) */
   size?: 'md' | 'sm' | 'xs' | 'xxs'
   icon?: IconName
