@@ -53,6 +53,30 @@ export type ItemReviewInput = {
   verdict: ReviewVerdict
   reason: string
 }
+
+/*
+ * 답변 전체 O/X 판정. 배포 서버 OpenAPI에 아직 없어 schema.ts에서 가져오지 못하고,
+ * 백엔드 main의 AnswerReviewCreate · AnswerReviewOut에 맞춰 직접 적었습니다. 배포되면 Schema 타입으로 바꿉니다.
+ */
+export type AnswerReview = {
+  id: string
+  itemId: string
+  revision: number
+  side: 'a' | 'b'
+  verdict: ReviewVerdict
+  reason: string | null
+  reviewedBy: string
+  createdAt: string
+}
+export type AnswerReviewInput = {
+  /** 항목을 마지막으로 본 reviewRevision (처음이면 0). 조건별 판정과 같은 revision을 함께 씁니다. */
+  expectedRevision: number
+  /** 어느 쪽 답변을 판정하는지. 서버 기본값은 a */
+  side?: 'a' | 'b'
+  verdict: ReviewVerdict
+  /** 선택. 비워 두면 보내지 않습니다. */
+  reason?: string
+}
 export type EvaluationRerunInput = { connectionRevision: number; promptVersionId?: string }
 
 /** A에서 B로 바뀌며 결과가 어떻게 달라졌는지 */
@@ -313,6 +337,46 @@ export function reviewItem(
       conditionId: pathId(input.conditionId, '조건 ID'),
       verdict: input.verdict,
       reason: input.reason.trim(),
+    },
+    { signal: extras.signal },
+  )
+}
+
+/** 항목의 답변 전체 O/X 판정 기록 목록 */
+export function listAnswerReviews(
+  projectId: string,
+  serviceId: string,
+  evaluationId: string,
+  itemId: string,
+  query: PageQuery & RequestExtras = {},
+) {
+  const { signal, limit, cursor } = query
+  return api.get<Page<AnswerReview>>(`${itemPath(projectId, serviceId, evaluationId, itemId)}/answer-reviews`, {
+    query: { limit, cursor },
+    signal,
+  })
+}
+
+/**
+ * 항목의 답변 전체에 사람이 O/X 판정을 남깁니다. 조건별 판정(reviewItem)과 revision을 함께 쓰므로
+ * 그 사이 누가 어느 쪽이든 판정했으면 409로 거절됩니다. 조건별 판정과 엇갈리면 서버가 검토 필요로 표시합니다.
+ */
+export function reviewAnswer(
+  projectId: string,
+  serviceId: string,
+  evaluationId: string,
+  itemId: string,
+  input: AnswerReviewInput,
+  extras: RequestExtras = {},
+) {
+  const reason = input.reason?.trim()
+  return api.post<AnswerReview>(
+    `${itemPath(projectId, serviceId, evaluationId, itemId)}/answer-reviews`,
+    {
+      expectedRevision: input.expectedRevision,
+      ...(input.side ? { side: input.side } : {}),
+      verdict: input.verdict,
+      ...(reason ? { reason } : {}),
     },
     { signal: extras.signal },
   )
