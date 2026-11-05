@@ -19,6 +19,7 @@ export {
 export { ProjectCard, type ProjectStatus, type ProjectScores } from './ProjectCard/ProjectCard'
 export { ProjectCardGrid } from './ProjectCard/ProjectCardGrid'
 export { useSidebarToggle } from './Sidebar/SidebarContext'
+export { SidebarUserContext, type SidebarUser } from './Sidebar/SidebarUserContext'
 export { PageHeader } from './PageHeader/PageHeader'
 export { AuthBrandPanel } from './AuthBrandPanel/AuthBrandPanel'
 export { EmptyState } from './EmptyState/EmptyState'

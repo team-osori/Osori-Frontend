@@ -10,6 +10,7 @@ import { UserMenu, type UserMenuActions } from '../UserMenu/UserMenu'
 import { UserProfile } from '../UserProfile/UserProfile'
 import { useProjectNav } from './ProjectNavContext'
 import { useSidebarToggle } from './SidebarContext'
+import { useSidebarUser } from './SidebarUserContext'
 import styles from './Sidebar.module.css'
 
 type User = { name: string; role: string; email?: string }
@@ -31,6 +32,10 @@ type SidebarProps = {
 /** 사이드바 공통 틀: 브랜드 + 접기 버튼 / 본문 / 사용자 프로필 */
 export function Sidebar({ user, onToggle, onUserClick, userMenu, children }: SidebarProps) {
   const layoutToggle = useSidebarToggle()
+  const signedIn = useSidebarUser()
+  // 로그인한 사용자가 있으면 그 이름 · 계정 메뉴를 씀 (역할은 아직 API에 없어 화면 값 유지)
+  const shown = signedIn ? { ...user, name: signedIn.name, email: signedIn.account } : user
+  const menu = signedIn?.menu ?? userMenu
   return (
     <aside className={styles.sidebar}>
       <div className={styles.header}>
@@ -48,10 +53,10 @@ export function Sidebar({ user, onToggle, onUserClick, userMenu, children }: Sid
       <nav className={styles.body}>{children}</nav>
       <div className={styles.footer}>
         <Divider tone="strong" />
-        {userMenu && user.email ? (
-          <UserMenu name={user.name} role={user.role} email={user.email} {...userMenu} />
+        {menu && shown.email ? (
+          <UserMenu name={shown.name} role={shown.role} email={shown.email} {...menu} />
         ) : (
-          <UserProfile name={user.name} role={user.role} onClick={onUserClick} />
+          <UserProfile name={shown.name} role={shown.role} onClick={onUserClick} />
         )}
       </div>
     </aside>
