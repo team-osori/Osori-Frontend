@@ -25,6 +25,8 @@
 .success:not(:disabled):hover { background: rgba(74, 222, 128, 0.22); }
 
 .primary { background: var(--color-primary); color: var(--color-on-primary); }
+/* 아이콘 파일 색과 상관없이 라임 버튼 위 아이콘은 글자색(검정)으로 */
+.primary img { filter: brightness(0); opacity: 0.85; }
 .primary:not(:disabled):hover { filter: brightness(1.08); }
 
 .secondary { background: var(--color-surface); color: var(--color-text); }
