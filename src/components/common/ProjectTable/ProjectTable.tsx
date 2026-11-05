@@ -1,6 +1,7 @@
+import type { CSSProperties } from 'react'
 import { cx } from '../../../lib/cx'
 import { STAGES } from '../../../routes'
-import { Icon, Sticker } from '../../ui'
+import { CountUp, Icon, Sticker } from '../../ui'
 import styles from './ProjectTable.module.css'
 
 export type ProjectStatus = 'done' | 'running' | 'setup'
@@ -44,12 +45,12 @@ function doneSteps(row: ProjectRowData) {
   return row.status === 'done' ? STAGES.length : row.currentStep
 }
 
-function ProjectRow({ row, onOpen }: { row: ProjectRowData; onOpen?: () => void }) {
+function ProjectRow({ row, index, onOpen }: { row: ProjectRowData; index: number; onOpen?: () => void }) {
   const done = doneSteps(row)
   const stage = STAGES[Math.min(row.currentStep, STAGES.length) - 1]
   return (
-    <li>
-      <button type="button" className={styles.row} onClick={onOpen} aria-label={`${row.name} 열기`}>
+    <li style={{ '--i': index } as CSSProperties}>
+      <button type="button" className={cx(styles.row, styles[row.status])} onClick={onOpen} aria-label={`${row.name} 열기`}>
         <span className={styles.project}>
           <Sticker name="folder" width={40} className={styles.folder} />
           <span className={styles.titles}>
@@ -67,7 +68,15 @@ function ProjectRow({ row, onOpen }: { row: ProjectRowData; onOpen?: () => void 
         <span className={styles.progress}>
           <span className={styles.segments} aria-hidden>
             {STAGES.map((s, i) => (
-              <span key={s.label} className={cx(styles.segment, i < done && styles.filled)} />
+              <span key={s.label} className={styles.segment}>
+                {i < done && (
+                  <span
+                    className={styles.filled}
+                    data-motion="fill"
+                    style={{ '--delay': `${300 + index * 55 + i * 120}ms` } as CSSProperties}
+                  />
+                )}
+              </span>
             ))}
           </span>
           <span className={styles.progressText}>
@@ -80,7 +89,7 @@ function ProjectRow({ row, onOpen }: { row: ProjectRowData; onOpen?: () => void 
             <span key={key} className={styles.score}>
               <span className={styles.scoreLabel}>{label}</span>
               <span className={cx(styles.scoreValue, row.scores[key] == null && styles.empty)}>
-                {row.scores[key] ?? '—'}
+                {row.scores[key] == null ? '—' : <CountUp value={row.scores[key]} delay={250 + index * 55} />}
               </span>
             </span>
           ))}
@@ -121,9 +130,9 @@ export function ProjectTable({ rows, onOpen }: ProjectTableProps) {
         <span>최신 통과율 (%)</span>
         <span>최근 평가</span>
       </div>
-      <ul className={styles.body}>
-        {rows.map((row) => (
-          <ProjectRow key={row.id} row={row} onOpen={() => onOpen?.(row)} />
+      <ul className={styles.body} data-motion="stagger">
+        {rows.map((row, index) => (
+          <ProjectRow key={row.id} row={row} index={index} onOpen={() => onOpen?.(row)} />
         ))}
       </ul>
     </section>

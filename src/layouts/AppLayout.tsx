@@ -102,7 +102,12 @@ export function AppLayout({ sidebar, children, footer, contained, flush }: AppLa
               <BrandMark />
             </div>
           )}
-          <main className={cx(styles.main, flush && styles.flush)}>{children}</main>
+          <main className={cx(styles.main, flush && styles.flush)}>
+            {/* 화면이 바뀔 때마다 본문이 살짝 떠오르며 등장 */}
+            <div className={styles.page} data-motion="page">
+              {children}
+            </div>
+          </main>
           {footer}
         </div>
       </div>

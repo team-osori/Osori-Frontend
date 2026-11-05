@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import { Card, CardHeader } from '../../components/ui'
 import { cx } from '../../lib/cx'
 import type { PromptVersion } from './types'
@@ -8,10 +9,15 @@ export function VersionList({ versions }: { versions: PromptVersion[] }) {
   return (
     <Card as="section" className={styles.versionCard} aria-label="프롬프트 버전">
       <CardHeader title="프롬프트 버전" />
-      <ol className={styles.versionList}>
+      <ol className={styles.versionList} data-motion="stagger" style={{ '--delay': '700ms' } as CSSProperties}>
         {versions.map((item, index) => (
-          <li key={item.version} className={styles.versionItem}>
-            <span className={cx(styles.versionTag, index === 0 && styles.versionTagLatest)}>{item.version}</span>
+          <li key={item.version} className={styles.versionItem} style={{ '--i': index } as CSSProperties}>
+            <span
+              className={cx(styles.versionTag, index === 0 && styles.versionTagLatest)}
+              data-motion={index === 0 ? 'pulse' : undefined}
+            >
+              {item.version}
+            </span>
             <span className={styles.versionTitle}>{item.title}</span>
             <time className={styles.versionTime}>{item.createdAt}</time>
           </li>

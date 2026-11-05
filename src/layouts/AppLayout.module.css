@@ -21,10 +21,11 @@
 /* 본문 안의 페이지가 남은 높이를 채울 수 있게 (빈 상태 안내를 가운데 놓는 용도) */
 .main { display: flex; flex: 1; flex-direction: column; padding: var(--page-padding-y) var(--page-padding-x); }
 /* 초광폭 모니터(21:9 등)에서 본문이 끝없이 늘어나지 않게 */
-.main > * { flex: 1; max-width: 1680px; }
+.main > .page { display: flex; flex: 1; flex-direction: column; min-height: 0; max-width: 1680px; }
+.page > * { flex: 1; min-height: 0; }
 /* 여백 없이 본문 영역을 가득 채움. 최대 폭 제한도 없앰 */
 .flush { padding: 0; }
-.flush > * { max-width: none; }
+.flush > .page { max-width: none; }
 
 .topbar {
   display: flex;

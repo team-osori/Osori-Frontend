@@ -29,7 +29,7 @@ export function StepItem({ index, label, status, onClick }: StepItemProps) {
       aria-current={status === 'current' ? 'step' : undefined}
       onClick={onClick}
     >
-      <span className={styles.marker} aria-hidden>
+      <span className={styles.marker} aria-hidden data-motion={status === 'current' ? 'pulse' : undefined}>
         {status === 'done' ? '✓' : index}
       </span>
       <span className={styles.texts}>

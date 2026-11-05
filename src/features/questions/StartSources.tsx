@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, type CSSProperties } from 'react'
 import { cx } from '../../lib/cx'
 import { Button, Icon, Modal, MultiSelect, StatTile, Sticker, type SelectOption } from '../../components/ui'
 import { QUESTION_TYPES, type DraftCounts, type QuestionType } from './types'
@@ -44,10 +44,10 @@ type StartChoicesProps = {
 /** 05 시험지가 없을 때: 문제를 넣는 두 가지 방법 */
 export function StartChoices({ onDraft, onUpload }: StartChoicesProps) {
   return (
-    <div className={styles.choices}>
+    <div className={styles.choices} data-motion="stagger">
       <section className={cx(styles.choice, styles.recommended)}>
         <div className={styles.choiceTop}>
-          <Sticker name="sparkle" width={34} />
+          <Sticker name="sparkle" width={34} motion="twinkle" />
           <span className={styles.tag}>추천</span>
         </div>
         <h2 className={styles.choiceTitle}>정책 문서로 자동 생성</h2>
@@ -60,9 +60,9 @@ export function StartChoices({ onDraft, onUpload }: StartChoicesProps) {
         </Button>
       </section>
 
-      <section className={styles.choice}>
+      <section className={styles.choice} style={{ '--i': 1 } as CSSProperties}>
         <div className={styles.choiceTop}>
-          <Sticker name="folder" width={52} />
+          <Sticker name="folder" width={52} motion="float" rot={-3} delay={600} />
         </div>
         <h2 className={styles.choiceTitle}>가진 질문 올리기</h2>
         <p className={styles.choiceDesc}>
@@ -87,9 +87,9 @@ const TYPE_GUIDE: Record<QuestionType, { desc: string; check: string }> = {
 /** 문제 유형 4가지 안내 */
 export function TypeGuide() {
   return (
-    <ul className={styles.types} aria-label="문제 유형">
-      {QUESTION_TYPES.map((type) => (
-        <li key={type} className={styles.type}>
+    <ul className={styles.types} aria-label="문제 유형" data-motion="stagger" style={{ '--delay': '260ms' } as CSSProperties}>
+      {QUESTION_TYPES.map((type, i) => (
+        <li key={type} className={styles.type} style={{ '--i': i } as CSSProperties}>
           <strong className={styles.typeName}>{type}</strong>
           <span className={styles.typeDesc}>{TYPE_GUIDE[type].desc}</span>
           <span className={styles.typeCheck}>→ {TYPE_GUIDE[type].check}</span>

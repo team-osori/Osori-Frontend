@@ -26,7 +26,10 @@
   background: transparent;
   transition: background-color 0.12s;
 }
-.railItem img { width: 17px; height: 17px; opacity: 0.55; transition: opacity 0.12s; }
+.railItem img { width: 17px; height: 17px; opacity: 0.55; transition: opacity 0.12s, transform 0.25s var(--ease-spring); }
+.railItem:not(:disabled):hover img { transform: scale(1.12); }
+.logo img { transition: transform 0.4s var(--ease-spring); }
+.logo:hover img { transform: rotate(-12deg) scale(1.08); }
 .railItem:not(:disabled):hover { background: rgba(255, 255, 255, 0.05); }
 .railItem:not(:disabled):hover img { opacity: 0.9; }
 .railItem:disabled { cursor: default; }

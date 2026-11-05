@@ -1,4 +1,5 @@
-import { Card, ProgressBar } from '../../components/ui'
+import type { CSSProperties } from 'react'
+import { Card, CountUp, ProgressBar } from '../../components/ui'
 import { cx } from '../../lib/cx'
 import type { MetricSummary } from './types'
 import styles from './grading.module.css'
@@ -17,7 +18,8 @@ function deltaOf(scores: MetricSummary['scores']) {
 }
 
 /** 검색 · 근거 · 응답 · 정책 점수를 버전별로 비교하는 카드 */
-export function MetricCard({ metric }: { metric: MetricSummary }) {
+export function MetricCard({ metric, index = 0 }: { metric: MetricSummary; index?: number }) {
+  const base = 380 + index * 90
   const delta = deltaOf(metric.scores)
   const last = metric.scores[metric.scores.length - 1]
   const prev = metric.scores[metric.scores.length - 2]
@@ -26,22 +28,29 @@ export function MetricCard({ metric }: { metric: MetricSummary }) {
       <div className={styles.metricHead}>
         <h3 className={styles.metricTitle}>{metric.label}</h3>
         {delta && prev && (
-          <span className={cx(styles.delta, delta.diff > 0 && styles.deltaUp)}>
+          <span
+            className={cx(styles.delta, delta.diff > 0 && styles.deltaUp)}
+            data-motion="pop"
+            style={{ '--delay': `${base + 500}ms` } as CSSProperties}
+          >
             {prev.version}→{last.version} {delta.text}
           </span>
         )}
       </div>
       <ul className={styles.metricRows}>
-        {metric.scores.map((item, index) => (
+        {metric.scores.map((item, row) => (
           <li key={item.version} className={styles.metricRow}>
             <span className={styles.metricVersion}>{item.version}</span>
             <ProgressBar
               size="md"
               value={item.score}
-              tone={toneFor(index, metric.scores.length)}
+              tone={toneFor(row, metric.scores.length)}
               label={`${metric.label} ${item.version} 점수`}
+              delay={base + row * 110}
             />
-            <span className={styles.metricScore}>{item.score}%</span>
+            <span className={styles.metricScore}>
+              <CountUp value={item.score} delay={base + row * 110} duration={800} />%
+            </span>
           </li>
         ))}
       </ul>
