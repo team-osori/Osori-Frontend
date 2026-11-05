@@ -1,0 +1,6 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  /* 헤더와 카드 사이 간격은 Figma 기준 28px */
+  gap: 28px;
+}
