@@ -10,12 +10,11 @@ import search from './search.svg'
 import server from './server.svg'
 import settings from './settings.svg'
 import sidebar from './sidebar.svg'
-import trash from './trash.svg'
 import trashDanger from './trash-danger.svg'
 
 export const icons = {
   arrowLeft, chevronDown, chevronRight, chevronUpDown, grid, lock, plus, plusSm,
-  search, server, settings, sidebar, trash, trashDanger,
+  search, server, settings, sidebar, trashDanger,
 }
 
 export type IconName = keyof typeof icons
