@@ -1,0 +1,26 @@
+/* 작은 숫자 칸 (라벨 + 값). 입력형이면 값을 바로 고칠 수 있음 */
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 9px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  transition: border-color 0.15s;
+}
+.tile:focus-within { border-color: var(--color-border-focus); }
+.label { overflow: hidden; font: var(--text-caption); color: var(--color-text-secondary); text-overflow: ellipsis; white-space: nowrap; }
+.value,
+.input {
+  font: var(--text-title-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+.input { width: 100%; padding: 0; border: none; outline: none; background: none; }
+
+/* 요약 카드 (A/B 실행 상단) */
+.card { display: flex; flex-direction: column; justify-content: center; gap: 10px; min-width: 0; }
+.cardLabel { font: var(--text-label); color: var(--color-text-secondary); }
+.cardValue { font: 20px / 24px var(--font-family); font-weight: var(--font-weight-bold); }

@@ -13,10 +13,15 @@
 .md { height: 44px; padding: 0 20px; font: var(--text-body); font-weight: var(--font-weight-bold); }
 .sm { height: 40px; padding: 0 16px; font: var(--text-body-sm); font-weight: var(--font-weight-bold); }
 .xs { height: 34px; padding: 0 12px; border-radius: 7px; font: var(--text-label); }
+.xxs { gap: 4px; height: 32px; padding: 0 12px; border-radius: 7px; font: var(--text-label); font-weight: var(--font-weight-bold); }
 .full { width: 100%; }
 
 .tonal { background: var(--color-surface-strong); color: var(--color-text); }
 .tonal:not(:disabled):hover { background: #44444f; }
+
+/* 완료 상태를 보여주는 연한 초록 (예: 승인됨) */
+.success { background: rgba(74, 222, 128, 0.15); color: var(--color-success); }
+.success:not(:disabled):hover { background: rgba(74, 222, 128, 0.22); }
 
 .primary { background: var(--color-primary); color: var(--color-on-primary); }
 .primary:not(:disabled):hover { filter: brightness(1.08); }

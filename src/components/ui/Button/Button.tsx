@@ -5,10 +5,10 @@ import { Icon } from '../Icon/Icon'
 import styles from './Button.module.css'
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  /** primary: 핑크 / secondary: 표면색 / tonal: 한 단계 밝은 표면색 / danger: 빨간 테두리 */
-  variant?: 'primary' | 'secondary' | 'tonal' | 'danger'
-  /** md 44px · sm 40px · xs 34px */
-  size?: 'md' | 'sm' | 'xs'
+  /** primary 핑크 · secondary 표면색 · tonal 한 단계 밝은 표면색 · success 연한 초록 · danger 빨간 테두리 */
+  variant?: 'primary' | 'secondary' | 'tonal' | 'success' | 'danger'
+  /** md 44px · sm 40px · xs 34px · xxs 32px(표 안 버튼) */
+  size?: 'md' | 'sm' | 'xs' | 'xxs'
   icon?: IconName
   /** 글자 뒤에 붙는 아이콘 (예: 다음 단계 →) */
   iconEnd?: IconName

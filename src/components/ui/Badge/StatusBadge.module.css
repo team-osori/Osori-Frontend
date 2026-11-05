@@ -16,3 +16,5 @@
 .warning { background: var(--color-warning); }
 .neutral { background: var(--color-neutral); }
 .danger { background: var(--color-danger); }
+.primary { background: var(--color-primary); }
+.muted { background: var(--color-text-tertiary); }

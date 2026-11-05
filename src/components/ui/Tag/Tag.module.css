@@ -7,6 +7,7 @@
   border-radius: 12px;
   background: var(--color-surface-strong);
   font: var(--text-caption);
-  font-weight: var(--font-weight-bold);
   white-space: nowrap;
 }
+.strong { font-weight: var(--font-weight-bold); }
+.primary { background: var(--color-primary); color: var(--color-on-primary); }

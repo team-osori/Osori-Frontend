@@ -24,6 +24,7 @@
   --color-neutral: #9ca3af;
   --color-danger: #ff6b6b;
   --color-danger-border: rgba(255, 107, 107, 0.4);
+  --color-caution: #f5b544; /* 주의 (라벨 없음 등) */
 
   /* Gradient */
   --gradient-sidebar: linear-gradient(180deg, #3a3a44 0%, #3a3a44 50%, #4a3550 100%);

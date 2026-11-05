@@ -14,5 +14,7 @@
   background: rgba(36, 36, 42, 0.55);
   backdrop-filter: blur(12px);
 }
-.status { display: flex; align-items: center; gap: 8px; font: var(--text-body-sm); }
-.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-left: auto; }
+.statusGroup { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.status { display: flex; align-items: center; gap: 6px; font: var(--text-body-sm); white-space: nowrap; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 12px 16px; margin-left: auto; }
+.hint { font: var(--text-label); color: var(--color-text-secondary); }

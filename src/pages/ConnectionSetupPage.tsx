@@ -80,7 +80,9 @@ export default function ConnectionSetupPage({
         />
       }
       footer={
-        <ActionBar status={`필수 항목 ${filled} / ${REQUIRED.length} 완료`} tone={complete ? 'success' : 'neutral'}>
+        <ActionBar
+          status={{ tone: complete ? 'success' : 'neutral', label: `필수 항목 ${filled} / ${REQUIRED.length} 완료` }}
+        >
           <Button iconEnd="arrowRight" disabled={!complete} onClick={() => onSaveAndNext?.(config)}>
             저장하고 질문 세트로
           </Button>
