@@ -30,7 +30,7 @@ export function Modal({ open, onClose, title, size = 'md', children, actions, se
 
   return createPortal(
     <div className={styles.overlay} onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div ref={panelRef} className={cx(styles.modal, styles[size])} role="dialog" aria-modal="true" aria-labelledby={titleId}>
+      <div ref={panelRef} className={cx(styles.modal, styles[size], decoration != null && styles.decorated)} role="dialog" aria-modal="true" aria-labelledby={titleId}>
         <div className={styles.header}>
           <h2 id={titleId} className={styles.title}>
             {title}
