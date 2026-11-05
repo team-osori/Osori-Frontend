@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import { Button, Sticker, type StickerName } from '../../components/ui'
 import { STAGES } from '../../routes'
 import styles from './Onboarding.module.css'
@@ -17,9 +18,9 @@ const STAGE_DESC = [
 /** 02-1 프로젝트가 없을 때: 첫 프로젝트 안내 + 평가 3단계 소개 */
 export function Onboarding({ onCreateProject }: { onCreateProject?: () => void }) {
   return (
-    <div className={styles.root}>
+    <div className={styles.root} data-motion="stagger">
       <section className={styles.hero}>
-        <Sticker name="folder" width={60} className={styles.heroArt} />
+        <Sticker name="folder" width={60} motion="float" rot={-4} className={styles.heroArt} />
         <div className={styles.heroText}>
           <h2 className={styles.heroTitle}>첫 프로젝트를 만들어 보세요</h2>
           <p className={styles.heroDesc}>프로젝트 하나에 챗봇 서비스 하나를 연결합니다.</p>
@@ -29,11 +30,17 @@ export function Onboarding({ onCreateProject }: { onCreateProject?: () => void }
         </Button>
       </section>
 
-      <ol className={styles.stages}>
+      <ol className={styles.stages} style={{ '--i': 1 } as CSSProperties} data-motion="stagger">
         {STAGES.map((stage, i) => (
-          <li key={stage.label} className={styles.stage}>
+          <li key={stage.label} className={styles.stage} style={{ '--i': i + 1 } as CSSProperties}>
             <span className={styles.number}>{String(i + 1).padStart(2, '0')}</span>
-            <Sticker name={STAGE_ART[i].sticker} width={STAGE_ART[i].width} className={styles.art} />
+            <Sticker
+              name={STAGE_ART[i].sticker}
+              width={STAGE_ART[i].width}
+              motion="pop"
+              delay={450 + i * 140}
+              className={styles.art}
+            />
             <h3 className={styles.stageTitle}>{stage.label}</h3>
             <p className={styles.stageDesc}>{STAGE_DESC[i]}</p>
           </li>

@@ -1,6 +1,6 @@
 .form { display: flex; flex-direction: column; gap: 16px; }
 
-.clip { transform: rotate(32deg); height: auto; }
+.clip { height: auto; }
 
 /* ---------- 단계 표시 ---------- */
 .stepper { display: flex; align-items: center; gap: 18px; margin: 0; padding: 0; list-style: none; }

@@ -6,8 +6,11 @@
   border: 1px solid transparent;
   border-radius: var(--radius-md);
   white-space: nowrap;
-  transition: filter 0.15s, background-color 0.15s;
+  transition: filter 0.15s, background-color 0.15s, transform 0.12s, box-shadow 0.2s;
 }
+.button:not(:disabled):active { transform: scale(0.97); }
+.button img { transition: transform 0.2s var(--ease-out); }
+.button:not(:disabled):hover img:last-child { transform: translateX(2px); }
 .button:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .lg { height: 48px; padding: 0 20px; font: var(--text-title-sm); font-weight: var(--font-weight-bold); }
@@ -25,7 +28,7 @@
 .success:not(:disabled):hover { background: rgba(74, 222, 128, 0.22); }
 
 .primary { background: var(--color-primary); color: var(--color-on-primary); }
-.primary:not(:disabled):hover { filter: brightness(1.08); }
+.primary:not(:disabled):hover { filter: brightness(1.08); box-shadow: 0 6px 20px -6px rgba(180, 244, 97, 0.55); }
 
 .secondary { background: var(--color-surface); color: var(--color-text); }
 .secondary:not(:disabled):hover { background: var(--color-surface-strong); }

@@ -121,7 +121,7 @@ export function ProjectListPage({ user, projects, onCreateProject, onOpenProject
           />
         )}
 
-        <Sticker name="paperclipLime" width={92} className={styles.clip} />
+        <Sticker name="paperclipLime" width={92} motion="sway" rot={-58} className={styles.clip} />
       </div>
     </AppLayout>
   )

@@ -10,6 +10,9 @@
   border-radius: var(--radius-xl);
   background: var(--color-surface);
 }
+.choice { transition: transform 0.3s var(--ease-out), border-color 0.3s, box-shadow 0.3s; }
+.choice:hover { transform: translateY(-4px); border-color: rgba(255, 255, 255, 0.16); }
+.recommended:hover { box-shadow: 0 18px 40px -18px rgba(180, 244, 97, 0.35); }
 .recommended { border-color: rgba(255, 255, 255, 0.28); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04) inset; }
 
 .choiceTop { display: flex; align-items: flex-start; justify-content: space-between; min-height: 60px; }
