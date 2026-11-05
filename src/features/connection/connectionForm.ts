@@ -7,8 +7,10 @@ import type { ConnectionInput, ConnectionResponse } from './connectionApi'
  */
 export type EndpointForm = {
   endpointUrl: string
-  /** Authorization: Bearer 뒤에 붙는 토큰. 서버는 저장된 토큰을 다시 돌려주지 않아서, 비워 두면 기존 토큰을 그대로 둡니다. */
-  authToken: string
+  /** 인증 키(예: RAG 서버의 X-API-Key 값). 서버는 저장된 키를 다시 돌려주지 않아서, 비워 두면 기존 키를 그대로 둡니다. */
+  authKey: string
+  /** 인증 키를 실어 보낼 헤더 이름. 바꾸면 서버가 저장된 키를 지웁니다. */
+  authHeaderName: string
   /** 챗봇에 보낼 요청 본문(JSON). 질문 · 프롬프트 위치의 값은 실행할 때 채워집니다. */
   requestTemplate: string
   /** 요청 본문에서 질문을 넣을 위치 */
@@ -21,15 +23,19 @@ export type EndpointForm = {
   retrievalPointer: string
 }
 
-/** 백엔드 인계 문서의 예시 설정과 같은 기본값 */
+/**
+ * 평가 대상 RAG 서버(rag-server)의 POST /query 형식에 맞춘 기본값.
+ * 요청 {"question", "prompt"} → 응답 {"answer", "chunks": [...]}, 인증은 X-API-Key 헤더
+ */
 export const DEFAULT_ENDPOINT_FORM: EndpointForm = {
   endpointUrl: '',
-  authToken: '',
-  requestTemplate: '{\n  "question": "",\n  "systemPrompt": ""\n}',
+  authKey: '',
+  authHeaderName: 'X-API-Key',
+  requestTemplate: '{\n  "question": "",\n  "prompt": ""\n}',
   questionPointer: '/question',
-  promptPointer: '/systemPrompt',
+  promptPointer: '/prompt',
   answerPointer: '/answer',
-  retrievalPointer: '',
+  retrievalPointer: '/chunks',
 }
 
 /** 화면에서 바꾸지 않는 값. 이미 저장된 설정이 있으면 그 값을 유지합니다. */
@@ -45,7 +51,8 @@ const DEFAULT_REST = {
 export function fromConnection(connection: ConnectionResponse): EndpointForm {
   return {
     endpointUrl: connection.url,
-    authToken: '',
+    authKey: '',
+    authHeaderName: connection.auth.type === 'HEADER' ? (connection.auth.headerName ?? '') : DEFAULT_ENDPOINT_FORM.authHeaderName,
     requestTemplate: JSON.stringify(connection.requestTemplate, null, 2),
     questionPointer: connection.questionPointer,
     promptPointer: connection.promptPointer ?? '',
@@ -64,6 +71,7 @@ export function validateEndpointForm(form: EndpointForm): Partial<Record<keyof E
   } catch {
     errors.requestTemplate = 'JSON 형식이 올바르지 않습니다.'
   }
+  if (!/^[A-Za-z0-9-]{1,100}$/.test(form.authHeaderName.trim())) errors.authHeaderName = '영문 · 숫자 · 하이픈으로 된 헤더 이름을 입력해 주세요.'
   const pointer = (value: string) => value === '' || value.startsWith('/')
   if (!form.questionPointer.trim() || !pointer(form.questionPointer.trim())) errors.questionPointer = '/로 시작하는 위치를 입력해 주세요.'
   if (!pointer(form.promptPointer.trim())) errors.promptPointer = '/로 시작하는 위치를 입력해 주세요.'
@@ -72,12 +80,19 @@ export function validateEndpointForm(form: EndpointForm): Partial<Record<keyof E
   return errors
 }
 
+/** 지금 저장된 인증 키가 이 화면의 헤더 이름과 같은 헤더로 저장돼 있는지 */
+function hasSavedKey(form: EndpointForm, saved: ConnectionResponse | null) {
+  return Boolean(
+    saved?.auth.secretConfigured && saved.auth.type === 'HEADER' && saved.auth.headerName?.toLowerCase() === form.authHeaderName.trim().toLowerCase(),
+  )
+}
+
 /**
  * 화면 값을 서버에 보낼 설정으로. validateEndpointForm을 통과한 값만 넘겨야 합니다.
- * 토큰을 새로 넣었거나 이미 저장된 토큰이 있으면 Bearer 인증, 아니면 인증 없음으로 보냅니다.
+ * 키를 새로 넣었거나 같은 헤더로 저장된 키가 있으면 헤더 인증, 아니면 인증 없음으로 보냅니다.
  */
 export function toConnectionInput(form: EndpointForm, saved: ConnectionResponse | null): ConnectionInput {
-  const useBearer = form.authToken.trim() !== '' || (saved?.auth.type === 'BEARER' && saved.auth.secretConfigured)
+  const useKey = form.authKey.trim() !== '' || hasSavedKey(form, saved)
   const promptPointer = form.promptPointer.trim()
   const retrievalPointer = form.retrievalPointer.trim()
   return {
@@ -89,7 +104,7 @@ export function toConnectionInput(form: EndpointForm, saved: ConnectionResponse 
     answerPointer: form.answerPointer.trim(),
     promptPointer: promptPointer || null,
     retrievalPointer: retrievalPointer || null,
-    auth: { type: useBearer ? 'BEARER' : 'NONE' },
+    auth: useKey ? { type: 'HEADER', headerName: form.authHeaderName.trim() } : { type: 'NONE' },
     timeoutMs: saved?.timeoutMs ?? DEFAULT_REST.timeoutMs,
     maxRetries: saved?.maxRetries ?? DEFAULT_REST.maxRetries,
     retrySafe: saved?.retrySafe ?? DEFAULT_REST.retrySafe,

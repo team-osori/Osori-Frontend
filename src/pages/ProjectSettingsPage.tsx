@@ -277,7 +277,7 @@ function ServiceTab({ projectId, defaultServiceName, service, connection, verifi
       else if (serviceName.trim() !== target.name) target = await updateService(projectId, target.id, target.revision, { name: serviceName })
 
       const saved = await saveConnection(projectId, target.id, toConnectionInput(form, connection), connection?.revision ?? null)
-      if (form.authToken.trim()) await putSecret(projectId, target.id, form.authToken.trim(), saved.revision)
+      if (form.authKey.trim()) await putSecret(projectId, target.id, form.authKey.trim(), saved.revision)
       toast.success('서비스 연결을 저장했습니다. 연결 테스트로 확인해 주세요.')
       onSaved()
     } catch (error) {

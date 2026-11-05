@@ -36,14 +36,15 @@ export async function setupProject(input: NewProject): Promise<SetupResult> {
     return { project, warnings }
   }
 
-  const form = { ...DEFAULT_ENDPOINT_FORM, endpointUrl: input.endpointUrl, authToken: input.authToken, answerPointer: input.answerPointer || DEFAULT_ENDPOINT_FORM.answerPointer }
+  // 요청 · 응답 형식은 RAG 서버 기본값. 다른 형식이면 프로젝트 설정 > 서비스 연결의 "요청 형식"에서 바꿈
+  const form = { ...DEFAULT_ENDPOINT_FORM, endpointUrl: input.endpointUrl, authKey: input.ragApiKey }
   try {
     const connection = await saveConnection(project.id, serviceId, toConnectionInput(form, null))
-    if (input.authToken) {
+    if (input.ragApiKey) {
       try {
-        await putSecret(project.id, serviceId, input.authToken, connection.revision)
+        await putSecret(project.id, serviceId, input.ragApiKey, connection.revision)
       } catch (error) {
-        fail('인증 토큰 저장', error)
+        fail('RAG 인증 키 저장', error)
       }
     }
   } catch (error) {

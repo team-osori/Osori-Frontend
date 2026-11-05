@@ -8,12 +8,10 @@ import styles from './CreateProjectModal.module.css'
 export type NewProject = {
   name: string
   description: string
-  /** 평가할 챗봇 서비스 주소 */
+  /** 평가할 RAG 서버의 질문 엔드포인트 (예: https://…/query) */
   endpointUrl: string
-  /** Authorization: Bearer 뒤에 붙는 토큰 (선택) */
-  authToken: string
-  /** 응답에서 답변을 읽을 위치(JSON Pointer, 선택). 비우면 /answer */
-  answerPointer: string
+  /** RAG 서버 인증 키. X-API-Key 헤더로 보냅니다 (선택) */
+  ragApiKey: string
   systemPrompt: string
   /** 정책 문서 파일. 프로젝트를 만든 뒤 하나씩 올립니다. */
   policyFiles: File[]
@@ -73,8 +71,7 @@ function CreateProjectForm({ onClose, onSubmit, submitting }: Omit<CreateProject
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [endpointUrl, setEndpointUrl] = useState('')
-  const [authToken, setAuthToken] = useState('')
-  const [answerPointer, setAnswerPointer] = useState('')
+  const [ragApiKey, setRagApiKey] = useState('')
   // 평가할 서비스: ▼를 누르면 아래로 연결 정보 입력칸이 펼쳐짐
   const [serviceOpen, setServiceOpen] = useState(false)
   const [systemPrompt, setSystemPrompt] = useState('')
@@ -82,8 +79,7 @@ function CreateProjectForm({ onClose, onSubmit, submitting }: Omit<CreateProject
 
   // 서버는 https 주소만 호출합니다
   const urlError = endpointUrl.trim() && !/^https:\/\/\S+$/.test(endpointUrl.trim()) ? 'https://로 시작하는 주소를 입력해 주세요.' : undefined
-  const pointerError = answerPointer.trim() && !answerPointer.trim().startsWith('/') ? '/로 시작하는 위치를 입력해 주세요. 예: /answer' : undefined
-  const stepOneDone = name.trim() !== '' && endpointUrl.trim() !== '' && !urlError && !pointerError
+  const stepOneDone = name.trim() !== '' && endpointUrl.trim() !== '' && !urlError
   const stepTwoDone = systemPrompt.trim() !== ''
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -97,8 +93,7 @@ function CreateProjectForm({ onClose, onSubmit, submitting }: Omit<CreateProject
       name: name.trim(),
       description: description.trim(),
       endpointUrl: endpointUrl.trim(),
-      authToken: authToken.trim(),
-      answerPointer: answerPointer.trim(),
+      ragApiKey: ragApiKey.trim(),
       // 프롬프트는 공백 · 줄바꿈도 의미가 있을 수 있어 그대로 보냄
       systemPrompt,
       policyFiles: docs.map((doc) => doc.file),
@@ -190,37 +185,37 @@ function CreateProjectForm({ onClose, onSubmit, submitting }: Omit<CreateProject
               <div id="create-project-service" className={styles.serviceBody} inert={!serviceOpen}>
                 <div className={styles.serviceFields}>
                   <TextField
-                    label="엔드포인트 URL"
+                    label="RAG 엔드포인트"
                     name="endpointUrl"
                     type="url"
                     inputMode="url"
                     autoComplete="off"
                     spellCheck={false}
-                    placeholder="https://cs-bot.example.com/v1/chat"
+                    placeholder="https://rag.example.com/query"
                     value={endpointUrl}
                     onChange={(e) => setEndpointUrl(e.target.value)}
                     error={urlError}
                   />
                   <div className={styles.serviceRow}>
                     <TextField
-                      label="인증 헤더"
-                      name="authToken"
-                      prefix="Bearer"
+                      label="RAG 인증 키"
+                      name="ragApiKey"
+                      prefix="X-API-Key"
                       type="password"
                       autoComplete="off"
-                      placeholder="토큰"
-                      value={authToken}
-                      onChange={(e) => setAuthToken(e.target.value)}
+                      placeholder="키 (선택)"
+                      value={ragApiKey}
+                      onChange={(e) => setRagApiKey(e.target.value)}
                     />
+                    {/* TODO: 백엔드에 RAG 서버로 넘길 두 번째 비밀값 API가 생기면 입력받아 저장 */}
                     <TextField
-                      label="응답에서 답변을 읽을 위치"
-                      name="answerPointer"
+                      label="AI API 키 (OpenAI)"
+                      name="aiApiKey"
+                      type="password"
                       autoComplete="off"
-                      spellCheck={false}
-                      placeholder="/answer"
-                      value={answerPointer}
-                      onChange={(e) => setAnswerPointer(e.target.value)}
-                      error={pointerError}
+                      placeholder="준비 중"
+                      disabled
+                      hint="RAG가 답변 생성에 쓰는 키입니다. 서버 저장이 준비되면 입력할 수 있습니다."
                     />
                   </div>
                 </div>

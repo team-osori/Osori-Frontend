@@ -10,7 +10,7 @@ type EndpointCardProps = {
   value: EndpointForm
   onChange: (patch: Partial<EndpointForm>) => void
   errors: EndpointErrors
-  /** 서버에 인증 토큰이 저장돼 있는지 (토큰 값은 다시 받을 수 없음) */
+  /** 서버에 인증 키가 저장돼 있는지 (키 값은 다시 받을 수 없음) */
   secretConfigured: boolean
   /** 저장된 설정이 있으면 지금 설정으로 연결 테스트를 통과했는지. 아직 저장 전이면 undefined */
   verified?: boolean
@@ -52,7 +52,7 @@ export function EndpointCard({
           required
         />
         <TextField
-          label="엔드포인트 URL"
+          label="RAG 엔드포인트"
           type="url"
           inputMode="url"
           spellCheck={false}
@@ -63,13 +63,22 @@ export function EndpointCard({
           required
         />
         <TextField
-          label="인증 헤더"
-          prefix="Authorization: Bearer"
+          label="RAG 인증 키"
+          prefix={value.authHeaderName || 'X-API-Key'}
           type="password"
           autoComplete="off"
-          value={value.authToken}
-          onChange={(e) => onChange({ authToken: e.target.value })}
-          placeholder={secretConfigured ? '저장됨 · 바꿀 때만 입력' : '토큰 (선택)'}
+          value={value.authKey}
+          onChange={(e) => onChange({ authKey: e.target.value })}
+          placeholder={secretConfigured ? '저장됨 · 바꿀 때만 입력' : '키 (선택)'}
+        />
+        {/* TODO: 백엔드에 RAG 서버로 넘길 두 번째 비밀값 API가 생기면 입력받아 저장 */}
+        <TextField
+          label="AI API 키 (OpenAI)"
+          type="password"
+          autoComplete="off"
+          placeholder="준비 중"
+          disabled
+          hint="RAG가 답변 생성에 쓰는 키입니다. 서버 저장이 준비되면 입력할 수 있습니다."
         />
         <TextField
           label="응답에서 답변을 읽을 위치"
@@ -93,11 +102,14 @@ export function EndpointCard({
       </div>
 
       {/* 대부분은 기본값 그대로 쓰므로 접어 둠. 오류가 있으면 펼친 채로 보여줌 */}
-      <details className={styles.details} open={Boolean(errors.requestTemplate || errors.questionPointer || errors.promptPointer) || undefined}>
+      <details
+        className={styles.details}
+        open={Boolean(errors.requestTemplate || errors.questionPointer || errors.promptPointer || errors.authHeaderName) || undefined}
+      >
         <summary className={styles.summary}>요청 형식</summary>
         <div className={styles.detailsBody}>
           <p className={styles.note}>
-            챗봇에 보낼 요청 본문입니다. 아래 위치에 질문과 시스템 프롬프트를 넣어 보냅니다. 위치는 JSON Pointer(예: /question)로 적습니다.
+            RAG 서버에 보낼 요청 본문입니다. 아래 위치에 질문과 시스템 프롬프트를 넣어 보냅니다. 위치는 JSON Pointer(예: /question)로 적습니다.
           </p>
           <CodeEditor
             value={value.requestTemplate}
@@ -129,6 +141,16 @@ export function EndpointCard({
               onChange={(e) => onChange({ promptPointer: e.target.value })}
               placeholder="/systemPrompt"
               error={errors.promptPointer}
+            />
+            <TextField
+              label="인증 키를 보낼 헤더"
+              mono
+              spellCheck={false}
+              value={value.authHeaderName}
+              onChange={(e) => onChange({ authHeaderName: e.target.value })}
+              placeholder="X-API-Key"
+              error={errors.authHeaderName}
+              hint="바꾸면 저장된 인증 키가 지워집니다."
             />
           </div>
         </div>
