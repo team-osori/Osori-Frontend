@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ProjectNavContext, SidebarUserContext, type HomeMenu, type UserMenuActions } from './components/common'
+import { useToast } from './components/ui'
 import { useAuth } from './features/auth'
 import { buildProject, CreateProjectModal, type NewProject } from './features/project'
 import { MOCK_JUDGE_ITEMS } from './features/grading/mock'
@@ -27,6 +28,7 @@ const PUBLIC_ROUTES: string[] = [ROUTES.login, ROUTES.signup, '/login/error']
 export default function App() {
   const [route, navigate] = useHashRoute(ROUTES.login)
   const auth = useAuth()
+  const toast = useToast()
   const isPublic = PUBLIC_ROUTES.includes(route)
 
   // 로그인하지 않았으면 로그인 화면으로, 로그인했는데 로그인 · 회원가입 화면이면 프로젝트 목록으로
@@ -37,9 +39,12 @@ export default function App() {
 
   // 토큰 갱신까지 실패하면(로그인 만료) 로그인 화면으로 보냄
   useEffect(() => {
-    setSessionExpiredHandler(() => navigate(ROUTES.login))
+    setSessionExpiredHandler(() => {
+      toast.warning('로그인이 만료되었습니다. 다시 로그인해 주세요.')
+      navigate(ROUTES.login)
+    })
     return () => setSessionExpiredHandler(null)
-  }, [navigate])
+  }, [navigate, toast])
   const [projects, setProjects] = useState<Project[]>(MOCK_PROJECTS)
   const [members, setMembers] = useState<Member[]>(MOCK_MEMBERS)
   const [createOpen, setCreateOpen] = useState(false)
@@ -70,6 +75,7 @@ export default function App() {
     onAccountSettings: () => navigate(ROUTES.accountSettings),
     onLogout: async () => {
       await auth.logout()
+      toast.success('로그아웃했습니다.')
       navigate(ROUTES.login)
     },
   }
@@ -80,7 +86,8 @@ export default function App() {
   /** 로그인 실패 문구 (비밀번호 칸 아래에 표시) */
   async function login(credentials: { loginId: string; password: string }) {
     try {
-      await auth.login(credentials)
+      const me = await auth.login(credentials)
+      toast.success(`${me.name}님, 환영합니다.`)
       navigate(ROUTES.projects)
     } catch (error) {
       return errorMessage(error, '로그인하지 못했습니다. 잠시 후 다시 시도해 주세요.')
@@ -90,7 +97,8 @@ export default function App() {
   /** 회원가입 후 바로 로그인. 실패하면 칸별 오류를 돌려줌 */
   async function signup(values: { name: string; loginId: string; password: string }): Promise<SignupErrors | void> {
     try {
-      await auth.signup(values)
+      const me = await auth.signup(values)
+      toast.success(`${me.name}님, 계정을 만들었습니다.`)
       navigate(ROUTES.projects)
     } catch (error) {
       if (isApiError(error) && error.status === 409) return { loginId: '이미 사용 중인 아이디입니다.' }
