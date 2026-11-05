@@ -1,7 +1,9 @@
 import type { CurrentUser, Project } from '../../types/project'
 
 /** API 연동 전까지 쓰는 Figma 샘플 데이터 */
-export const MOCK_USER: CurrentUser = { name: '김QA', role: '어드민' }
+export const MOCK_USER: CurrentUser = { name: '김QA', role: '어드민', email: 'qa@moamall.co.kr' }
+
+export const MOCK_INSTANCE_VERSION = 'v1.4.2'
 
 export const MOCK_PROJECTS: Project[] = [
   {

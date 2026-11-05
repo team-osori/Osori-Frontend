@@ -4,21 +4,24 @@ import { BrandMark } from '../BrandMark/BrandMark'
 import { NavItem } from '../NavItem/NavItem'
 import { ProjectSelector } from '../ProjectSelector/ProjectSelector'
 import { StepList } from '../StepItem/StepItem'
+import { UserMenu, type UserMenuActions } from '../UserMenu/UserMenu'
 import { UserProfile } from '../UserProfile/UserProfile'
 import { useSidebarToggle } from './SidebarContext'
 import styles from './Sidebar.module.css'
 
-type User = { name: string; role: string }
+type User = { name: string; role: string; email?: string }
 
 type SidebarProps = {
   user: User
   onToggle?: () => void
   onUserClick?: () => void
+  /** 주면 하단 프로필을 누를 때 계정 메뉴가 열립니다. (user.email 필요) */
+  userMenu?: UserMenuActions
   children: ReactNode
 }
 
 /** 사이드바 공통 틀: 브랜드 + 접기 버튼 / 본문 / 사용자 프로필 */
-export function Sidebar({ user, onToggle, onUserClick, children }: SidebarProps) {
+export function Sidebar({ user, onToggle, onUserClick, userMenu, children }: SidebarProps) {
   const layoutToggle = useSidebarToggle()
   return (
     <aside className={styles.sidebar}>
@@ -37,7 +40,11 @@ export function Sidebar({ user, onToggle, onUserClick, children }: SidebarProps)
       <nav className={styles.body}>{children}</nav>
       <div className={styles.footer}>
         <Divider tone="strong" />
-        <UserProfile name={user.name} role={user.role} onClick={onUserClick} />
+        {userMenu && user.email ? (
+          <UserMenu name={user.name} role={user.role} email={user.email} {...userMenu} />
+        ) : (
+          <UserProfile name={user.name} role={user.role} onClick={onUserClick} />
+        )}
       </div>
     </aside>
   )
@@ -61,7 +68,7 @@ export function SidebarDivider() {
 
 /* ---------- 홈(전체 프로젝트) 사이드바 ---------- */
 
-type HomeMenu = 'projects' | 'create'
+export type HomeMenu = 'projects' | 'create' | 'trash' | 'settings'
 
 type HomeSidebarProps = {
   user: User
@@ -71,6 +78,7 @@ type HomeSidebarProps = {
   onSearch?: (keyword: string) => void
   onToggle?: () => void
   onUserClick?: () => void
+  userMenu?: UserMenuActions
 }
 
 export function HomeSidebar({
@@ -81,9 +89,10 @@ export function HomeSidebar({
   onSearch,
   onToggle,
   onUserClick,
+  userMenu,
 }: HomeSidebarProps) {
   return (
-    <Sidebar user={user} onToggle={onToggle} onUserClick={onUserClick}>
+    <Sidebar user={user} onToggle={onToggle} onUserClick={onUserClick} userMenu={userMenu}>
       <SearchInput placeholder="프로젝트 검색" onChange={(e) => onSearch?.(e.target.value)} />
       <SidebarSectionLabel>프로젝트</SidebarSectionLabel>
       <SidebarList>
@@ -95,6 +104,11 @@ export function HomeSidebar({
           onClick={() => onNavigate?.('projects')}
         />
         <NavItem icon="plus" label="프로젝트 만들기" active={active === 'create'} onClick={() => onNavigate?.('create')} />
+      </SidebarList>
+      <SidebarDivider />
+      <SidebarList>
+        <NavItem icon="trash" label="휴지통" active={active === 'trash'} onClick={() => onNavigate?.('trash')} />
+        <NavItem icon="settings" label="설정" active={active === 'settings'} onClick={() => onNavigate?.('settings')} />
       </SidebarList>
     </Sidebar>
   )

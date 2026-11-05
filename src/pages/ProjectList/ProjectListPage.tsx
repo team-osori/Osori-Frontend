@@ -1,5 +1,13 @@
 import { useMemo, useState } from 'react'
-import { EmptyState, HomeSidebar, PageHeader, ProjectCard, ProjectCardGrid } from '../../components/common'
+import {
+  EmptyState,
+  HomeSidebar,
+  PageHeader,
+  ProjectCard,
+  ProjectCardGrid,
+  type HomeMenu,
+  type UserMenuActions,
+} from '../../components/common'
 import { Button, Select, type SelectOption } from '../../components/ui'
 import { AppLayout } from '../../layouts/AppLayout'
 import type { CurrentUser, Project } from '../../types/project'
@@ -28,12 +36,23 @@ function metaText(project: Project) {
 type ProjectListPageProps = {
   user: CurrentUser
   projects: Project[]
+  /** 헤더 · 빈 상태의 "프로젝트 만들기" 버튼 */
   onCreateProject?: () => void
   onOpenProject?: (project: Project) => void
+  /** 사이드바 메뉴 이동 (프로젝트 만들기 · 휴지통 · 설정 포함) */
+  onNavigate?: (menu: HomeMenu) => void
+  userMenu?: UserMenuActions
 }
 
 /** 02 프로젝트 목록 */
-export function ProjectListPage({ user, projects, onCreateProject, onOpenProject }: ProjectListPageProps) {
+export function ProjectListPage({
+  user,
+  projects,
+  onCreateProject,
+  onOpenProject,
+  onNavigate,
+  userMenu,
+}: ProjectListPageProps) {
   const [keyword, setKeyword] = useState('')
   const [sort, setSort] = useState<SortKey>('recent')
 
@@ -50,7 +69,8 @@ export function ProjectListPage({ user, projects, onCreateProject, onOpenProject
           user={user}
           projectCount={projects.length}
           onSearch={setKeyword}
-          onNavigate={(menu) => menu === 'create' && onCreateProject?.()}
+          onNavigate={onNavigate}
+          userMenu={userMenu}
         />
       }
     >

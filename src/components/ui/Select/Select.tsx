@@ -11,8 +11,8 @@ type SelectProps = {
   options: SelectOption[]
   value: string
   onChange: (value: string) => void
-  /** md: 툴바용 40px · sm: 사이드바용 30px · field: 폼 입력과 같은 44px */
-  size?: 'md' | 'sm' | 'field'
+  /** md: 툴바용 40px · sm: 사이드바용 30px · field: 폼 입력과 같은 44px · row: 표 안에서 쓰는 34px */
+  size?: 'md' | 'sm' | 'field' | 'row'
   /** 부모 폭을 꽉 채움 */
   fullWidth?: boolean
   /** 목록을 오른쪽 끝에 맞춰 엶 */
@@ -132,7 +132,7 @@ export function Select({
         onKeyDown={onKeyDown}
       >
         <span className={cx(styles.value, !selected && styles.placeholder)}>{selected?.label ?? placeholder}</span>
-        <Icon name="chevronDown" className={styles.chevron} />
+        <Icon name={size === 'row' ? 'chevronDownXs' : 'chevronDown'} className={styles.chevron} />
       </button>
 
       {open &&
@@ -142,7 +142,7 @@ export function Select({
             id={listId}
             role="listbox"
             aria-label={ariaLabel}
-            className={cx(styles.list, size === 'sm' && styles.listSm)}
+            className={cx(styles.list, (size === 'sm' || size === 'row') && styles.listSm)}
             style={listStyle}
           >
             {options.map((option, index) => {

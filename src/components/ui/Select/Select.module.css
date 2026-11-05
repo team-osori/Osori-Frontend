@@ -39,6 +39,19 @@
 }
 .sm .trigger:hover { background: #42424d; }
 
+.row .trigger {
+  gap: 4px;
+  height: 34px;
+  padding: 0 12px;
+  border-color: var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  font: var(--text-label);
+}
+.row .trigger:hover { border-color: #4a4a56; }
+.row.open .trigger,
+.row .trigger:focus-visible { border-color: var(--color-border-focus); }
+
 /* 폼 필드형: TextField와 같은 44px 입력 박스 */
 .field { display: flex; width: 100%; }
 .field .trigger {
