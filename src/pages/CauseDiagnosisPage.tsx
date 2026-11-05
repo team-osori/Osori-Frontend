@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Button, FilterChips } from '../components/ui'
 import { ActionBar, PageHeader, ProjectSidebar } from '../components/common'
 import { AppLayout } from '../layouts/AppLayout'
+import { ROUTES } from '../routes'
 import { CauseCard } from '../features/grading/CauseCard'
 import { CAUSE_INFO, CAUSE_ORDER } from '../features/grading/causes'
 import { MOCK_DIAGNOSES, MOCK_GRADING_SUMMARY } from '../features/grading/mock'
@@ -75,8 +76,8 @@ export default function CauseDiagnosisPage({
           promptValue={baseVersion}
           onPromptChange={setBaseVersion}
           questionSet="v1 · 67문항"
-          currentStep={6}
-          unlockedUntil={7}
+          current={ROUTES.diagnosis}
+          unlockedUntil={3}
           onBack={onBack}
         />
       }

@@ -1,12 +1,10 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
 import { Avatar, Divider, Icon } from '../../ui'
-import { UserProfile } from '../UserProfile/UserProfile'
 import styles from './UserMenu.module.css'
 
-/** 프로필 버튼 위쪽으로 띄우는 간격과, 사이드바 안쪽 여백만큼 왼쪽으로 당기는 값 (Figma 기준) */
-const GAP_ABOVE = 20
-const OFFSET_LEFT = 12
+/** 레일의 아바타 버튼 오른쪽으로 띄우는 간격 */
+const GAP_RIGHT = 12
 
 export type UserMenuActions = {
   /** 인스턴스 버전 표시 (예: v1.4.2) */
@@ -17,7 +15,7 @@ export type UserMenuActions = {
 
 type UserMenuProps = UserMenuActions & { name: string; role: string; email: string }
 
-/** 사이드바 하단 프로필. 누르면 계정 설정 · 인스턴스 정보 · 로그아웃 메뉴가 위로 열립니다. */
+/** 아이콘 레일 하단 아바타. 누르면 계정 설정 · 인스턴스 정보 · 로그아웃 메뉴가 오른쪽에 열립니다. */
 export function UserMenu({ name, role, email, instanceVersion, onAccountSettings, onLogout }: UserMenuProps) {
   const [open, setOpen] = useState(false)
   const [position, setPosition] = useState<CSSProperties>()
@@ -32,8 +30,8 @@ export function UserMenu({ name, role, email, instanceVersion, onAccountSettings
       const rect = triggerRef.current?.getBoundingClientRect()
       if (!rect) return
       setPosition({
-        left: Math.max(8, rect.left - OFFSET_LEFT),
-        bottom: window.innerHeight - rect.top + GAP_ABOVE,
+        left: rect.right + GAP_RIGHT,
+        bottom: Math.max(8, window.innerHeight - rect.bottom),
       })
     }
     place()
@@ -83,15 +81,18 @@ export function UserMenu({ name, role, email, instanceVersion, onAccountSettings
 
   return (
     <>
-      <UserProfile
-        name={name}
-        role={role}
-        buttonRef={triggerRef}
+      <button
+        ref={triggerRef}
+        type="button"
+        className={styles.trigger}
         onClick={() => setOpen((v) => !v)}
+        aria-label={`${name} (${role}) 계정 메뉴`}
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-controls={open ? popoverId : undefined}
-      />
+      >
+        {name.slice(0, 1)}
+      </button>
 
       {open &&
         createPortal(

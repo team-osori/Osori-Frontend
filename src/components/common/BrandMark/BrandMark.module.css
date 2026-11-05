@@ -1,25 +1,23 @@
-.brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
 
 .logo {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-lg);
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
   background: var(--color-primary);
-  font: var(--text-body);
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.12);
+  font-size: 13px;
   font-weight: var(--font-weight-bold);
-  color: var(--color-text);
+  color: var(--color-on-primary);
 }
 
-.text { display: flex; flex-direction: column; gap: 2px; }
-.title { font: var(--text-title-lg); font-weight: var(--font-weight-bold); }
-.subtitle { font: var(--text-body-sm); }
-
-/* sidebar: 핑크 제목 + 흰 부제 / panel: 흰 제목 + 회색 부제 */
-.sidebar .title { color: var(--color-primary); }
-.sidebar .subtitle { color: var(--color-text); }
-.panel .title { color: var(--color-text); }
-.panel .subtitle { color: var(--color-text-secondary); }
+.word {
+  font-size: 15px;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}

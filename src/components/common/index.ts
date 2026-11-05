@@ -1,6 +1,6 @@
 export { BrandMark } from './BrandMark/BrandMark'
-export { NavItem } from './NavItem/NavItem'
-export { StepItem, StepList, EVALUATION_STEPS, type StepStatus } from './StepItem/StepItem'
+export { NavItem, type NavDot } from './NavItem/NavItem'
+export { StepItem, StageList, type StepStatus } from './StepItem/StepItem'
 export { ProjectSelector } from './ProjectSelector/ProjectSelector'
 export { type ProjectSwitchItem } from './ProjectSelector/ProjectSwitcher'
 export { type PromptVersion } from './ProjectSelector/PromptVersionPicker'
@@ -9,16 +9,20 @@ export { UserProfile } from './UserProfile/UserProfile'
 export { UserMenu, type UserMenuActions } from './UserMenu/UserMenu'
 export {
   Sidebar,
+  SidebarTitle,
   SidebarSectionLabel,
   SidebarList,
-  SidebarDivider,
-  HomeSidebar,
+  SidebarCreateButton,
   ProjectSidebar,
   type HomeMenu,
 } from './Sidebar/Sidebar'
-export { ProjectCard, type ProjectStatus, type ProjectScores } from './ProjectCard/ProjectCard'
-export { ProjectCardGrid } from './ProjectCard/ProjectCardGrid'
-export { useSidebarToggle } from './Sidebar/SidebarContext'
+export {
+  ProjectTable,
+  PROJECT_STATUS_LABEL,
+  type ProjectRowData,
+  type ProjectStatus,
+  type ProjectScores,
+} from './ProjectTable/ProjectTable'
 export { SidebarUserContext, type SidebarUser } from './Sidebar/SidebarUserContext'
 export { PageHeader } from './PageHeader/PageHeader'
 export { AuthBrandPanel } from './AuthBrandPanel/AuthBrandPanel'

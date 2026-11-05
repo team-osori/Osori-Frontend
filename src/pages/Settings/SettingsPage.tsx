@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { HomeSidebar, PageHeader, type HomeMenu, type UserMenuActions } from '../../components/common'
-import { Button, Tabs } from '../../components/ui'
+import { NavItem, PageHeader, Sidebar, SidebarList, SidebarTitle, type HomeMenu, type UserMenuActions } from '../../components/common'
+import { Button } from '../../components/ui'
 import { MembersTable, type Member, type MemberRole } from '../../features/settings'
 import { AppLayout } from '../../layouts/AppLayout'
 import type { CurrentUser } from '../../types/project'
@@ -16,7 +16,8 @@ const TABS: Array<{ value: SettingsTab; label: string }> = [
 
 type SettingsPageProps = {
   user: CurrentUser
-  projectCount: number
+  /** 예전 API 호환용 (지금은 쓰지 않음) */
+  projectCount?: number
   members: Member[]
   onMembersChange: (members: Member[]) => void
   onNavigate?: (menu: HomeMenu) => void
@@ -27,7 +28,6 @@ type SettingsPageProps = {
 /** 15 설정 · 멤버 */
 export function SettingsPage({
   user,
-  projectCount,
   members,
   onMembersChange,
   onNavigate,
@@ -44,25 +44,25 @@ export function SettingsPage({
   return (
     <AppLayout
       sidebar={
-        <HomeSidebar
-          user={user}
-          projectCount={projectCount}
-          active="settings"
-          onNavigate={onNavigate}
-          userMenu={userMenu}
-        />
+        <Sidebar active="settings" user={user} userMenu={userMenu} onNavigate={onNavigate}>
+          <SidebarTitle>설정</SidebarTitle>
+          <SidebarList label="설정 구분">
+            {TABS.map((t) => (
+              <NavItem key={t.value} label={t.label} active={tab === t.value} onClick={() => setTab(t.value)} />
+            ))}
+          </SidebarList>
+        </Sidebar>
       }
     >
       <div className={styles.page}>
-        <PageHeader title="설정" />
-        <Tabs items={TABS} value={tab} onChange={setTab} ariaLabel="설정 구분" />
+        <PageHeader title={TABS.find((t) => t.value === tab)?.label ?? '설정'} />
 
-        <div role="tabpanel" className={styles.panel}>
+        <div className={styles.panel}>
           {tab === 'members' ? (
             <>
               <div className={styles.toolbar}>
                 <h2 className={styles.count}>멤버 {members.length}</h2>
-                <Button iconEnd="plusDark">
+                <Button size="xs" icon="plusSm">
                   멤버 초대
                 </Button>
               </div>

@@ -26,6 +26,8 @@ type Menu = 'project' | 'prompt'
 
 type ProjectSelectorProps = {
   projectName: string
+  /** 프로젝트 이름 아래 서비스 주소 */
+  host?: string
   /** promptVersions를 주면 쓰지 않음 */
   promptOptions?: SelectOption[]
   promptValue: string
@@ -36,9 +38,10 @@ type ProjectSelectorProps = {
   promptVersions?: PromptVersionOptions
 }
 
-/** 프로젝트 사이드바 상단의 프로젝트 / 프롬프트 버전 / 질문 세트 카드 */
+/** 프로젝트 사이드바 상단의 프로젝트 / 프롬프트 버전 / 시험지 */
 export function ProjectSelector({
   projectName,
+  host,
   promptOptions = [],
   promptValue,
   onPromptChange,
@@ -70,16 +73,24 @@ export function ProjectSelector({
           aria-expanded={openMenu === 'project'}
           aria-label={`${projectName} · 프로젝트 전환`}
         >
-          {projectName}
+          <span className={styles.name}>{projectName}</span>
           <Icon name="chevronUpDown" />
         </button>
       ) : onProjectClick ? (
         <button type="button" className={styles.header} onClick={onProjectClick} aria-label={`${projectName} 프로젝트 변경`}>
-          {projectName}
+          <span className={styles.name}>{projectName}</span>
           <Icon name="chevronUpDown" />
         </button>
       ) : (
-        <span className={styles.header}>{projectName}</span>
+        <span className={styles.header}>
+          <span className={styles.name}>{projectName}</span>
+        </span>
+      )}
+      {host && (
+        <span className={styles.host}>
+          <span className={styles.hostDot} aria-hidden />
+          {host}
+        </span>
       )}
       <div className={styles.row}>
         {promptVersions ? (
@@ -121,7 +132,7 @@ export function ProjectSelector({
         )}
       </div>
       <div className={styles.row}>
-        <span className={styles.label}>질문 세트</span>
+        <span className={styles.label}>시험지</span>
         <span className={styles.value}>{questionSet}</span>
       </div>
 

@@ -16,10 +16,14 @@ type ModalProps = {
   actions?: ReactNode
   /** 하단 왼쪽 (예: 질문 삭제) */
   secondaryAction?: ReactNode
+  /** 제목 아래 영역 (예: 단계 표시) */
+  subheader?: ReactNode
+  /** 모서리에 얹는 장식 (예: 클립 스티커) */
+  decoration?: ReactNode
 }
 
 /** 가운데 뜨는 확인·편집 창 */
-export function Modal({ open, onClose, title, size = 'md', children, actions, secondaryAction }: ModalProps) {
+export function Modal({ open, onClose, title, size = 'md', children, actions, secondaryAction, subheader, decoration }: ModalProps) {
   const titleId = useId()
   const panelRef = useDialog(open, onClose)
   if (!open) return null
@@ -35,6 +39,12 @@ export function Modal({ open, onClose, title, size = 'md', children, actions, se
             <Icon name="close" />
           </button>
         </div>
+        {subheader && <div className={styles.subheader}>{subheader}</div>}
+        {decoration && (
+          <div className={styles.decoration} aria-hidden>
+            {decoration}
+          </div>
+        )}
         <div className={styles.body}>{children}</div>
         {(actions || secondaryAction) && (
           <div className={styles.footer}>

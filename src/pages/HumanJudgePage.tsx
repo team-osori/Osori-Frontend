@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Button } from '../components/ui'
 import { ActionBar, ProjectSidebar } from '../components/common'
 import { AppLayout } from '../layouts/AppLayout'
+import { ROUTES } from '../routes'
 import { JudgeBar } from '../features/grading/JudgeBar'
 import { JudgeDetail } from '../features/grading/JudgeDetail'
 import { MOCK_JUDGE_ITEMS } from '../features/grading/mock'
@@ -75,8 +76,8 @@ export default function HumanJudgePage({
           promptValue="ab"
           onPromptChange={() => {}}
           questionSet="v1 · 67문항"
-          currentStep={5}
-          unlockedUntil={6}
+          current={ROUTES.judge}
+          unlockedUntil={3}
           onBack={onBack}
         />
       }

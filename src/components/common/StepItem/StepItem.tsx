@@ -1,9 +1,17 @@
 import { cx } from '../../../lib/cx'
+import type { Stage } from '../../../routes'
 import { Icon } from '../../ui'
 import styles from './StepItem.module.css'
 
 /** done: 완료(✓), current: 현재 단계, todo: 진행 가능, locked: 잠금 */
 export type StepStatus = 'done' | 'current' | 'todo' | 'locked'
+
+const STATUS_TEXT: Record<StepStatus, string> = {
+  done: '완료',
+  current: '진행 중',
+  todo: '열림',
+  locked: '잠김',
+}
 
 type StepItemProps = {
   index: number
@@ -24,49 +32,54 @@ export function StepItem({ index, label, status, onClick }: StepItemProps) {
       <span className={styles.marker} aria-hidden>
         {status === 'done' ? '✓' : index}
       </span>
-      <span className={styles.label}>{label}</span>
-      {status === 'locked' && <Icon name="lock" />}
+      <span className={styles.texts}>
+        <span className={styles.label}>{label}</span>
+        <span className={styles.status}>{STATUS_TEXT[status]}</span>
+      </span>
+      {status === 'locked' && <Icon name="lock" className={styles.lock} />}
     </button>
   )
 }
 
-export const EVALUATION_STEPS = [
-  '연결 설정',
-  '질문 세트',
-  '프롬프트 A/B 실행',
-  '자동 채점 결과',
-  '사람 판정',
-  '원인 진단',
-  '개선안 적용',
-] as const
-
-type StepListProps = {
+type StageListProps = {
+  stages: Stage[]
   /** 1부터 시작하는 현재 단계 */
   current: number
+  /** 지금 보고 있는 화면. 없으면 단계 안 화면 목록을 강조하지 않음 (예: 프로젝트 설정) */
+  currentRoute?: string
   /** 이 단계까지 진행 가능(이후는 잠금). 기본값은 current */
   unlockedUntil?: number
-  steps?: readonly string[]
-  /** false면 현재 단계를 강조하지 않음(예: 프로젝트 설정 화면) */
-  highlightCurrent?: boolean
-  onSelect?: (index: number) => void
+  onSelect?: (route: string) => void
 }
 
-export function StepList({
-  current,
-  unlockedUntil = current,
-  steps = EVALUATION_STEPS,
-  highlightCurrent = true,
-  onSelect,
-}: StepListProps) {
+/** 사이드바 평가 단계 목록. 현재 단계 아래에 그 단계의 화면들을 펼쳐 보여줍니다. */
+export function StageList({ stages, current, currentRoute, unlockedUntil = current, onSelect }: StageListProps) {
   return (
     <ol className={styles.list}>
-      {steps.map((label, i) => {
+      {stages.map((stage, i) => {
         const index = i + 1
         const status: StepStatus =
-          index < current ? 'done' : index === current ? (highlightCurrent ? 'current' : 'todo') : index <= unlockedUntil ? 'todo' : 'locked'
+          index < current ? 'done' : index === current ? (currentRoute ? 'current' : 'todo') : index <= unlockedUntil ? 'todo' : 'locked'
+        const showScreens = index === current && currentRoute && stage.screens.length > 1
         return (
-          <li key={label}>
-            <StepItem index={index} label={label} status={status} onClick={() => onSelect?.(index)} />
+          <li key={stage.label}>
+            <StepItem index={index} label={stage.label} status={status} onClick={() => onSelect?.(stage.screens[0].route)} />
+            {showScreens && (
+              <ul className={styles.screens}>
+                {stage.screens.map((screen) => (
+                  <li key={screen.route}>
+                    <button
+                      type="button"
+                      className={cx(styles.screen, screen.route === currentRoute && styles.screenActive)}
+                      aria-current={screen.route === currentRoute ? 'page' : undefined}
+                      onClick={() => onSelect?.(screen.route)}
+                    >
+                      {screen.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </li>
         )
       })}
