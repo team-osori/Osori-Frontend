@@ -10,6 +10,7 @@ import file from './file.svg'
 import fileSm from './file-sm.svg'
 import fileXs from './file-xs.svg'
 import grid from './grid.svg'
+import gridLg from './grid-lg.svg'
 import lock from './lock.svg'
 import pencil from './pencil.svg'
 import plus from './plus.svg'
@@ -41,6 +42,7 @@ export const icons = {
   fileSm,
   fileXs,
   grid,
+  gridLg,
   lock,
   pencil,
   plus,

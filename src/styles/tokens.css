@@ -48,6 +48,7 @@
   --text-title-sm: 16px / 19px var(--font-family);  /* 프로젝트 선택 */
   --text-title: 17px / 20px var(--font-family);     /* 섹션 제목 */
   --text-title-lg: 18px / 21px var(--font-family);  /* 카드 제목, 브랜드 */
+  --text-title-xl: 22px / 26px var(--font-family);  /* 빈 상태 제목 */
   /* 큰 글자는 화면 폭에 따라 줄어듦 (최대값 = Figma 기준) */
   --text-lead: clamp(15px, 1.4vw, 18px) / 1.6 var(--font-family);      /* 리드 문단 */
   --text-heading: clamp(22px, 2vw, 28px) / 1.22 var(--font-family);    /* 페이지 제목 */
@@ -59,6 +60,7 @@
   --radius-md: 8px;
   --radius-lg: 10px;
   --radius-xl: 12px;
+  --radius-2xl: 16px;
   --radius-full: 9999px;
 
   /* Spacing */

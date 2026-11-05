@@ -18,9 +18,10 @@
 .content { display: flex; flex: 1; flex-direction: column; min-width: 0; }
 .contained .content { overflow-y: auto; }
 
-.main { flex: 1; padding: var(--page-padding-y) var(--page-padding-x); }
+/* 본문 안의 페이지가 남은 높이를 채울 수 있게 (빈 상태 안내를 가운데 놓는 용도) */
+.main { display: flex; flex: 1; flex-direction: column; padding: var(--page-padding-y) var(--page-padding-x); }
 /* 초광폭 모니터(21:9 등)에서 본문이 끝없이 늘어나지 않게 */
-.main > * { max-width: 1680px; }
+.main > * { flex: 1; max-width: 1680px; }
 
 .topbar {
   display: flex;
