@@ -1,0 +1,37 @@
+.card { display: flex; flex-direction: column; padding: 23px; }
+
+.header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.titles { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.title { margin: 0; font: var(--text-title-lg); font-weight: var(--font-weight-bold); }
+.meta { font: var(--text-label); color: var(--color-text-secondary); }
+
+.metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 20px;
+  margin: 18px 0 0;
+}
+.metric { display: flex; flex-direction: column; gap: 7px; }
+.metricHead { display: flex; justify-content: space-between; font: var(--text-label); }
+.metricHead dt { color: var(--color-text-secondary); }
+.metricHead dd { margin: 0; font-weight: var(--font-weight-bold); }
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--color-surface-strong);
+  font: var(--text-label);
+}
+.progress { color: var(--color-text-secondary); }
+.action {
+  padding: 0;
+  border: none;
+  background: none;
+  font: var(--text-label);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+.action:hover { text-decoration: underline; }

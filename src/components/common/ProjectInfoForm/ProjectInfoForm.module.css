@@ -1,0 +1,25 @@
+.form { display: flex; flex-direction: column; gap: 16px; }
+.form > h2 { margin-bottom: 4px; }
+
+.service {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 48px;
+  padding: 0 10px 0 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  font: var(--text-body-sm);
+}
+.serviceName { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.link {
+  padding: 0;
+  border: none;
+  background: none;
+  font: var(--text-label);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+.link:hover { text-decoration: underline; }
+
+.actions { display: flex; justify-content: flex-end; }

@@ -1,0 +1,21 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 56px;
+  background: var(--gradient-brand-panel);
+}
+
+.content { display: flex; flex: 1; flex-direction: column; justify-content: center; gap: 20px; padding: 40px 0; }
+
+.headline {
+  margin: 0;
+  font: var(--text-display);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -1px;
+}
+.highlight { color: var(--color-primary); }
+
+.lead { max-width: 507px; margin: 0; font: var(--text-lead); color: var(--color-text-secondary); }
+
+.badge { align-self: flex-start; }

@@ -1,0 +1,25 @@
+.brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  background: var(--color-primary);
+  font: var(--text-body);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+.text { display: flex; flex-direction: column; gap: 2px; }
+.title { font: var(--text-title-lg); font-weight: var(--font-weight-bold); }
+.subtitle { font: var(--text-body-sm); }
+
+/* sidebar: 핑크 제목 + 흰 부제 / panel: 흰 제목 + 회색 부제 */
+.sidebar .title { color: var(--color-primary); }
+.sidebar .subtitle { color: var(--color-text); }
+.panel .title { color: var(--color-text); }
+.panel .subtitle { color: var(--color-text-secondary); }
