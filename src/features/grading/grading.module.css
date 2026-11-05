@@ -65,7 +65,10 @@
 
 /* 지표 카드 4개 */
 .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 0; padding: 0; list-style: none; }
-.metricCard { display: flex; flex-direction: column; gap: 14px; padding: 20px; }
+.metricCard { display: flex; flex-direction: column; gap: 14px; padding: 20px; transition: transform 0.3s var(--ease-out), border-color 0.3s; }
+.metricCard:hover { transform: translateY(-3px); border-color: rgba(255, 255, 255, 0.14); }
+.versionItem { transition: background-color 0.15s; border-radius: var(--radius-md); }
+.versionItem:hover { background: rgba(255, 255, 255, 0.03); }
 .metricHead { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .metricTitle { margin: 0; font: var(--text-title); font-weight: var(--font-weight-bold); }
 .delta { font: var(--text-label); font-weight: var(--font-weight-bold); color: var(--color-text-secondary); white-space: nowrap; }
