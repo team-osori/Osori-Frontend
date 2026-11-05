@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { Button, Card, CardTitle, Field, StatusDot, TextArea, TextField } from '../../ui'
 import styles from './ProjectInfoForm.module.css'
 
@@ -21,6 +21,12 @@ export function ProjectInfoForm({
   onSubmit,
 }: ProjectInfoFormProps) {
   const [value, setValue] = useState(initialValue)
+
+  // 데이터가 나중에 오거나 다른 프로젝트로 바뀌면 폼 값도 갱신
+  const { name, description } = initialValue
+  useEffect(() => {
+    setValue({ name, description })
+  }, [name, description])
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()

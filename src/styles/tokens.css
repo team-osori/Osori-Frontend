@@ -72,6 +72,4 @@
   /* Layout */
   --sidebar-width: clamp(260px, 21vw, 306px);
   --page-padding-x: clamp(16px, 4vw, 56px);
-  --page-padding-y: clamp(24px, 3.5vw, 48px);
-  --breakpoint-drawer: 1024px; /* 이 폭 미만에서 사이드바가 드로어로 전환 (AppLayout) */
-}
+  --page-padding-y: clamp(24px, 3.5vw, 48px);}

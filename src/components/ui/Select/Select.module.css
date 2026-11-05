@@ -16,6 +16,7 @@
 .open .trigger { border-color: var(--color-border-focus); }
 
 .value { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.placeholder { color: var(--color-text-tertiary); }
 
 .chevron { transition: transform 0.15s; }
 .open .chevron { transform: rotate(180deg); }
@@ -39,13 +40,10 @@
 .sm .trigger:hover { background: #42424d; }
 
 /* 옵션 목록 */
+/* 위치는 Select.tsx에서 화면 기준(fixed)으로 계산 */
 .list {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  z-index: 30;
-  min-width: 100%;
-  max-height: 240px;
+  position: fixed;
+  z-index: 50;
   margin: 0;
   padding: 4px;
   overflow-y: auto;
@@ -56,7 +54,6 @@
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
   animation: pop 0.12s ease-out;
 }
-.alignEnd .list { left: auto; right: 0; }
 
 @keyframes pop {
   from { opacity: 0; transform: translateY(-4px); }

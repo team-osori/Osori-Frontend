@@ -1,3 +1,9 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 20px;
+}
+
 .card { display: flex; flex-direction: column; min-width: 0; padding: clamp(16px, 1.6vw, 23px); }
 
 .header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }

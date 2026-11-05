@@ -10,7 +10,7 @@ export function ProgressBar({ value, label }: { value: number | null; label?: st
       aria-label={label}
       aria-valuemin={0}
       aria-valuemax={100}
-      aria-valuenow={value ?? undefined}
+      aria-valuenow={value == null ? undefined : clamped}
     >
       {value != null && <div className={styles.fill} style={{ width: `${clamped}%` }} />}
     </div>

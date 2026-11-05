@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
+import { useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react'
 import { cx } from '../../../lib/cx'
 import { Icon } from '../Icon/Icon'
 import styles from './Select.module.css'
@@ -14,10 +14,14 @@ type SelectProps = {
   fullWidth?: boolean
   /** 목록을 오른쪽 끝에 맞춰 엶 */
   align?: 'start' | 'end'
+  /** value가 옵션에 없을 때 표시 */
+  placeholder?: string
   id?: string
   ariaLabel?: string
   className?: string
 }
+
+const LIST_GAP = 6
 
 /** 브라우저 기본 select 대신 쓰는 커스텀 드롭다운 (키보드: ↑↓ Home End Enter Esc) */
 export function Select({
@@ -27,18 +31,47 @@ export function Select({
   size = 'md',
   fullWidth,
   align = 'start',
+  placeholder = '선택',
   id,
   ariaLabel,
   className,
 }: SelectProps) {
   const [open, setOpen] = useState(false)
   const [highlight, setHighlight] = useState(0)
+  const [listStyle, setListStyle] = useState<CSSProperties>()
   const rootRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
+  const listRef = useRef<HTMLUListElement>(null)
   const listId = useId()
 
-  const selectedIndex = Math.max(0, options.findIndex((o) => o.value === value))
-  const selected = options[selectedIndex]
+  const selectedIndex = options.findIndex((o) => o.value === value)
+  const selected = selectedIndex >= 0 ? options[selectedIndex] : undefined
+
+  // 목록을 화면 기준(fixed)으로 띄워 스크롤 영역(사이드바 등)에 잘리지 않게 함
+  useLayoutEffect(() => {
+    if (!open) return
+    const place = () => {
+      const rect = triggerRef.current?.getBoundingClientRect()
+      if (!rect) return
+      const below = window.innerHeight - rect.bottom - LIST_GAP - 8
+      const above = rect.top - LIST_GAP - 8
+      const openUp = below < 160 && above > below
+      setListStyle({
+        position: 'fixed',
+        minWidth: rect.width,
+        maxHeight: Math.min(240, openUp ? above : below),
+        ...(openUp ? { bottom: window.innerHeight - rect.top + LIST_GAP } : { top: rect.bottom + LIST_GAP }),
+        ...(align === 'end' ? { right: window.innerWidth - rect.right } : { left: rect.left }),
+      })
+    }
+    place()
+    window.addEventListener('resize', place)
+    window.addEventListener('scroll', place, true)
+    return () => {
+      window.removeEventListener('resize', place)
+      window.removeEventListener('scroll', place, true)
+    }
+  }, [open, align])
 
   // 바깥 클릭 시 닫기
   useEffect(() => {
@@ -50,8 +83,14 @@ export function Select({
     return () => document.removeEventListener('pointerdown', onPointerDown)
   }, [open])
 
+  // 키보드로 하이라이트가 목록 밖에 있으면 보이게 스크롤
+  useEffect(() => {
+    if (!open) return
+    listRef.current?.querySelector(`[data-index="${highlight}"]`)?.scrollIntoView({ block: 'nearest' })
+  }, [open, highlight])
+
   const openList = () => {
-    setHighlight(selectedIndex)
+    setHighlight(Math.max(0, selectedIndex))
     setOpen(true)
   }
 
@@ -93,6 +132,9 @@ export function Select({
         choose(highlight)
         break
       case 'Escape':
+        e.preventDefault()
+        setOpen(false)
+        break
       case 'Tab':
         setOpen(false)
         break
@@ -102,40 +144,35 @@ export function Select({
   return (
     <div
       ref={rootRef}
-      className={cx(
-        styles.root,
-        styles[size],
-        fullWidth && styles.full,
-        open && styles.open,
-        align === 'end' && styles.alignEnd,
-        className,
-      )}
+      className={cx(styles.root, styles[size], fullWidth && styles.full, open && styles.open, className)}
     >
       <button
         ref={triggerRef}
         id={id}
         type="button"
+        role="combobox"
         className={styles.trigger}
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-controls={open ? listId : undefined}
+        aria-controls={listId}
         aria-label={ariaLabel}
         aria-activedescendant={open ? `${listId}-${highlight}` : undefined}
         onClick={() => (open ? setOpen(false) : openList())}
         onKeyDown={onKeyDown}
       >
-        <span className={styles.value}>{selected?.label}</span>
+        <span className={cx(styles.value, !selected && styles.placeholder)}>{selected?.label ?? placeholder}</span>
         <Icon name="chevronDown" className={styles.chevron} />
       </button>
 
       {open && (
-        <ul id={listId} role="listbox" className={styles.list}>
+        <ul ref={listRef} id={listId} role="listbox" aria-label={ariaLabel} className={styles.list} style={listStyle}>
           {options.map((option, index) => {
             const isSelected = index === selectedIndex
             return (
               <li
                 key={option.value}
                 id={`${listId}-${index}`}
+                data-index={index}
                 role="option"
                 aria-selected={isSelected}
                 className={cx(styles.option, index === highlight && styles.highlighted, isSelected && styles.selected)}

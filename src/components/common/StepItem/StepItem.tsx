@@ -59,7 +59,7 @@ export function StepList({
   onSelect,
 }: StepListProps) {
   return (
-    <ol style={{ display: 'flex', flexDirection: 'column', gap: 2, margin: 0, padding: 0, listStyle: 'none' }}>
+    <ol className={styles.list}>
       {steps.map((label, i) => {
         const index = i + 1
         const status: StepStatus =
