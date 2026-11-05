@@ -8,12 +8,12 @@ import styles from './CreateProjectModal.module.css'
 export type NewProject = {
   name: string
   description: string
-  /** 평가할 챗봇 서비스 주소 */
-  endpointUrl: string
-  /** Authorization: Bearer 뒤에 붙는 토큰 (선택) */
-  authToken: string
-  /** 응답에서 답변 · 근거를 읽을 위치 (선택) */
-  responsePath: string
+  /** 답변을 만들 AI API 키 (OpenAI 기준) */
+  aiApiKey: string
+  /** 정책 문서를 검색할 RAG 서비스 주소 */
+  ragEndpoint: string
+  /** RAG 서비스 인증키 (선택) */
+  ragAuthKey: string
   systemPrompt: string
   policyDocs: PolicyDoc[]
 }
@@ -66,15 +66,15 @@ function CreateProjectForm({ onClose, onSubmit }: Omit<CreateProjectModalProps, 
   const [step, setStep] = useState(1)
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
-  const [endpointUrl, setEndpointUrl] = useState('')
-  const [authToken, setAuthToken] = useState('')
-  const [responsePath, setResponsePath] = useState('')
+  const [aiApiKey, setAiApiKey] = useState('')
+  const [ragEndpoint, setRagEndpoint] = useState('')
+  const [ragAuthKey, setRagAuthKey] = useState('')
   // 평가할 서비스: ▼를 누르면 아래로 연결 정보 입력칸이 펼쳐짐
   const [serviceOpen, setServiceOpen] = useState(false)
   const [systemPrompt, setSystemPrompt] = useState('')
   const [docs, setDocs] = useState<PolicyDoc[]>([])
 
-  const stepOneDone = name.trim() !== '' && endpointUrl.trim() !== ''
+  const stepOneDone = name.trim() !== '' && aiApiKey.trim() !== '' && ragEndpoint.trim() !== ''
   const stepTwoDone = systemPrompt.trim() !== ''
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -87,9 +87,9 @@ function CreateProjectForm({ onClose, onSubmit }: Omit<CreateProjectModalProps, 
     onSubmit({
       name: name.trim(),
       description: description.trim(),
-      endpointUrl: endpointUrl.trim(),
-      authToken: authToken.trim(),
-      responsePath: responsePath.trim(),
+      aiApiKey: aiApiKey.trim(),
+      ragEndpoint: ragEndpoint.trim(),
+      ragAuthKey: ragAuthKey.trim(),
       systemPrompt: systemPrompt.trim(),
       policyDocs: docs,
     })
@@ -171,8 +171,8 @@ function CreateProjectForm({ onClose, onSubmit }: Omit<CreateProjectModalProps, 
                   <Icon name="server" />
                   평가할 서비스
                 </span>
-                <span className={cx(styles.serviceHost, !endpointUrl.trim() && styles.serviceHostEmpty)}>
-                  {endpointUrl.trim() ? hostOf(endpointUrl.trim()) : '연결할 주소를 입력하세요'}
+                <span className={cx(styles.serviceHost, !ragEndpoint.trim() && styles.serviceHostEmpty)}>
+                  {ragEndpoint.trim() ? hostOf(ragEndpoint.trim()) : 'AI 키 · RAG 주소를 입력하세요'}
                 </span>
                 <span className={styles.caret} aria-hidden />
               </button>
@@ -180,35 +180,35 @@ function CreateProjectForm({ onClose, onSubmit }: Omit<CreateProjectModalProps, 
               <div id="create-project-service" className={styles.serviceBody} inert={!serviceOpen}>
                 <div className={styles.serviceFields}>
                   <TextField
-                    label="엔드포인트 URL"
-                    name="endpointUrl"
-                    type="url"
-                    inputMode="url"
+                    label="AI API 키 (OpenAI)"
+                    name="aiApiKey"
+                    type="password"
                     autoComplete="off"
                     spellCheck={false}
-                    placeholder="https://cs-bot.example.com/v1/chat"
-                    value={endpointUrl}
-                    onChange={(e) => setEndpointUrl(e.target.value)}
+                    placeholder="sk-..."
+                    value={aiApiKey}
+                    onChange={(e) => setAiApiKey(e.target.value)}
                   />
                   <div className={styles.serviceRow}>
                     <TextField
-                      label="인증 헤더"
-                      name="authToken"
-                      prefix="Bearer"
-                      type="password"
-                      autoComplete="off"
-                      placeholder="토큰"
-                      value={authToken}
-                      onChange={(e) => setAuthToken(e.target.value)}
-                    />
-                    <TextField
-                      label="응답에서 읽을 위치"
-                      name="responsePath"
+                      label="RAG 엔드포인트"
+                      name="ragEndpoint"
+                      type="url"
+                      inputMode="url"
                       autoComplete="off"
                       spellCheck={false}
-                      placeholder="답변 $.answer · 근거 $.contexts"
-                      value={responsePath}
-                      onChange={(e) => setResponsePath(e.target.value)}
+                      placeholder="https://rag.example.com/v1/search"
+                      value={ragEndpoint}
+                      onChange={(e) => setRagEndpoint(e.target.value)}
+                    />
+                    <TextField
+                      label="RAG 인증키"
+                      name="ragAuthKey"
+                      type="password"
+                      autoComplete="off"
+                      placeholder="인증키 (선택)"
+                      value={ragAuthKey}
+                      onChange={(e) => setRagAuthKey(e.target.value)}
                     />
                   </div>
                 </div>
