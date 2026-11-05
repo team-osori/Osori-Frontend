@@ -22,38 +22,28 @@
 .done { color: var(--color-text-secondary); }
 .done .stepMarker { border-color: var(--color-text-secondary); }
 
-/* ---------- 1 서비스 연결 ---------- */
+/* ---------- 1 서비스 연결: 토글을 켜면 아래로 입력칸이 펼쳐짐 ---------- */
 .service {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  height: 48px;
-  padding: 0 14px;
+  margin-top: 4px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  background: var(--color-input);
+  background: var(--color-surface);
 }
-.service:focus-within { border-color: var(--color-border-focus); }
-.serviceLabel { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; font: var(--text-label); font-weight: var(--font-weight-bold); }
-.serviceLabel img { width: 16px; height: 16px; opacity: 0.7; }
-.serviceInput {
-  flex: 1;
-  min-width: 0;
-  height: 100%;
-  padding: 0;
-  border: none;
-  background: none;
-  font: var(--text-caption);
-  font-family: var(--font-mono);
-  color: var(--color-text-secondary);
-  text-align: right;
-  outline: none;
-}
-.serviceInput::placeholder { color: var(--color-text-tertiary); }
-.serviceState { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: var(--color-surface-strong); }
-.serviceOn { background: var(--color-primary); box-shadow: 0 0 8px var(--color-primary); }
+.serviceHead { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 0 18px 0 20px; }
+.serviceLabel { display: inline-flex; flex: 1; align-items: center; gap: 10px; font: var(--text-body); font-weight: var(--font-weight-bold); }
+.serviceLabel img { width: 20px; height: 20px; opacity: 0.85; }
+.serviceHost { min-width: 0; overflow: hidden; font: var(--text-caption); color: var(--color-text-secondary); text-overflow: ellipsis; white-space: nowrap; }
+.serviceHostEmpty { color: var(--color-text-tertiary); }
 
-.note { margin: -4px 0 0; font: var(--text-caption); line-height: 1.6; color: var(--color-text-tertiary); word-break: keep-all; }
+/* 높이 0 → 내용 높이로 부드럽게 펼침 */
+.serviceBody { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.25s ease; }
+.serviceOpen .serviceBody { grid-template-rows: 1fr; }
+.serviceFields { display: flex; flex-direction: column; gap: 16px; min-height: 0; overflow: hidden; padding: 0 20px; transition: padding 0.25s ease; }
+.serviceOpen .serviceFields { padding-bottom: 20px; }
+.serviceRow { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+@media (prefers-reduced-motion: reduce) {
+  .serviceBody, .serviceFields { transition: none; }
+}
 
 /* ---------- 2 프롬프트 · 정책 문서 ---------- */
 .prompt { height: 148px; font: var(--text-label); line-height: 1.75; }
@@ -79,4 +69,5 @@
 
 @media (max-width: 560px) {
   .docList { grid-template-columns: 1fr; }
+  .serviceRow { grid-template-columns: 1fr; }
 }
