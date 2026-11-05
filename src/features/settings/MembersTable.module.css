@@ -40,7 +40,8 @@
   color: var(--color-text-secondary);
 }
 
-.avatarCell { padding-left: 20px; }
+/* .table td { padding: 0 }보다 우선하도록 선택자를 맞춤 */
+.table .avatarCell { padding-left: 20px; }
 
 .name { font-weight: var(--font-weight-bold); color: var(--color-text); }
 .muted { font-weight: var(--font-weight-regular); color: var(--color-text-secondary); }
