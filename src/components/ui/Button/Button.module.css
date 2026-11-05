@@ -38,3 +38,19 @@
   color: var(--color-danger);
 }
 .danger:not(:disabled):hover { background: rgba(255, 107, 107, 0.08); }
+
+/* 되돌릴 수 없는 동작 확정 (삭제·중단) */
+.dangerFill { background: var(--color-danger); color: var(--color-on-primary); }
+.dangerFill:not(:disabled):hover { filter: brightness(1.08); }
+
+/* 배경 없는 빨간 글자 버튼 (모달 왼쪽 "질문 삭제" 등) */
+.dangerText { padding: 0; border: none; background: none; color: var(--color-danger); font-weight: var(--font-weight-regular); }
+.dangerText.md { font: var(--text-body-sm); }
+.dangerText:not(:disabled):hover { text-decoration: underline; }
+
+/* 얇은 흰 테두리 (예: 청크 연결) */
+.outline { background: transparent; border-color: rgba(255, 255, 255, 0.35); color: var(--color-text); }
+.outline:not(:disabled):hover { border-color: rgba(255, 255, 255, 0.6); }
+
+/* 모달·하단 바의 취소·중단 같은 보조 동작은 보통 굵기 */
+.tonal.md { font-weight: var(--font-weight-regular); padding: 0 18px; }

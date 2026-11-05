@@ -65,6 +65,8 @@ type TextFieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> &
     prefix?: string
     /** 코드·경로 입력용 고정폭 글꼴 */
     mono?: boolean
+    /** 되돌릴 수 없는 동작 확인용 빨간 테두리 (문구 없이 테두리만) */
+    danger?: boolean
   }
 
 export function TextField({
@@ -75,6 +77,7 @@ export function TextField({
   hintTone,
   prefix,
   mono,
+  danger,
   className,
   id,
   'aria-describedby': describedBy,
@@ -88,7 +91,7 @@ export function TextField({
     styles.control,
     styles.input,
     size === 'lg' && styles.inputLg,
-    error && styles.invalid,
+    (error || danger) && styles.invalid,
     className,
   )
   const a11y = {
@@ -125,14 +128,18 @@ export function TextField({
   )
 }
 
-type TextAreaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & { label: string }
+type TextAreaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
+  label: string
+  /** sm 72px (한두 줄) · md 88px */
+  size?: 'sm' | 'md'
+}
 
-export function TextArea({ label, className, id, ...rest }: TextAreaProps) {
+export function TextArea({ label, size = 'md', className, id, ...rest }: TextAreaProps) {
   const autoId = useId()
   const inputId = id ?? autoId
   return (
     <Field label={label} htmlFor={inputId}>
-      <textarea id={inputId} className={cx(styles.control, styles.textarea, className)} {...rest} />
+      <textarea id={inputId} className={cx(styles.control, styles.textarea, size === 'sm' && styles.textareaSm, className)} {...rest} />
     </Field>
   )
 }

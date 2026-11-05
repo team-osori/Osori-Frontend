@@ -51,3 +51,8 @@
 .error { margin-top: -3px; font: var(--text-body); color: var(--color-danger); }
 .hint { font: var(--text-label); color: var(--color-text-tertiary); }
 .hintSuccess { color: var(--color-success); }
+
+.textareaSm { height: 72px; }
+.danger,
+.danger:hover,
+.danger:focus { border-color: var(--color-danger); }

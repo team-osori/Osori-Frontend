@@ -5,8 +5,11 @@ import { MOCK_MEMBERS, type Member } from './features/settings'
 import { useHashRoute } from './hooks/useHashRoute'
 import AbRunPage from './pages/AbRunPage'
 import ConnectionSetupPage from './pages/ConnectionSetupPage'
+import GradingResultsPage from './pages/GradingResultsPage'
+import ImprovementApplyPage from './pages/ImprovementApplyPage'
 import { LoginPage } from './pages/Login'
 import { MOCK_INSTANCE_VERSION, MOCK_PROJECTS, MOCK_USER, ProjectListPage } from './pages/ProjectList'
+import ProjectSettingsPage from './pages/ProjectSettingsPage'
 import QuestionSetPage from './pages/QuestionSetPage'
 import { SettingsPage } from './pages/Settings'
 import { SignupPage } from './pages/Signup'
@@ -29,13 +32,13 @@ export default function App() {
   function navigateHome(menu: HomeMenu) {
     if (menu === 'create') setCreateOpen(true)
     else if (menu === 'projects') navigate('/projects')
-    else if (menu === 'settings') navigate('/settings')
+    else if (menu === 'settings') navigate('/account-settings')
   }
 
   // TODO: 로그아웃 시 세션 정리 (인증 API 연동 후)
   const userMenu: UserMenuActions = {
     instanceVersion: MOCK_INSTANCE_VERSION,
-    onAccountSettings: () => navigate('/settings'),
+    onAccountSettings: () => navigate('/account-settings'),
     onLogout: () => navigate('/login'),
   }
 
@@ -53,7 +56,8 @@ export default function App() {
       // API 연동 전, 프로젝트가 없는 상태(02-1)를 확인하기 위한 경로
       case '/projects/empty':
         return <ProjectListPage {...listProps} projects={[]} />
-      case '/settings':
+      // 앱 전체 설정 (내 계정 · 멤버 · 인스턴스). /settings는 프로젝트 설정이 쓰고 있음
+      case '/account-settings':
         return (
           <SettingsPage
             user={MOCK_USER}
@@ -77,7 +81,14 @@ export default function App() {
       case '/questions':
         return <QuestionSetPage onBack={() => navigate('/projects')} onConfirm={() => navigate('/ab-run')} />
       case '/ab-run':
-        return <AbRunPage onBack={() => navigate('/projects')} />
+        return <AbRunPage onBack={() => navigate('/projects')} onShowResults={() => navigate('/grading')} />
+      case '/grading':
+        return <GradingResultsPage onBack={() => navigate('/projects')} />
+      case '/improvement':
+        return <ImprovementApplyPage onBack={() => navigate('/projects')} onReevaluate={() => navigate('/grading')} />
+      // 프로젝트 설정 (일반 · 서비스 연결 · 채점자 · 멤버)
+      case '/settings':
+        return <ProjectSettingsPage onBack={() => navigate('/projects')} onDeleted={() => navigate('/projects')} />
       default:
         return <LoginPage onLogin={() => navigate('/projects')} />
     }

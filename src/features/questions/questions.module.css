@@ -81,22 +81,12 @@
 .deleted { opacity: 0.4; }
 
 .chunk { display: inline-flex; align-items: center; gap: 6px; color: var(--color-text); }
+.more { color: var(--color-text-secondary); }
 .noLabel { display: inline-flex; align-items: center; gap: 6px; color: var(--color-caution); }
 
 .actions { display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
 .invertIcon img { filter: invert(1); } /* Figma의 검은 복원 아이콘을 어두운 버튼 위에서 보이게 */
 
-.editInput {
-  width: 100%;
-  height: 36px;
-  padding: 0 10px;
-  border: 1px solid var(--color-border-focus);
-  border-radius: var(--radius-sm);
-  outline: none;
-  background: var(--color-bg);
-  font: var(--text-label);
-  color: var(--color-text);
-}
 
 .emptyRow td { height: 120px; text-align: center; }
 
@@ -119,4 +109,41 @@
   .table td:first-child { padding-bottom: 8px; }
   .actions { justify-content: flex-start; padding-top: 8px; }
   .emptyRow td { justify-content: center; height: 100px; }
+}
+
+/* ---------- 근거 청크 고르기 ---------- */
+.picker { display: inline-flex; }
+.pickerList {
+  z-index: 60;
+  margin: 0;
+  padding: 4px;
+  overflow-y: auto;
+  list-style: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+.pickerOption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  font: var(--text-label);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.pickerHighlighted { background: var(--color-surface-strong); }
+
+.fieldLabel { margin: 0 0 8px; font: var(--text-label); color: var(--color-text-secondary); }
+
+/* ---------- 질문 세트 확정 요약 ---------- */
+.summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 0; }
+.summaryItem { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; border-radius: var(--radius-lg); background: var(--color-bg); }
+.summaryItem dt { display: flex; align-items: center; gap: 6px; font: var(--text-label); color: var(--color-text-secondary); }
+.summaryItem dd { margin: 0; font: 22px / 26px var(--font-family); font-weight: var(--font-weight-bold); }
+.cautionDot { width: 8px; height: 8px; border-radius: var(--radius-full); background: var(--color-caution); }
+@media (max-width: 420px) {
+  .summary { grid-template-columns: minmax(0, 1fr); }
 }

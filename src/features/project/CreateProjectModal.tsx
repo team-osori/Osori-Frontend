@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Button, Icon, Modal, ModalBody, ModalFooter, TextArea, TextField } from '../../components/ui'
+import { Button, Icon, Modal, TextArea, TextField } from '../../components/ui'
 import styles from './CreateProjectModal.module.css'
 
 export type NewProject = { name: string; description: string }
@@ -12,13 +12,12 @@ type CreateProjectModalProps = {
 
 /** 12 프로젝트 만들기 모달 */
 export function CreateProjectModal({ open, onClose, onSubmit }: CreateProjectModalProps) {
-  return (
-    <Modal open={open} title="프로젝트 만들기" onClose={onClose}>
-      {/* Modal이 닫히면 이 폼도 사라져서 다음에 열 때 입력값이 비어 있음 */}
-      <CreateProjectForm onClose={onClose} onSubmit={onSubmit} />
-    </Modal>
-  )
+  // 열릴 때마다 새 폼이 만들어지도록 open일 때만 렌더링해서 이전 입력값이 남지 않게 함
+  if (!open) return null
+  return <CreateProjectForm onClose={onClose} onSubmit={onSubmit} />
 }
+
+const FORM_ID = 'create-project-form'
 
 function CreateProjectForm({ onClose, onSubmit }: Omit<CreateProjectModalProps, 'open'>) {
   const [name, setName] = useState('')
@@ -32,8 +31,23 @@ function CreateProjectForm({ onClose, onSubmit }: Omit<CreateProjectModalProps, 
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate>
-      <ModalBody>
+    <Modal
+      open
+      title="프로젝트 만들기"
+      onClose={onClose}
+      actions={
+        <>
+          <Button variant="tonal" className={styles.cancel} onClick={onClose}>
+            취소
+          </Button>
+          {/* 버튼이 폼 바깥(모달 푸터)에 있어서 form 속성으로 연결 */}
+          <Button type="submit" form={FORM_ID} iconEnd="arrowRight" disabled={!trimmedName}>
+            만들고 연결 설정으로
+          </Button>
+        </>
+      }
+    >
+      <form id={FORM_ID} className={styles.form} onSubmit={handleSubmit} noValidate>
         <div className={styles.fields}>
           <TextField
             label="프로젝트 이름"
@@ -55,15 +69,7 @@ function CreateProjectForm({ onClose, onSubmit }: Omit<CreateProjectModalProps, 
           <Icon name="server" />
           프로젝트 하나에 서비스 하나를 연결합니다. 만든 뒤 바로 연결 설정으로 이동합니다.
         </p>
-      </ModalBody>
-      <ModalFooter>
-        <Button variant="tonal" className={styles.cancel} onClick={onClose}>
-          취소
-        </Button>
-        <Button type="submit" iconEnd="arrowRight" disabled={!trimmedName}>
-          만들고 연결 설정으로
-        </Button>
-      </ModalFooter>
-    </form>
+      </form>
+    </Modal>
   )
 }

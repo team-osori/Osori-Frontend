@@ -14,6 +14,7 @@ import {
 } from '../features/abRun/mock'
 import { useRunSimulation } from '../features/abRun/useRunSimulation'
 import { PromptDiffCard, RunProgressCard, VersionCard } from '../features/abRun/RunCards'
+import { StopRunModal } from '../features/abRun/StopRunModal'
 import styles from './AbRunPage.module.css'
 
 const user = { name: '김QA', role: '어드민' }
@@ -38,6 +39,7 @@ export default function AbRunPage({
   onBack,
 }: AbRunPageProps) {
   const [versions, setVersions] = useState({ base: 'v1', candidate: 'v2' })
+  const [stopOpen, setStopOpen] = useState(false)
   const run = useRunSimulation({ total: MOCK_TOTAL, initialDone: MOCK_V2_DONE, concurrency: MOCK_CONCURRENCY })
 
   const status: ActionBarStatus =
@@ -64,7 +66,7 @@ export default function AbRunPage({
       footer={
         <ActionBar status={status}>
           {run.state === 'running' && (
-            <Button variant="tonal" onClick={run.stop}>
+            <Button variant="tonal" onClick={() => setStopOpen(true)}>
               중단
             </Button>
           )}
@@ -112,6 +114,19 @@ export default function AbRunPage({
           <PromptDiffCard from={versions.base} to={versions.candidate} lines={MOCK_DIFF} memo={MOCK_DIFF_MEMO} />
         </div>
       </div>
+
+      {/* 실행이 먼저 끝나면 모달도 닫힘 */}
+      <StopRunModal
+        open={stopOpen && run.state === 'running'}
+        onClose={() => setStopOpen(false)}
+        version={versions.candidate}
+        done={run.done}
+        total={MOCK_TOTAL}
+        onStop={() => {
+          run.stop()
+          setStopOpen(false)
+        }}
+      />
     </AppLayout>
   )
 }
