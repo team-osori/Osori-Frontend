@@ -36,3 +36,11 @@
 .current .marker { border-color: var(--color-primary); }
 
 .locked { opacity: 0.4; }
+
+@media (max-height: 880px) {
+  .item { height: 40px; }
+}
+@media (max-height: 720px) {
+  .item { height: 34px; }
+  .marker { width: 22px; height: 22px; }
+}
