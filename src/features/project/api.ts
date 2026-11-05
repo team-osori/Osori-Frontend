@@ -48,8 +48,9 @@ export function getProject(projectId: string, extras: RequestExtras = {}): Promi
 /**
  * 서버 응답을 화면이 쓰는 Project로 바꿉니다.
  *
- * 서버가 주는 값(id · 이름 · 설명)만 실제 값을 쓰고, 서버에 없는 값(점수 · 마지막 평가 시각 · 진행 단계)은
- * 지어내지 않고 "아직 모름"으로 둡니다. 화면은 점수를 `—`로 보여줍니다. (필요한 API는 #26에 정리돼 있음)
+ * 서버가 주는 값(id · 이름 · 설명)만 실제 값을 쓰고, 서버에 없는 값(서비스 주소 · 점수 · 마지막 평가 시각 · 진행 단계)은
+ * 지어내지 않고 "아직 모름"으로 둡니다. 주소는 빈 문자열, 점수는 null이라 화면에는 `—`로 보입니다. (필요한 API는 #26에 정리돼 있음)
+ * 서비스 주소는 서비스 연결 설정(connection.url)에 있지만 목록 한 줄마다 요청하면 비용이 커서 여기서 채우지 않습니다.
  *
  * 상태는 서버 정보로 확실한 것만 판단합니다. 연결한 서비스가 없으면 아직 설정 전(setup)이 분명하지만,
  * 서비스가 있다고 해서 평가가 끝났는지는 프로젝트 응답만으로 알 수 없어서 평가 목록 API가 생기기 전까지 setup으로 둡니다.
@@ -59,11 +60,11 @@ export function toProject(response: ProjectResponse): Project {
     id: response.id,
     name: response.name,
     description: response.description ?? undefined,
+    host: '',
     status: 'setup',
     scores: { retrieval: null, grounding: null, response: null, policy: null },
     lastEvaluatedAt: null,
     promptVersion: null,
-    progressText: response.serviceCount > 0 ? '서비스 연결됨' : '1 · 연결 설정',
     currentStep: 1,
   }
 }
