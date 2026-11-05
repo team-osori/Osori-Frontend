@@ -6,10 +6,9 @@
   min-height: 100%;
   padding: 24px;
   overflow-y: auto;
-  scrollbar-width: none; /* 스크롤은 되지만 막대는 숨김 */
+  /* 스크롤은 되지만 막대는 숨김 */
   background: var(--gradient-sidebar);
 }
-.sidebar::-webkit-scrollbar { display: none; }
 
 .header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .toggle {

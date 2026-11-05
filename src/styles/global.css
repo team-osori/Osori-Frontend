@@ -38,3 +38,6 @@ input:focus-visible,
 textarea:focus-visible,
 select:focus-visible { outline: none; }
 
+/* 스크롤바는 모든 곳에서 숨김 (스크롤 동작은 그대로) */
+* { scrollbar-width: none; }
+*::-webkit-scrollbar { display: none; }

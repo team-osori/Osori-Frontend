@@ -16,8 +16,7 @@
 .contained .slot { position: relative; height: 100%; }
 
 .content { display: flex; flex: 1; flex-direction: column; min-width: 0; }
-.contained .content { overflow-y: auto; scrollbar-width: none; }
-.contained .content::-webkit-scrollbar { display: none; }
+.contained .content { overflow-y: auto; }
 
 .main { flex: 1; padding: var(--page-padding-y) var(--page-padding-x); }
 /* 초광폭 모니터(21:9 등)에서 본문이 끝없이 늘어나지 않게 */
