@@ -23,10 +23,14 @@ export function ProjectSelector({
   const selectId = useId()
   return (
     <div className={styles.card}>
-      <button type="button" className={styles.header} onClick={onProjectClick} aria-label={`${projectName} 프로젝트 변경`}>
-        {projectName}
-        <Icon name="chevronUpDown" />
-      </button>
+      {onProjectClick ? (
+        <button type="button" className={styles.header} onClick={onProjectClick} aria-label={`${projectName} 프로젝트 변경`}>
+          {projectName}
+          <Icon name="chevronUpDown" />
+        </button>
+      ) : (
+        <span className={styles.header}>{projectName}</span>
+      )}
       <div className={styles.row}>
         <label className={styles.label} htmlFor={selectId}>
           프롬프트

@@ -71,7 +71,7 @@
   white-space: nowrap;
   cursor: pointer;
 }
-.sm .option { padding: 8px 9px; font: var(--text-label); }
+.listSm .option { padding: 8px 9px; font: var(--text-label); }
 .highlighted { background: var(--color-surface-strong); }
 .selected { color: var(--color-primary); font-weight: var(--font-weight-bold); }
 .check { width: 6px; height: 6px; border-radius: var(--radius-full); background: var(--color-primary); }

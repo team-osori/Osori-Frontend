@@ -38,30 +38,52 @@ export function AppLayout({ sidebar, children, contained }: AppLayoutProps) {
     return () => observer.disconnect()
   }, [])
 
+  // 닫은 뒤 본문의 inert가 풀린 다음 메뉴 버튼으로 포커스 복귀
+  const restoreFocusRef = useRef(false)
   const closeDrawer = () => {
+    restoreFocusRef.current = true
     setDrawerOpen(false)
-    menuRef.current?.focus()
   }
+  useEffect(() => {
+    if (drawerOpen || !restoreFocusRef.current) return
+    restoreFocusRef.current = false
+    menuRef.current?.focus()
+  }, [drawerOpen])
 
   // 드로어: 열리면 안쪽으로 포커스 이동, Esc로 닫기
   useEffect(() => {
     if (!narrow || !drawerOpen) return
     slotRef.current?.querySelector<HTMLElement>('button, input, [tabindex]')?.focus()
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeDrawer()
+      // 안쪽 컴포넌트(Select 등)가 이미 Esc를 처리했으면 드로어는 유지
+      if (e.key === 'Escape' && !e.defaultPrevented) closeDrawer()
     }
     document.addEventListener('keydown', onKeyDown)
     return () => document.removeEventListener('keydown', onKeyDown)
   }, [narrow, drawerOpen])
 
+  // 데스크톱 접기/펼치기 후, 새로 보이는 버튼으로 포커스 이동 (첫 렌더는 제외)
+  const toggledRef = useRef(false)
+  useEffect(() => {
+    if (!toggledRef.current) return
+    toggledRef.current = false
+    if (collapsed) menuRef.current?.focus()
+    else slotRef.current?.querySelector<HTMLElement>('[data-sidebar-toggle]')?.focus()
+  }, [collapsed])
+
+  const toggleCollapsed = (next: boolean) => {
+    toggledRef.current = true
+    setCollapsed(next)
+  }
+
   const control = useMemo(
-    () => ({ toggle: () => (narrow ? closeDrawer() : setCollapsed((c) => !c)) }),
-    [narrow],
+    () => ({ toggle: () => (narrow ? closeDrawer() : toggleCollapsed(!collapsed)) }),
+    [narrow, collapsed],
   )
 
   const showTopbar = narrow || collapsed
   const drawerHidden = narrow && !drawerOpen
-  const openSidebar = () => (narrow ? setDrawerOpen(true) : setCollapsed(false))
+  const openSidebar = () => (narrow ? setDrawerOpen(true) : toggleCollapsed(false))
 
   return (
     <SidebarContext.Provider value={control}>
@@ -82,7 +104,8 @@ export function AppLayout({ sidebar, children, contained }: AppLayoutProps) {
         {narrow && drawerOpen && (
           <button type="button" className={styles.backdrop} aria-label="메뉴 닫기" onClick={closeDrawer} tabIndex={-1} />
         )}
-        <div className={styles.content}>
+        {/* 드로어가 열려 있으면 뒤쪽 본문은 inert: 포커스가 드로어 밖으로 나가지 않음 */}
+        <div className={styles.content} inert={narrow && drawerOpen}>
           {showTopbar && (
             <div className={styles.topbar}>
               <button

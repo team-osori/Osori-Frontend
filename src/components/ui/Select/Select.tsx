@@ -1,4 +1,5 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react'
+import { createPortal } from 'react-dom'
 import { cx } from '../../../lib/cx'
 import { Icon } from '../Icon/Icon'
 import styles from './Select.module.css'
@@ -47,7 +48,7 @@ export function Select({
   const selectedIndex = options.findIndex((o) => o.value === value)
   const selected = selectedIndex >= 0 ? options[selectedIndex] : undefined
 
-  // 목록을 화면 기준(fixed)으로 띄워 스크롤 영역(사이드바 등)에 잘리지 않게 함
+  // 목록은 body에 portal로 띄움: 스크롤 영역·transform(드로어) 안에서도 잘리거나 어긋나지 않게
   useLayoutEffect(() => {
     if (!open) return
     const place = () => {
@@ -77,7 +78,8 @@ export function Select({
   useEffect(() => {
     if (!open) return
     const onPointerDown = (e: PointerEvent) => {
-      if (!rootRef.current?.contains(e.target as Node)) setOpen(false)
+      const target = e.target as Node
+      if (!rootRef.current?.contains(target) && !listRef.current?.contains(target)) setOpen(false)
     }
     document.addEventListener('pointerdown', onPointerDown)
     return () => document.removeEventListener('pointerdown', onPointerDown)
@@ -164,28 +166,37 @@ export function Select({
         <Icon name="chevronDown" className={styles.chevron} />
       </button>
 
-      {open && (
-        <ul ref={listRef} id={listId} role="listbox" aria-label={ariaLabel} className={styles.list} style={listStyle}>
-          {options.map((option, index) => {
-            const isSelected = index === selectedIndex
-            return (
-              <li
-                key={option.value}
-                id={`${listId}-${index}`}
-                data-index={index}
-                role="option"
-                aria-selected={isSelected}
-                className={cx(styles.option, index === highlight && styles.highlighted, isSelected && styles.selected)}
-                onPointerEnter={() => setHighlight(index)}
-                onClick={() => choose(index)}
-              >
-                {option.label}
-                {isSelected && <span className={styles.check} aria-hidden />}
-              </li>
-            )
-          })}
-        </ul>
-      )}
+      {open &&
+        createPortal(
+          <ul
+            ref={listRef}
+            id={listId}
+            role="listbox"
+            aria-label={ariaLabel}
+            className={cx(styles.list, size === 'sm' && styles.listSm)}
+            style={listStyle}
+          >
+            {options.map((option, index) => {
+              const isSelected = index === selectedIndex
+              return (
+                <li
+                  key={option.value}
+                  id={`${listId}-${index}`}
+                  data-index={index}
+                  role="option"
+                  aria-selected={isSelected}
+                  className={cx(styles.option, index === highlight && styles.highlighted, isSelected && styles.selected)}
+                  onPointerEnter={() => setHighlight(index)}
+                  onClick={() => choose(index)}
+                >
+                  {option.label}
+                  {isSelected && <span className={styles.check} aria-hidden />}
+                </li>
+              )
+            })}
+          </ul>,
+          document.body,
+        )}
     </div>
   )
 }

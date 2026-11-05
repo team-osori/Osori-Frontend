@@ -24,7 +24,13 @@ export function Sidebar({ user, onToggle, onUserClick, children }: SidebarProps)
     <aside className={styles.sidebar}>
       <div className={styles.header}>
         <BrandMark tone="sidebar" />
-        <button type="button" className={styles.toggle} onClick={onToggle ?? layoutToggle} aria-label="사이드바 접기">
+        <button
+          type="button"
+          className={styles.toggle}
+          onClick={onToggle ?? layoutToggle}
+          aria-label="사이드바 접기"
+          data-sidebar-toggle
+        >
           <Icon name="sidebar" />
         </button>
       </div>
@@ -64,11 +70,20 @@ type HomeSidebarProps = {
   onNavigate?: (menu: HomeMenu) => void
   onSearch?: (keyword: string) => void
   onToggle?: () => void
+  onUserClick?: () => void
 }
 
-export function HomeSidebar({ user, projectCount, active = 'projects', onNavigate, onSearch, onToggle }: HomeSidebarProps) {
+export function HomeSidebar({
+  user,
+  projectCount,
+  active = 'projects',
+  onNavigate,
+  onSearch,
+  onToggle,
+  onUserClick,
+}: HomeSidebarProps) {
   return (
-    <Sidebar user={user} onToggle={onToggle}>
+    <Sidebar user={user} onToggle={onToggle} onUserClick={onUserClick}>
       <SearchInput placeholder="프로젝트 검색" onChange={(e) => onSearch?.(e.target.value)} />
       <SidebarSectionLabel>프로젝트</SidebarSectionLabel>
       <SidebarList>
@@ -101,7 +116,9 @@ type ProjectSidebarProps = {
   onBack?: () => void
   onSelectStep?: (index: number) => void
   onSettings?: () => void
+  onProjectClick?: () => void
   onToggle?: () => void
+  onUserClick?: () => void
 }
 
 export function ProjectSidebar({
@@ -117,10 +134,12 @@ export function ProjectSidebar({
   onBack,
   onSelectStep,
   onSettings,
+  onProjectClick,
   onToggle,
+  onUserClick,
 }: ProjectSidebarProps) {
   return (
-    <Sidebar user={user} onToggle={onToggle}>
+    <Sidebar user={user} onToggle={onToggle} onUserClick={onUserClick}>
       <button type="button" className={styles.back} onClick={onBack}>
         <Icon name="arrowLeft" />
         전체 프로젝트
@@ -131,6 +150,7 @@ export function ProjectSidebar({
         promptValue={promptValue}
         onPromptChange={onPromptChange}
         questionSet={questionSet}
+        onProjectClick={onProjectClick}
       />
       <SidebarSectionLabel>평가 단계</SidebarSectionLabel>
       <StepList

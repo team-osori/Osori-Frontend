@@ -64,3 +64,7 @@
   background: rgba(0, 0, 0, 0.5);
 }
 .contained .backdrop { position: absolute; }
+
+/* 박스 안에 넣은 레이아웃: 드로어 폭을 부모 기준으로 제한 */
+.narrow.contained .slot { width: min(306px, 85%); }
+.narrow.contained .slot aside { width: 100%; }

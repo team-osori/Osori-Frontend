@@ -5,15 +5,18 @@ import styles from './ProjectInfoForm.module.css'
 export type ProjectInfo = { name: string; description: string }
 
 type ProjectInfoFormProps = {
+  /** 프로젝트가 바뀌면 입력 중이던 값을 버리고 새 값으로 초기화 */
+  projectId: string
   initialValue: ProjectInfo
   serviceLabel: string
   serviceConnected?: boolean
   onChangeService?: () => void
-  onSubmit: (value: ProjectInfo) => void
+  onSubmit: (projectId: string, value: ProjectInfo) => void
 }
 
 /** 프로젝트 설정 > 일반 탭의 기본 정보 카드 */
 export function ProjectInfoForm({
+  projectId,
   initialValue,
   serviceLabel,
   serviceConnected = true,
@@ -22,15 +25,15 @@ export function ProjectInfoForm({
 }: ProjectInfoFormProps) {
   const [value, setValue] = useState(initialValue)
 
-  // 데이터가 나중에 오거나 다른 프로젝트로 바뀌면 폼 값도 갱신
+  // 다른 프로젝트로 바뀌거나 데이터가 나중에 도착하면 폼 값도 갱신
   const { name, description } = initialValue
   useEffect(() => {
     setValue({ name, description })
-  }, [name, description])
+  }, [projectId, name, description])
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
-    onSubmit(value)
+    onSubmit(projectId, value)
   }
 
   return (
