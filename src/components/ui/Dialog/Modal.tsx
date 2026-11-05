@@ -9,8 +9,10 @@ type ModalProps = {
   open: boolean
   onClose: () => void
   title: string
-  /** sm 480 · md 520 · lg 640 */
-  size?: 'sm' | 'md' | 'lg'
+  /** sm 480 · md 520 · lg 640 · xl 760 (긴 글 읽기) */
+  size?: 'sm' | 'md' | 'lg' | 'xl'
+  /** 제목 위 작은 글씨 (예: 챗봇 답변 · 프롬프트 v3). 있으면 머리 아래에 구분선 */
+  eyebrow?: ReactNode
   children: ReactNode
   /** 하단 오른쪽 버튼들 */
   actions?: ReactNode
@@ -23,7 +25,7 @@ type ModalProps = {
 }
 
 /** 가운데 뜨는 확인·편집 창 */
-export function Modal({ open, onClose, title, size = 'md', children, actions, secondaryAction, subheader, decoration }: ModalProps) {
+export function Modal({ open, onClose, title, size = 'md', eyebrow, children, actions, secondaryAction, subheader, decoration }: ModalProps) {
   const titleId = useId()
   const panelRef = useDialog(open, onClose)
   if (!open) return null
@@ -31,10 +33,13 @@ export function Modal({ open, onClose, title, size = 'md', children, actions, se
   return createPortal(
     <div className={styles.overlay} onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
       <div ref={panelRef} className={cx(styles.modal, styles[size], decoration != null && styles.decorated)} role="dialog" aria-modal="true" aria-labelledby={titleId}>
-        <div className={styles.header}>
-          <h2 id={titleId} className={styles.title}>
-            {title}
-          </h2>
+        <div className={cx(styles.header, eyebrow != null && styles.headerDivided)}>
+          <div className={styles.titles}>
+            {eyebrow != null && <p className={styles.eyebrow}>{eyebrow}</p>}
+            <h2 id={titleId} className={styles.title}>
+              {title}
+            </h2>
+          </div>
           <button type="button" className={styles.close} onClick={onClose} aria-label="닫기">
             <Icon name="close" />
           </button>
