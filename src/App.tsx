@@ -95,7 +95,7 @@ export default function App() {
         )
       // API 연동 전, 로그인 오류 상태(11)를 확인하기 위한 경로
       case '/login/error':
-        return <LoginPage initialEmail={MOCK_USER.email} initialError="비밀번호가 일치하지 않습니다." />
+        return <LoginPage initialLoginId="kim_qa" initialError="아이디 또는 비밀번호를 확인해 주세요." />
       case ROUTES.signup:
         return <SignupPage onSignup={() => navigate(ROUTES.login)} />
 
