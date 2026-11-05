@@ -6,11 +6,19 @@ import {
   runEvaluation,
   type Evaluation,
   type EvaluationInput,
-  type EvaluationItemQuery,
+  type EvaluationChange,
+  type EvaluationFilterCriterion,
+  type EvaluationIssueKind,
+  type EvaluationResultStatus,
   type EvaluationItemSummary,
 } from './api'
 
 const PAGE_SIZE = 20
+
+/** 목록 필터. change는 criterion과 함께만 쓸 수 있습니다(서버 규칙). */
+type EvaluationItemFilter =
+  | { criterion?: EvaluationFilterCriterion; change?: undefined; resultStatus?: EvaluationResultStatus; issueKind?: EvaluationIssueKind }
+  | { criterion: EvaluationFilterCriterion; change: EvaluationChange; resultStatus?: EvaluationResultStatus; issueKind?: EvaluationIssueKind }
 
 /** 서비스의 평가 목록 */
 export function useEvaluations(projectId: string | undefined, serviceId: string | undefined) {
@@ -22,18 +30,18 @@ export function useEvaluations(projectId: string | undefined, serviceId: string 
   })
 }
 
-/** 한 평가의 질문별 결과 목록. 기준(criterion) · 변화(change) 필터가 바뀌면 처음부터 다시 불러옵니다. */
+/** 한 평가의 질문별 결과 목록. 기준 · 판정 결과 · 문제 종류 · 변화 필터가 바뀌면 처음부터 다시 불러옵니다. */
 export function useEvaluationItems(
   projectId: string | undefined,
   serviceId: string | undefined,
   evaluationId: string | undefined,
-  filter: Pick<EvaluationItemQuery, 'criterion' | 'change'> = {},
+  filter: EvaluationItemFilter = {},
 ) {
   return usePagedList<EvaluationItemSummary>({
     fetchPage: ({ cursor, signal }) =>
       listEvaluationItems(projectId!, serviceId!, evaluationId!, { ...filter, limit: PAGE_SIZE, cursor, signal }),
     getKey: (item) => item.id,
-    deps: [projectId, serviceId, evaluationId, filter.criterion, filter.change],
+    deps: [projectId, serviceId, evaluationId, filter.criterion, filter.resultStatus, filter.issueKind, filter.change],
     enabled: Boolean(projectId && serviceId && evaluationId),
   })
 }

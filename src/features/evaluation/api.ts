@@ -22,9 +22,38 @@ export type EvaluationItemSummary = Schema<'EvaluationItemSummary'>
 export type EvaluationItem = Schema<'EvaluationItemResponse'>
 export type EvaluationSide = Schema<'EvaluationSide'>
 
-/** 평가 기준 4가지 */
-export const EVALUATION_CRITERIA = ['retrieval', 'grounding', 'response', 'policy'] as const
+/**
+ * 서버가 요약 · 항목 결과에 실제로 담아 주는 평가 기준 3가지.
+ * 요약(summary)과 항목의 criteria는 이 이름을 키로 하는 객체입니다. (명세상 키가 고정돼 있지 않은 자유 객체)
+ */
+export const EVALUATION_CRITERIA = ['policy', 'questionResolution', 'communicationQuality'] as const
 export type EvaluationCriterion = (typeof EVALUATION_CRITERIA)[number]
+/**
+ * 명세는 항목 필터의 criterion에 예전 기준(retrieval · grounding · response)도 허용한다고 적혀 있지만,
+ * 실제 서버는 "이 평가에 포함된 기준"만 받고 나머지는 400 INVALID_CRITERION으로 거절합니다. 그래서 타입을 실제 3개로 제한했습니다.
+ */
+export type EvaluationFilterCriterion = EvaluationCriterion
+
+/** 항목 판정 결과 */
+export const EVALUATION_RESULT_STATUSES = ['MET', 'UNMET', 'REVIEW_REQUIRED', 'JUDGMENT_ERROR', 'EXECUTION_ERROR', 'NOT_RUN', 'IN_PROGRESS'] as const
+export type EvaluationResultStatus = (typeof EVALUATION_RESULT_STATUSES)[number]
+/** 답변의 문제 종류 */
+export const EVALUATION_ISSUE_KINDS = ['condition_omitted', 'policy_contradiction', 'unsupported_claim', 'incomplete_guidance', 'non_answer', 'unclear_answer', 'other'] as const
+export type EvaluationIssueKind = (typeof EVALUATION_ISSUE_KINDS)[number]
+
+export type ItemReview = Schema<'ReviewOut'>
+export type ReviewVerdict = Schema<'ReviewCreate'>['verdict']
+export type ItemReviewInput = {
+  /** 항목을 마지막으로 본 reviewRevision (처음이면 0) */
+  expectedRevision: number
+  /** 어느 쪽 답변을 판정하는지. 서버 기본값은 a */
+  side?: 'a' | 'b'
+  /** 판정할 조건(expectedCondition)의 ID */
+  conditionId: string
+  verdict: ReviewVerdict
+  reason: string
+}
+export type EvaluationRerunInput = { connectionRevision: number; promptVersionId?: string }
 
 /** A에서 B로 바뀌며 결과가 어떻게 달라졌는지 */
 export const EVALUATION_CHANGES = ['IMPROVED', 'WORSENED', 'UNCHANGED_PASS', 'UNCHANGED_FAIL', 'NOT_COMPARABLE'] as const
@@ -51,11 +80,25 @@ export type EvaluationInput =
     })
 
 export type EvaluationItemQuery = PageQuery & {
-  /** 이 기준에서 실패한 질문만 보기 등 기준별 필터 */
-  criterion?: EvaluationCriterion
-  /** 변화 종류별 필터 */
-  change?: EvaluationChange
-}
+  /** 판정 결과별 필터 */
+  resultStatus?: EvaluationResultStatus
+  /** 문제 종류별 필터 */
+  issueKind?: EvaluationIssueKind
+} & (
+    | {
+        /** 기준별 필터 */
+        criterion?: EvaluationFilterCriterion
+        change?: undefined
+      }
+    | {
+        /**
+         * 변화 종류별 필터(A에서 B로). 실제 서버는 change를 criterion과 함께만 받습니다
+         * (criterion 없이 보내면 400 "change 필터에는 criterion이 필요합니다"). 명세에는 이 규칙이 없습니다.
+         */
+        change: EvaluationChange
+        criterion: EvaluationFilterCriterion
+      }
+  )
 
 const evaluationsPath = (projectId: string, serviceId: string) => `${servicePath(projectId, serviceId)}/evaluations`
 const evaluationPath = (projectId: string, serviceId: string, evaluationId: string) =>
@@ -119,12 +162,62 @@ export async function runEvaluation(
 ): Promise<Evaluation> {
   const { idempotencyKey, ...pollOptions } = options
   const started = await startEvaluation(projectId, serviceId, input, { idempotencyKey, signal: options.signal })
-  pollOptions.onUpdate?.(started)
+  return waitForEvaluation(projectId, serviceId, started, pollOptions)
+}
+
+/** 이미 시작된 평가(시작 · 재실행 응답)가 끝날 때까지 진행 상황을 확인합니다. */
+export async function waitForEvaluation(
+  projectId: string,
+  serviceId: string,
+  started: Evaluation,
+  options: Pick<PollOptions<Evaluation>, 'onUpdate' | 'signal' | 'intervalMs' | 'timeoutMs'> = {},
+): Promise<Evaluation> {
+  options.onUpdate?.(started)
   if (isEvaluationFinished(started)) return started
   return pollUntil<Evaluation>({
-    ...pollOptions,
+    ...options,
     fetch: (signal) => getEvaluation(projectId, serviceId, started.id, { signal }),
     isDone: isEvaluationFinished,
+  })
+}
+
+/**
+ * 끝난 평가를 새 연결 revision · 프롬프트로 다시 실행합니다. 새 평가가 QUEUED로 돌아오고
+ * (sourceEvaluationId가 원래 평가), 끝날 때까지는 waitForEvaluation으로 확인합니다.
+ * 실제 서버는 "종료한 단일(SINGLE) 평가"만 재실행할 수 있게 하고, 그 외에는 409 INVALID_REEVALUATION_SOURCE로 거절합니다.
+ */
+export function rerunEvaluation(
+  projectId: string,
+  serviceId: string,
+  evaluationId: string,
+  input: EvaluationRerunInput,
+  extras: RequestExtras & { idempotencyKey?: string } = {},
+) {
+  return api.post<Evaluation>(
+    `${evaluationPath(projectId, serviceId, evaluationId)}/reruns`,
+    {
+      connectionRevision: input.connectionRevision,
+      ...(input.promptVersionId ? { promptVersionId: pathId(input.promptVersionId, '프롬프트 버전 ID') } : {}),
+    },
+    { idempotencyKey: extras.idempotencyKey ?? createIdempotencyKey(), signal: extras.signal },
+  )
+}
+
+/**
+ * 이전 평가(baseline)와의 질문별 개선 · 악화 비교. 응답 구조가 명세에 정해져 있지 않아(자유 객체) 그대로 돌려줍니다.
+ * 명세는 baselineEvaluationId를 선택이라고 하지만 실제 서버는 없으면 400 BASELINE_REQUIRED로 거절해서 필수로 받습니다.
+ */
+export function getEvaluationComparison(
+  projectId: string,
+  serviceId: string,
+  evaluationId: string,
+  baselineEvaluationId: string,
+  query: PageQuery & RequestExtras = {},
+) {
+  const { signal, limit, cursor } = query
+  return api.get<Record<string, unknown>>(`${evaluationPath(projectId, serviceId, evaluationId)}/comparison`, {
+    query: { limit, cursor, baselineEvaluationId: pathId(baselineEvaluationId, '기준 평가 ID') },
+    signal,
   })
 }
 
@@ -159,9 +252,9 @@ export function listEvaluationItems(
   evaluationId: string,
   query: EvaluationItemQuery & RequestExtras = {},
 ) {
-  const { signal, limit, cursor, criterion, change } = query
+  const { signal, limit, cursor, criterion, resultStatus, issueKind, change } = query
   return api.get<Page<EvaluationItemSummary>>(`${evaluationPath(projectId, serviceId, evaluationId)}/items`, {
-    query: { limit, cursor, criterion, change },
+    query: { limit, cursor, criterion, resultStatus, issueKind, change },
     signal,
   })
 }
@@ -176,6 +269,51 @@ export function getEvaluationItem(
 ) {
   return api.get<EvaluationItem>(
     `${evaluationPath(projectId, serviceId, evaluationId)}/items/${pathId(itemId, '평가 항목 ID')}`,
+    { signal: extras.signal },
+  )
+}
+
+/* ---------- 항목 사람 검토 ---------- */
+
+const itemPath = (projectId: string, serviceId: string, evaluationId: string, itemId: string) =>
+  `${evaluationPath(projectId, serviceId, evaluationId)}/items/${pathId(itemId, '평가 항목 ID')}`
+
+/** 항목에 대한 사람의 판정 기록 목록 */
+export function listItemReviews(
+  projectId: string,
+  serviceId: string,
+  evaluationId: string,
+  itemId: string,
+  query: PageQuery & RequestExtras = {},
+) {
+  const { signal, limit, cursor } = query
+  return api.get<Page<ItemReview>>(`${itemPath(projectId, serviceId, evaluationId, itemId)}/reviews`, {
+    query: { limit, cursor },
+    signal,
+  })
+}
+
+/**
+ * 항목의 조건 하나에 사람이 판정을 남깁니다. 항목의 reviewRevision을 expectedRevision으로 보내며,
+ * 그 사이 다른 사람이 판정했으면 409로 거절됩니다.
+ */
+export function reviewItem(
+  projectId: string,
+  serviceId: string,
+  evaluationId: string,
+  itemId: string,
+  input: ItemReviewInput,
+  extras: RequestExtras = {},
+) {
+  return api.post<ItemReview>(
+    `${itemPath(projectId, serviceId, evaluationId, itemId)}/reviews`,
+    {
+      expectedRevision: input.expectedRevision,
+      ...(input.side ? { side: input.side } : {}),
+      conditionId: pathId(input.conditionId, '조건 ID'),
+      verdict: input.verdict,
+      reason: input.reason.trim(),
+    },
     { signal: extras.signal },
   )
 }
