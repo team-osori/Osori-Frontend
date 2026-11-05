@@ -23,6 +23,7 @@ export {
   type ProjectStatus,
   type ProjectScores,
 } from './ProjectTable/ProjectTable'
+export { SidebarUserContext, type SidebarUser } from './Sidebar/SidebarUserContext'
 export { PageHeader } from './PageHeader/PageHeader'
 export { AuthBrandPanel } from './AuthBrandPanel/AuthBrandPanel'
 export { EmptyState } from './EmptyState/EmptyState'

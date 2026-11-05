@@ -56,3 +56,25 @@
 .danger,
 .danger:hover,
 .danger:focus { border-color: var(--color-danger); }
+
+/* 비밀번호 보기 · 숨기기 버튼 */
+.reveal {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-right: -8px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  opacity: 0.6;
+  transition: opacity 0.15s, background-color 0.15s;
+}
+.reveal:hover { opacity: 1; background: rgba(255, 255, 255, 0.06); }
+.reveal:focus-visible { opacity: 1; box-shadow: none; background: rgba(255, 255, 255, 0.06); }
+/* Edge 기본 비밀번호 보기 버튼은 숨김 (직접 만든 버튼과 겹치지 않게) */
+.bare::-ms-reveal,
+.bare::-ms-clear { display: none; }

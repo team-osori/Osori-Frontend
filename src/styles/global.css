@@ -38,6 +38,25 @@ input:focus-visible,
 textarea:focus-visible,
 select:focus-visible { outline: none; }
 
+/*
+ * 브라우저 자동완성이 입력칸을 하늘색 배경 · 검은 글자로 바꾸지 않게 함.
+ * 칸마다 배경이 달라서(어두운 칸, 투명한 칸) 색을 덮지 않고, 배경색 변화를 사실상 멈춰 원래 배경을 유지합니다.
+ */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--color-text);
+  caret-color: var(--color-text);
+  transition: background-color 600000s 0s, color 600000s 0s;
+}
+/* 모르는 선택자가 섞이면 규칙 전체가 무시되므로 표준 선택자는 따로 둠 */
+input:autofill {
+  -webkit-text-fill-color: var(--color-text);
+  caret-color: var(--color-text);
+  transition: background-color 600000s 0s, color 600000s 0s;
+}
+
 /* 스크롤바는 모든 곳에서 숨김 (스크롤 동작은 그대로) */
 * { scrollbar-width: none; }
 *::-webkit-scrollbar { display: none; }

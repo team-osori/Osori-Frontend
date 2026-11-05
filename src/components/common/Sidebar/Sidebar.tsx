@@ -10,6 +10,7 @@ import type { PromptVersion } from '../ProjectSelector/PromptVersionPicker'
 import { StageList } from '../StepItem/StepItem'
 import { UserMenu, type UserMenuActions } from '../UserMenu/UserMenu'
 import { useProjectNav } from './ProjectNavContext'
+import { useSidebarUser } from './SidebarUserContext'
 import styles from './Sidebar.module.css'
 
 type User = { name: string; role: string; email?: string }
@@ -45,9 +46,12 @@ type SidebarProps = {
 /** 사이드바 공통 틀: 왼쪽 아이콘 레일 + 오른쪽 보조 패널 */
 export function Sidebar({ active, user, userMenu, onNavigate, children, panelFooter }: SidebarProps) {
   const nav = useProjectNav()
-  const me = user ?? nav?.user
-  const menu = userMenu ?? nav?.userMenu
-  const email = me?.email ?? nav?.user?.email
+  const signedIn = useSidebarUser()
+  const base = user ?? nav?.user
+  // 로그인한 사용자가 있으면 그 이름 · 계정 메뉴가 우선 (역할은 아직 API에 없어 화면 값 유지)
+  const me = signedIn ? { role: base?.role ?? '멤버', ...base, name: signedIn.name, email: signedIn.account } : base
+  const menu = signedIn?.menu ?? userMenu ?? nav?.userMenu
+  const email = me?.email
 
   return (
     <aside className={styles.sidebar}>
