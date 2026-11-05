@@ -101,9 +101,8 @@
   --space-14: 56px;
 
   /* Layout */
-  --rail-width: 72px;
-  --panel-width: clamp(220px, 16.4vw, 248px);
-  --sidebar-width: calc(var(--rail-width) + var(--panel-width));
+  /* 레일과 패널을 한 칸으로 합침 */
+  --sidebar-width: clamp(224px, 16vw, 248px);
   --page-padding-x: clamp(16px, 4vw, 56px);
   --page-padding-y: clamp(24px, 3vw, 40px);
 }

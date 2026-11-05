@@ -8,7 +8,6 @@ import {
   SidebarCreateButton,
   SidebarList,
   SidebarSectionLabel,
-  SidebarTitle,
   type HomeMenu,
   type ProjectStatus,
   type UserMenuActions,
@@ -63,7 +62,6 @@ export function ProjectListPage({ user, projects, onCreateProject, onOpenProject
     <AppLayout
       sidebar={
         <Sidebar active="projects" user={user} userMenu={userMenu} onNavigate={onNavigate}>
-          <SidebarTitle>Pebble</SidebarTitle>
           <SidebarCreateButton onClick={onCreateProject} />
           <SidebarSectionLabel>상태</SidebarSectionLabel>
           <SidebarList label="상태 필터">

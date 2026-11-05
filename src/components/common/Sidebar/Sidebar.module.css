@@ -1,46 +1,39 @@
-.sidebar { display: flex; height: 100%; min-height: 100%; }
-
-/* ---------- 아이콘 레일 ---------- */
-.rail {
+.sidebar {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  width: var(--rail-width);
-  flex-shrink: 0;
-  padding: 24px 0;
-  background: var(--color-rail);
+  width: var(--sidebar-width);
+  height: 100%;
+  min-height: 100%;
+  background: var(--color-panel);
   border-right: 1px solid var(--color-line);
 }
-.logo { display: inline-flex; border-radius: 8px; text-decoration: none; }
 
+/* 맨 위 로고 */
+.logo { display: inline-flex; align-self: flex-start; margin: 24px 0 0 22px; border-radius: 8px; text-decoration: none; }
 .logo img { transition: transform 0.4s var(--ease-spring); }
-.logo:hover img { transform: rotate(-12deg) scale(1.08); }
+.logo:hover img { transform: translateY(-1px) scale(1.03); }
 
-.railFooter { margin-top: auto; }
+.panelBody { display: flex; flex: 1; flex-direction: column; min-height: 0; padding: 24px 14px 16px; overflow-y: auto; }
+.panelFooter { padding: 4px 14px 8px; }
+
+/* 맨 아래 계정 */
+.account { padding: 10px 14px 18px; border-top: 1px solid var(--color-line); }
+.profile { display: flex; align-items: center; gap: 12px; padding: 6px 8px; }
 .avatar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
   border: 1.5px solid rgba(255, 255, 255, 0.3);
   border-radius: var(--radius-full);
   background: var(--color-chip);
-  font-size: 16px;
+  font-size: 14px;
   font-weight: var(--font-weight-bold);
 }
-
-/* ---------- 보조 패널 ---------- */
-.panel {
-  display: flex;
-  flex-direction: column;
-  width: var(--panel-width);
-  flex-shrink: 0;
-  background: var(--color-panel);
-  border-right: 1px solid var(--color-border-soft);
-}
-.panelBody { display: flex; flex: 1; flex-direction: column; min-height: 0; padding: 28px 16px 16px; overflow-y: auto; }
-.panelFooter { padding: 4px 16px 20px; }
+.who { display: flex; flex-direction: column; gap: 2px; min-width: 0; font-size: 13px; color: var(--color-text-secondary); }
+.who b { overflow: hidden; font-size: 15px; color: var(--color-text); text-overflow: ellipsis; white-space: nowrap; }
 
 .title { margin: 4px 0 14px 10px; font-size: 20px; line-height: 24px; font-weight: var(--font-weight-bold); }
 .create { justify-content: center; height: 48px; margin-bottom: 4px; border-radius: 12px; background: var(--color-chip); font-size: 16px; font-weight: 700; }

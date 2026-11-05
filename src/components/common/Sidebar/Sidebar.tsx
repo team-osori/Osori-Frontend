@@ -35,7 +35,7 @@ type SidebarProps = {
   panelFooter?: ReactNode
 }
 
-/** 사이드바 공통 틀: 왼쪽 레일(로고 · 아바타) + 오른쪽 보조 패널 */
+/** 사이드바 공통 틀: 맨 위 로고 · 화면별 내용 · 아래 고정 메뉴 · 맨 아래 계정 */
 export function Sidebar({ user, userMenu, children, panelFooter }: SidebarProps) {
   const nav = useProjectNav()
   const signedIn = useSidebarUser()
@@ -47,27 +47,26 @@ export function Sidebar({ user, userMenu, children, panelFooter }: SidebarProps)
 
   return (
     <aside className={styles.sidebar}>
-      <div className={styles.rail}>
-        <a href={`#${ROUTES.projects}`} className={styles.logo} aria-label="홈 · 전체 프로젝트">
-          <BrandMark variant="mark" />
-        </a>
-        <div className={styles.railFooter}>
-          {me && menu && email ? (
+      <a href={`#${ROUTES.projects}`} className={styles.logo} aria-label="Pebble · 전체 프로젝트">
+        <BrandMark />
+      </a>
+      <div className={styles.panelBody}>{children}</div>
+      {panelFooter && <div className={styles.panelFooter}>{panelFooter}</div>}
+      {me && (
+        <div className={styles.account}>
+          {menu && email ? (
             <UserMenu name={me.name} role={me.role} email={email} {...menu} />
           ) : (
-            me && (
-              <span className={styles.avatar} title={me.name}>
-                {me.name.slice(0, 1)}
+            <span className={styles.profile}>
+              <span className={styles.avatar}>{me.name.slice(0, 1)}</span>
+              <span className={styles.who}>
+                <b>{me.name}</b>
+                {me.role}
               </span>
-            )
+            </span>
           )}
         </div>
-      </div>
-
-      <div className={styles.panel}>
-        <div className={styles.panelBody}>{children}</div>
-        {panelFooter && <div className={styles.panelFooter}>{panelFooter}</div>}
-      </div>
+      )}
     </aside>
   )
 }
