@@ -5,7 +5,8 @@ import { Icon } from '../Icon/Icon'
 import styles from './Button.module.css'
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: 'primary' | 'secondary' | 'danger'
+  /** muted: 카드·모달처럼 secondary와 배경이 같은 곳에서 쓰는 취소 버튼 */
+  variant?: 'primary' | 'secondary' | 'muted' | 'danger'
   /** lg는 로그인·회원가입처럼 큰 입력창과 함께 쓰는 48px 버튼 */
   size?: 'lg' | 'md' | 'sm'
   icon?: IconName

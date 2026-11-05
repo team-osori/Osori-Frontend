@@ -20,6 +20,9 @@
 .secondary { background: var(--color-surface); color: var(--color-text); }
 .secondary:not(:disabled):hover { background: var(--color-surface-strong); }
 
+.muted { padding: 0 18px; background: var(--color-surface-strong); color: var(--color-text); font-weight: var(--font-weight-regular); }
+.muted:not(:disabled):hover { background: #42424d; }
+
 .danger {
   padding: 0 18px;
   background: transparent;

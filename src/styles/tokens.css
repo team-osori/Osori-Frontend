@@ -25,6 +25,11 @@
   --color-danger: #ff6b6b;
   --color-danger-border: rgba(255, 107, 107, 0.4);
 
+  /* Overlay · Shadow */
+  --color-overlay: rgba(14, 14, 18, 0.66);
+  --shadow-modal: 0 24px 32px rgba(0, 0, 0, 0.5);
+  --shadow-popover: 0 16px 24px rgba(0, 0, 0, 0.55);
+
   /* Gradient */
   --gradient-sidebar: linear-gradient(180deg, #3a3a44 0%, #3a3a44 50%, #4a3550 100%);
   --gradient-brand-panel: linear-gradient(170deg, #3a3a44 25%, #5e3a5c 80%, #7a3a6e 100%);
