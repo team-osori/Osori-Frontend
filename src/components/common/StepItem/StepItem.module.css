@@ -15,6 +15,8 @@
   transition: background-color 0.12s;
 }
 .item:not(:disabled):hover { background: rgba(255, 255, 255, 0.04); }
+.item:not(:disabled):hover .marker { transform: scale(1.1); }
+.marker { transition: transform 0.25s var(--ease-spring); }
 .item:disabled { cursor: default; }
 
 .marker {

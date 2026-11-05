@@ -25,7 +25,7 @@ export function Onboarding({ onCreateProject }: { onCreateProject?: () => void }
   return (
     <div className={styles.root} data-motion="stagger">
       <section className={styles.hero}>
-        <img src={folder} alt="" width={107} height={104} className={styles.heroArt} />
+        <img src={folder} alt="" width={107} height={104} className={styles.heroArt} data-motion="float" />
         <div className={styles.heroText}>
           <h2 className={styles.heroTitle}>첫 프로젝트를 만들어 보세요</h2>
           <p className={styles.heroDesc}>프로젝트 하나에 챗봇 서비스 하나를 연결합니다.</p>
@@ -35,11 +35,11 @@ export function Onboarding({ onCreateProject }: { onCreateProject?: () => void }
         </button>
       </section>
 
-      <ol className={styles.stages} style={{ '--i': 1 } as CSSProperties}>
+      <ol className={styles.stages} style={{ '--i': 1 } as CSSProperties} data-motion="stagger">
         {STAGES.map((stage, i) => {
           const art = STAGE_ART[i]
           return (
-            <li key={stage.label} className={styles.stage}>
+            <li key={stage.label} className={styles.stage} style={{ '--i': i + 1 } as CSSProperties}>
               <span className={styles.number}>{String(i + 1).padStart(2, '0')}</span>
               <img
                 src={art.src}
@@ -47,6 +47,7 @@ export function Onboarding({ onCreateProject }: { onCreateProject?: () => void }
                 width={art.width}
                 height={art.height}
                 className={styles.art}
+                data-motion="pop"
                 style={{ top: art.top, right: art.right }}
               />
               <div className={styles.stageText}>

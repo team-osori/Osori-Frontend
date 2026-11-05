@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import { Card, CardHeader } from '../../components/ui'
 import { CAUSE_INFO, CAUSE_ORDER } from './causes'
 import type { FailureBreakdown } from './types'
@@ -32,11 +33,13 @@ export function FailureChart({ rows, note }: FailureChartProps) {
       </CardHeader>
 
       <div className={styles.bars}>
-        {rows.map((row) => (
+        {rows.map((row, r) => (
           <div key={row.version} className={styles.barRow}>
             <span className={styles.barVersion}>{row.version}</span>
             <div
               className={styles.barTrack}
+              data-motion="fill"
+              style={{ '--delay': `${650 + r * 180}ms` } as CSSProperties}
               role="img"
               aria-label={`${row.version} 실패 ${total(row)}건: ${CAUSE_ORDER.map((c) => `${CAUSE_INFO[c].label} ${row.counts[c]}건`).join(', ')}`}
             >
@@ -47,7 +50,9 @@ export function FailureChart({ rows, note }: FailureChartProps) {
                     className={styles.barSegment}
                     style={{ flexGrow: row.counts[cause], background: CAUSE_INFO[cause].color }}
                   >
-                    {row.counts[cause]}
+                    <span data-motion="pop" style={{ '--delay': `${1050 + r * 180}ms` } as CSSProperties}>
+                      {row.counts[cause]}
+                    </span>
                   </span>
                 ) : null,
               )}

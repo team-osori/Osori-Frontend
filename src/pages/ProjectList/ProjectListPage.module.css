@@ -13,7 +13,6 @@
   right: clamp(12px, 2vw, 32px);
   bottom: 18px;
   height: auto;
-  transform: rotate(-58deg);
   opacity: 0.9;
   pointer-events: none;
 }

@@ -63,7 +63,7 @@ export function ProjectListPage({ user, projects, onCreateProject, onOpenProject
     <AppLayout
       sidebar={
         <Sidebar active="projects" user={user} userMenu={userMenu} onNavigate={onNavigate}>
-          <SidebarTitle>프로젝트</SidebarTitle>
+          <SidebarTitle>Pebble</SidebarTitle>
           <SidebarCreateButton onClick={onCreateProject} />
           <SidebarSectionLabel>상태</SidebarSectionLabel>
           <SidebarList label="상태 필터">
@@ -124,7 +124,7 @@ export function ProjectListPage({ user, projects, onCreateProject, onOpenProject
         )}
 
         {/* 목록이 있을 때만 (빈 상태 카드를 가리지 않게) */}
-        {projects.length > 0 && <Sticker name="paperclipLime" width={92} className={styles.clip} />}
+        {projects.length > 0 && <Sticker name="paperclipLime" width={92} motion="sway" rot={-58} className={styles.clip} />}
       </div>
     </AppLayout>
   )

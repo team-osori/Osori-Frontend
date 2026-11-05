@@ -147,7 +147,7 @@ export default function WrongNotesPage({
         {item && (
           <StageCard
             className={styles.card}
-            decoration={<Sticker name="paperclipLime" width={70} style={{ transform: 'rotate(20deg)' }} />}
+            decoration={<Sticker name="paperclipLime" width={70} rot={20} motion="sway" />}
           >
             <div key={item.id} className={styles.cardBody} data-motion="rise">
               <div className={styles.meta}>

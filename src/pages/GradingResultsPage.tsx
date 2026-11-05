@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
 import { Button } from '../components/ui'
 import { ActionBar, PageHeader, ProjectSidebar } from '../components/common'
 import { AppLayout } from '../layouts/AppLayout'
@@ -73,7 +73,7 @@ export default function GradingResultsPage({
         </ActionBar>
       }
     >
-      <div className={styles.page}>
+      <div className={styles.page} data-motion="stagger" style={{ '--stagger': '90ms' } as CSSProperties}>
         <PageHeader title="자동 채점 결과" />
 
         <ConfidenceBar
@@ -84,15 +84,15 @@ export default function GradingResultsPage({
           onShowUnstable={unstableItems.length > 0 ? () => setDrawerOpen(true) : undefined}
         />
 
-        <ul className={styles.metrics}>
-          {summary.metrics.map((metric) => (
-            <li key={metric.key}>
-              <MetricCard metric={metric} />
+        <ul className={styles.metrics} style={{ '--i': 2 } as CSSProperties} data-motion="stagger">
+          {summary.metrics.map((metric, i) => (
+            <li key={metric.key} style={{ '--i': i, '--delay': '260ms' } as CSSProperties}>
+              <MetricCard metric={metric} index={i} />
             </li>
           ))}
         </ul>
 
-        <div className={styles.lower}>
+        <div className={styles.lower} style={{ '--i': 3 } as CSSProperties}>
           <FailureChart rows={summary.failures} note={note} />
           <VersionList versions={summary.versions} />
         </div>

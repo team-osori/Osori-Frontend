@@ -13,6 +13,9 @@
 }
 .logo { display: inline-flex; border-radius: 8px; text-decoration: none; }
 
+.logo img { transition: transform 0.4s var(--ease-spring); }
+.logo:hover img { transform: rotate(-12deg) scale(1.08); }
+
 .railFooter { margin-top: auto; }
 .avatar {
   display: inline-flex;

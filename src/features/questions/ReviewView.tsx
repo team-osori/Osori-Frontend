@@ -96,7 +96,7 @@ export function ReviewView({ questions, onPatch, onEdit, onDraft, onUpload }: Re
         {question ? (
           <StageCard
             className={styles.card}
-            decoration={<Sticker name="binderClip" width={84} style={{ transform: 'rotate(6deg)' }} />}
+            decoration={<Sticker name="binderClip" width={84} rot={6} motion="pop" delay={200} />}
           >
             <div key={question.id} className={styles.cardBody} data-motion="rise">
               <div className={styles.meta}>
