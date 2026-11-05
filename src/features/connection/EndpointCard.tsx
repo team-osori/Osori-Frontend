@@ -12,6 +12,8 @@ type EndpointCardProps = {
   errors: EndpointErrors
   /** 서버에 인증 키가 저장돼 있는지 (키 값은 다시 받을 수 없음) */
   secretConfigured: boolean
+  /** 서버에 AI API 키가 저장돼 있는지 */
+  aiKeyConfigured: boolean
   /** 저장된 설정이 있으면 지금 설정으로 연결 테스트를 통과했는지. 아직 저장 전이면 undefined */
   verified?: boolean
   dirty: boolean
@@ -27,6 +29,7 @@ export function EndpointCard({
   onChange,
   errors,
   secretConfigured,
+  aiKeyConfigured,
   verified,
   dirty,
   saving,
@@ -71,14 +74,14 @@ export function EndpointCard({
           onChange={(e) => onChange({ authKey: e.target.value })}
           placeholder={secretConfigured ? '저장됨 · 바꿀 때만 입력' : '키 (선택)'}
         />
-        {/* TODO: 백엔드에 RAG 서버로 넘길 두 번째 비밀값 API가 생기면 입력받아 저장 */}
         <TextField
           label="AI API 키 (OpenAI)"
           type="password"
           autoComplete="off"
-          placeholder="준비 중"
-          disabled
-          hint="RAG가 답변 생성에 쓰는 키입니다. 서버 저장이 준비되면 입력할 수 있습니다."
+          value={value.aiKey}
+          onChange={(e) => onChange({ aiKey: e.target.value })}
+          placeholder={aiKeyConfigured ? '저장됨 · 바꿀 때만 입력' : 'sk-… (선택)'}
+          hint="RAG가 질문에 답할 때 쓰는 키입니다. 질문 생성에는 쓰지 않습니다."
         />
         <TextField
           label="응답에서 답변을 읽을 위치"

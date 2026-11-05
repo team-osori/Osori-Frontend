@@ -13,7 +13,11 @@ import { servicePath } from '../service/api'
 /* 이 파일은 서비스 백엔드의 "서비스 연결" API입니다.
  * (같은 폴더의 api.ts는 화면 목업용 임시 함수라서 이름을 구분했습니다.) */
 
-export type ConnectionResponse = Schema<'ConnectionResponse'>
+/**
+ * 연결 설정. llmKeyHeaderName · llmKeyConfigured는 백엔드 #43(답변 생성용 AI 키)에서 추가된 값으로,
+ * 배포 서버 OpenAPI에 아직 없어 직접 적었습니다. 배포 후 api:types로 다시 만들면 이 줄은 지워도 됩니다.
+ */
+export type ConnectionResponse = Schema<'ConnectionResponse'> & { llmKeyHeaderName?: string | null; llmKeyConfigured?: boolean }
 /**
  * 서버가 받는 실행 방식. 명세에는 그냥 문자열이라고만 적혀 있지만 실제 서버는 이 두 값만 받습니다(그 외는 400 UNSUPPORTED_EXECUTION_MODE).
  * 이름으로 보면 PROMPT_BODY는 요청 본문에 시스템 프롬프트를 실어 보내는 방식(promptPointer 사용),
@@ -24,6 +28,8 @@ export type ExecutionMode = (typeof EXECUTION_MODES)[number]
 /** 연결 설정을 저장할 때 보내는 값. expectedRevision · method는 saveConnection이 채웁니다. */
 export type ConnectionInput = Omit<Schema<'ConnectionPut'>, 'expectedRevision' | 'executionMode' | 'method'> & {
   executionMode: ExecutionMode
+  /** 평가 대상이 답변 생성에 쓰는 AI 키를 실어 보낼 헤더 (백엔드 #43). 지정하지 않으면 보내지 않음 */
+  llmKeyHeaderName?: string | null
 }
 export type SecretResponse = Schema<'SecretResponse'>
 export type ConnectionTest = Schema<'ConnectionTestResponse'>
@@ -72,6 +78,15 @@ export function saveConnection(
 /** 인증 키 저장. 연결 설정이 먼저 있어야 합니다(revision이 1 이상). 응답에는 키 값이 오지 않고 저장 여부만 옵니다. */
 export function putSecret(projectId: string, serviceId: string, secret: string, expectedRevision: number, extras: RequestExtras = {}) {
   return api.put<SecretResponse>(`${connectionPath(projectId, serviceId)}/secret`, { secret, expectedRevision }, { signal: extras.signal })
+}
+
+/** 답변 생성용 AI API 키 저장 (백엔드 #43). 연결 설정에 llmKeyHeaderName이 먼저 있어야 합니다. */
+export function putLlmSecret(projectId: string, serviceId: string, secret: string, expectedRevision: number, extras: RequestExtras = {}) {
+  return api.put<{ connectionId: string; revision: number; llmKeyConfigured: boolean }>(
+    `${connectionPath(projectId, serviceId)}/llm-secret`,
+    { secret, expectedRevision },
+    { signal: extras.signal },
+  )
 }
 
 /** 인증 키 삭제. revision을 If-Match로 보냅니다. */

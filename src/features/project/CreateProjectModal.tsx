@@ -12,6 +12,8 @@ export type NewProject = {
   endpointUrl: string
   /** RAG 서버 인증 키. X-API-Key 헤더로 보냅니다 (선택) */
   ragApiKey: string
+  /** RAG가 답변 생성에 쓰는 AI API 키(OpenAI). X-OpenAI-Key 헤더로 보냅니다 (선택) */
+  aiApiKey: string
   systemPrompt: string
   /** 정책 문서 파일. 프로젝트를 만든 뒤 하나씩 올립니다. */
   policyFiles: File[]
@@ -72,6 +74,7 @@ function CreateProjectForm({ onClose, onSubmit, submitting }: Omit<CreateProject
   const [description, setDescription] = useState('')
   const [endpointUrl, setEndpointUrl] = useState('')
   const [ragApiKey, setRagApiKey] = useState('')
+  const [aiApiKey, setAiApiKey] = useState('')
   // 평가할 서비스: ▼를 누르면 아래로 연결 정보 입력칸이 펼쳐짐
   const [serviceOpen, setServiceOpen] = useState(false)
   const [systemPrompt, setSystemPrompt] = useState('')
@@ -94,6 +97,7 @@ function CreateProjectForm({ onClose, onSubmit, submitting }: Omit<CreateProject
       description: description.trim(),
       endpointUrl: endpointUrl.trim(),
       ragApiKey: ragApiKey.trim(),
+      aiApiKey: aiApiKey.trim(),
       // 프롬프트는 공백 · 줄바꿈도 의미가 있을 수 있어 그대로 보냄
       systemPrompt,
       policyFiles: docs.map((doc) => doc.file),
@@ -207,15 +211,15 @@ function CreateProjectForm({ onClose, onSubmit, submitting }: Omit<CreateProject
                       value={ragApiKey}
                       onChange={(e) => setRagApiKey(e.target.value)}
                     />
-                    {/* TODO: 백엔드에 RAG 서버로 넘길 두 번째 비밀값 API가 생기면 입력받아 저장 */}
                     <TextField
                       label="AI API 키 (OpenAI)"
                       name="aiApiKey"
                       type="password"
                       autoComplete="off"
-                      placeholder="준비 중"
-                      disabled
-                      hint="RAG가 답변 생성에 쓰는 키입니다. 서버 저장이 준비되면 입력할 수 있습니다."
+                      placeholder="sk-… (선택)"
+                      value={aiApiKey}
+                      onChange={(e) => setAiApiKey(e.target.value)}
+                      hint="RAG가 질문에 답할 때 쓰는 키입니다. 질문 생성에는 쓰지 않습니다."
                     />
                   </div>
                 </div>

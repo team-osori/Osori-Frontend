@@ -11,6 +11,8 @@ export type EndpointForm = {
   authKey: string
   /** 인증 키를 실어 보낼 헤더 이름. 바꾸면 서버가 저장된 키를 지웁니다. */
   authHeaderName: string
+  /** 답변 생성용 AI API 키(OpenAI). 서버는 저장된 키를 돌려주지 않아서, 비워 두면 기존 키를 그대로 둡니다. */
+  aiKey: string
   /** 챗봇에 보낼 요청 본문(JSON). 질문 · 프롬프트 위치의 값은 실행할 때 채워집니다. */
   requestTemplate: string
   /** 요청 본문에서 질문을 넣을 위치 */
@@ -31,12 +33,16 @@ export const DEFAULT_ENDPOINT_FORM: EndpointForm = {
   endpointUrl: '',
   authKey: '',
   authHeaderName: 'X-API-Key',
+  aiKey: '',
   requestTemplate: '{\n  "question": "",\n  "prompt": ""\n}',
   questionPointer: '/question',
   promptPointer: '/prompt',
   answerPointer: '/answer',
   retrievalPointer: '/chunks',
 }
+
+/** RAG 서버가 답변 생성용 OpenAI 키를 받는 헤더 (rag-server #1) */
+export const LLM_KEY_HEADER = 'X-OpenAI-Key'
 
 /** 화면에서 바꾸지 않는 값. 이미 저장된 설정이 있으면 그 값을 유지합니다. */
 const DEFAULT_REST = {
@@ -53,6 +59,7 @@ export function fromConnection(connection: ConnectionResponse): EndpointForm {
     endpointUrl: connection.url,
     authKey: '',
     authHeaderName: connection.auth.type === 'HEADER' ? (connection.auth.headerName ?? '') : DEFAULT_ENDPOINT_FORM.authHeaderName,
+    aiKey: '',
     requestTemplate: JSON.stringify(connection.requestTemplate, null, 2),
     questionPointer: connection.questionPointer,
     promptPointer: connection.promptPointer ?? '',
@@ -108,5 +115,7 @@ export function toConnectionInput(form: EndpointForm, saved: ConnectionResponse 
     timeoutMs: saved?.timeoutMs ?? DEFAULT_REST.timeoutMs,
     maxRetries: saved?.maxRetries ?? DEFAULT_REST.maxRetries,
     retrySafe: saved?.retrySafe ?? DEFAULT_REST.retrySafe,
+    // 예전 서버는 이 값을 모르면 거절하므로, AI 키를 쓰거나 이미 쓰고 있을 때만 보냄
+    ...(form.aiKey.trim() || saved?.llmKeyHeaderName ? { llmKeyHeaderName: saved?.llmKeyHeaderName ?? LLM_KEY_HEADER } : {}),
   }
 }

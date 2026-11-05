@@ -1,5 +1,5 @@
 import { errorMessage } from '../../lib/api'
-import { putSecret, saveConnection } from '../connection/connectionApi'
+import { putLlmSecret, putSecret, saveConnection } from '../connection/connectionApi'
 import { DEFAULT_ENDPOINT_FORM, toConnectionInput } from '../connection/connectionForm'
 import { uploadPolicyFile } from '../policy/api'
 import { createPrompt } from '../prompt/api'
@@ -37,14 +37,23 @@ export async function setupProject(input: NewProject): Promise<SetupResult> {
   }
 
   // 요청 · 응답 형식은 RAG 서버 기본값. 다른 형식이면 프로젝트 설정 > 서비스 연결의 "요청 형식"에서 바꿈
-  const form = { ...DEFAULT_ENDPOINT_FORM, endpointUrl: input.endpointUrl, authKey: input.ragApiKey }
+  const form = { ...DEFAULT_ENDPOINT_FORM, endpointUrl: input.endpointUrl, authKey: input.ragApiKey, aiKey: input.aiApiKey }
   try {
     const connection = await saveConnection(project.id, serviceId, toConnectionInput(form, null))
+    // 키를 저장할 때마다 revision이 올라가서 직전 응답의 revision을 다음 요청에 씀
+    let revision = connection.revision
     if (input.ragApiKey) {
       try {
-        await putSecret(project.id, serviceId, input.ragApiKey, connection.revision)
+        revision = (await putSecret(project.id, serviceId, input.ragApiKey, revision)).revision
       } catch (error) {
         fail('RAG 인증 키 저장', error)
+      }
+    }
+    if (input.aiApiKey) {
+      try {
+        await putLlmSecret(project.id, serviceId, input.aiApiKey, revision)
+      } catch (error) {
+        fail('AI API 키 저장', error)
       }
     }
   } catch (error) {

@@ -9,7 +9,7 @@ import { EndpointCard } from '../features/connection/EndpointCard'
 import { GradersCard } from '../features/connection/GradersCard'
 import { PolicyDocsCard } from '../features/connection/PolicyDocsCard'
 import { SystemPromptCard } from '../features/connection/SystemPromptCard'
-import { putSecret, saveConnection, type ConnectionResponse } from '../features/connection/connectionApi'
+import { putLlmSecret, putSecret, saveConnection, type ConnectionResponse } from '../features/connection/connectionApi'
 import { DEFAULT_ENDPOINT_FORM, fromConnection, toConnectionInput, validateEndpointForm, type EndpointForm } from '../features/connection/connectionForm'
 import { useConnection, useConnectionTest } from '../features/connection/useConnection'
 import type { PolicyDoc } from '../features/connection/types'
@@ -282,7 +282,10 @@ function ServiceTab({ projectId, defaultServiceName, service, connection, verifi
       else if (serviceName.trim() !== target.name) target = await updateService(projectId, target.id, target.revision, { name: serviceName })
 
       const saved = await saveConnection(projectId, target.id, toConnectionInput(form, connection), connection?.revision ?? null)
-      if (form.authKey.trim()) await putSecret(projectId, target.id, form.authKey.trim(), saved.revision)
+      // 키를 저장할 때마다 revision이 올라가서 직전 응답의 revision을 다음 요청에 씀
+      let revision = saved.revision
+      if (form.authKey.trim()) revision = (await putSecret(projectId, target.id, form.authKey.trim(), revision)).revision
+      if (form.aiKey.trim()) await putLlmSecret(projectId, target.id, form.aiKey.trim(), revision)
       toast.success('서비스 연결을 저장했습니다. 연결 테스트로 확인해 주세요.')
       onSaved()
     } catch (error) {
@@ -312,6 +315,7 @@ function ServiceTab({ projectId, defaultServiceName, service, connection, verifi
         onChange={(patch) => setForm((prev) => ({ ...prev, ...patch }))}
         errors={errors}
         secretConfigured={Boolean(connection?.auth.secretConfigured)}
+        aiKeyConfigured={Boolean(connection?.llmKeyConfigured)}
         verified={verified}
         dirty={dirty}
         saving={saving}
