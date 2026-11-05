@@ -2,8 +2,8 @@
 :root {
   /* Color · Surface */
   --color-bg: #1a1c1e;
-  --color-rail: #141617;            /* 왼쪽 아이콘 레일 */
-  --color-panel: #1b1d1f;           /* 보조 패널 (상태 필터 · 평가 단계) */
+  --color-rail: #242429;            /* 왼쪽 아이콘 레일 */
+  --color-panel: #242429;           /* 보조 패널 (상태 필터 · 평가 단계) */
   --color-surface: #232527;         /* 카드 · 입력 */
   --color-surface-strong: #2c2f31;
   --color-surface-raised: #2a2d2f;  /* 모달 */
@@ -15,7 +15,7 @@
   --color-focus-ring: rgba(180, 244, 97, 0.45);
 
   /* Color · Brand */
-  --color-primary: #b4f461;
+  --color-primary: #cff26b;
   --color-primary-strong: #a3e635;
   --color-on-primary: #11240a;
 
@@ -32,6 +32,20 @@
   --color-danger-border: rgba(255, 107, 107, 0.4);
   --color-caution: #f5b544; /* 주의 (라벨 없음 등) */
   --color-accent: #b4f461; /* 검색 원인 · 합의 샘플 구분 */
+
+  /* Color · 채점 · 오답 노트 (시안 06~08) */
+  --color-correct: #8fd6a8;        /* 맞음 · 승인 */
+  --color-wrong: #e88a8a;          /* 틀림 · 삭제 */
+  --color-review: #d9bf85;         /* 검토 필요 · 모델 문제 */
+  --color-cause-search: #a8a1e6;   /* 검색 문제 · 근거 문서 */
+  --color-cause-search-ink: #d4cff5;
+  --color-cause-prompt: #87c9b5;   /* 프롬프트 문제 */
+  --color-cause-prompt-ink: #bfe6d9;
+  --color-pending: #4a4a52;        /* 아직 채점 안 함 */
+  --color-card: #242429;           /* 시안 카드 바탕 */
+  --color-well: #1a1a1c;           /* 카드 안쪽 움푹한 칸 */
+  --color-chip: #303038;
+  --color-line: #36363d;
 
   /* Overlay · Shadow */
   --color-overlay: rgba(8, 10, 8, 0.66);
@@ -87,8 +101,8 @@
   --space-14: 56px;
 
   /* Layout */
-  --rail-width: 56px;
-  --panel-width: clamp(200px, 15vw, 232px);
+  --rail-width: 72px;
+  --panel-width: clamp(220px, 16.4vw, 248px);
   --sidebar-width: calc(var(--rail-width) + var(--panel-width));
   --page-padding-x: clamp(16px, 4vw, 56px);
   --page-padding-y: clamp(24px, 3vw, 40px);

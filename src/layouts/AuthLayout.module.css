@@ -21,7 +21,6 @@
   position: absolute;
   top: -14px;
   right: clamp(20px, 5vw, 64px);
-  transform: rotate(38deg);
   pointer-events: none;
 }
 
@@ -52,7 +51,11 @@
   font: var(--text-caption);
   color: var(--color-text-tertiary);
 }
-.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-primary); box-shadow: 0 0 8px var(--color-primary); }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-primary); animation: status-blink 2.4s ease-in-out infinite; }
+@keyframes status-blink {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(180, 244, 97, 0.6); }
+  50% { box-shadow: 0 0 0 4px rgba(180, 244, 97, 0); }
+}
 
 /* 좁은 화면: 브랜드 영역 숨기고 폼만 */
 @media (max-width: 860px) {

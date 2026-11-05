@@ -1,4 +1,4 @@
-import type { FormEvent, ReactNode } from 'react'
+import type { CSSProperties, FormEvent, ReactNode } from 'react'
 import { AuthBrandPanel } from '../components/common'
 import { Button, Sticker } from '../components/ui'
 import styles from './AuthLayout.module.css'
@@ -34,22 +34,24 @@ export function AuthLayout({
       <AuthBrandPanel />
 
       <section className={styles.formSide}>
-        <Sticker name="paperclipLime" width={58} className={styles.clip} />
-        <form className={styles.form} onSubmit={onSubmit} noValidate>
+        <Sticker name="paperclipLime" width={58} motion="sway" rot={38} className={styles.clip} />
+        <form className={styles.form} onSubmit={onSubmit} noValidate data-motion="stagger" style={{ '--delay': '200ms' } as CSSProperties}>
           <header className={styles.header}>
             <h1 className={styles.title}>{title}</h1>
             <p className={styles.subtitle}>{subtitle}</p>
           </header>
 
-          <div className={styles.fields}>{children}</div>
+          <div className={styles.fields} style={{ '--i': 1 } as CSSProperties}>
+            {children}
+          </div>
 
-          <Button type="submit" size="md" fullWidth disabled={submitting}>
+          <Button type="submit" size="md" fullWidth disabled={submitting} style={{ '--i': 2 } as CSSProperties}>
             {submitLabel}
           </Button>
 
-          {footer}
+          {footer && <div style={{ '--i': 3 } as CSSProperties}>{footer}</div>}
 
-          <p className={styles.status}>
+          <p className={styles.status} style={{ '--i': 4 } as CSSProperties}>
             <span className={styles.dot} aria-hidden />
             셀프 호스팅 인스턴스에 연결됨 · {instanceVersion}
           </p>

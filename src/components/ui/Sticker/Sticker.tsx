@@ -32,8 +32,17 @@ const STICKERS = {
 
 export type StickerName = keyof typeof STICKERS
 
+/** motion.css의 data-motion 이름 */
+export type Motion = 'rise' | 'fade' | 'pop' | 'float' | 'sway' | 'twinkle'
+
 type StickerProps = {
   name: StickerName
+  /** 움직임 (motion.css) */
+  motion?: Motion
+  /** 기울기(도). 움직이는 동안에도 유지 */
+  rot?: number
+  /** 움직임 시작 지연(ms) */
+  delay?: number
   /** 표시 폭(px). 높이는 비율대로 */
   width: number
   className?: string
@@ -41,6 +50,22 @@ type StickerProps = {
 }
 
 /** 장식용 일러스트. 스크린리더는 읽지 않음 */
-export function Sticker({ name, width, className, style }: StickerProps) {
-  return <img src={STICKERS[name]} alt="" aria-hidden width={width} className={className} style={style} draggable={false} />
+export function Sticker({ name, width, motion, rot, delay, className, style }: StickerProps) {
+  const vars = {
+    ...(rot != null && { '--rot': `${rot}deg`, transform: `rotate(${rot}deg)` }),
+    ...(delay != null && { '--delay': `${delay}ms` }),
+    ...style,
+  } as CSSProperties
+  return (
+    <img
+      src={STICKERS[name]}
+      alt=""
+      aria-hidden
+      width={width}
+      className={className}
+      style={vars}
+      data-motion={motion}
+      draggable={false}
+    />
+  )
 }

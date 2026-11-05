@@ -19,24 +19,34 @@
   word-break: keep-all;
 }
 
+.line { display: block; }
+/* "비교하세요." 아래로 형광펜이 그어짐 */
+.mark { position: relative; z-index: 0; white-space: nowrap; }
+.mark::after {
+  content: '';
+  position: absolute;
+  left: -4px;
+  right: -6px;
+  bottom: 0.08em;
+  z-index: -1;
+  height: 0.38em;
+  border-radius: 4px;
+  background: rgba(180, 244, 97, 0.38);
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: mark-swipe 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.75s forwards;
+}
+@keyframes mark-swipe { to { transform: scaleX(1); } }
+
 .lead { margin: 0; font: var(--text-body); line-height: 1.7; color: var(--color-text-secondary); word-break: keep-all; max-width: 460px; }
 
-.highlighter {
-  position: absolute;
-  left: -36px;
-  bottom: -40px;
-  width: clamp(180px, 20vw, 280px);
-  height: auto;
-  transform: rotate(-8deg);
-  pointer-events: none;
-}
-.squiggle {
+.highlighterWrap { position: absolute; left: -36px; bottom: clamp(8px, 3vh, 32px); pointer-events: none; }
+.highlighter { display: block; width: clamp(180px, 20vw, 280px); height: auto; }
+.squiggleWrap {
   position: absolute;
   left: clamp(200px, 22vw, 300px);
   bottom: clamp(36px, 6vh, 64px);
-  width: clamp(160px, 18vw, 260px);
-  height: auto;
   transform: rotate(-4deg);
-  opacity: 0.9;
   pointer-events: none;
 }
+.squiggle { display: block; width: clamp(160px, 18vw, 260px); height: auto; opacity: 0.9; }

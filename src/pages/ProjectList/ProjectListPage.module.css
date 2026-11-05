@@ -13,10 +13,11 @@
   right: clamp(12px, 2vw, 32px);
   bottom: 18px;
   height: auto;
-  transform: rotate(-58deg);
   opacity: 0.9;
   pointer-events: none;
 }
 @media (max-width: 1024px) {
   .clip { display: none; }
 }
+
+.count { margin-left: 8px; font-size: 0.7em; font-weight: 500; color: rgba(255, 255, 255, 0.5); letter-spacing: -0.8px; }

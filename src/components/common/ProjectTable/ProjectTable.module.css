@@ -31,10 +31,12 @@
   transition: background-color 0.12s;
 }
 .row:hover { background: rgba(255, 255, 255, 0.025); }
+.row:active { transform: scale(0.995); }
+.row:hover .folder { transform: rotate(-6deg) translateY(-2px) scale(1.06); }
 .row:hover .chevron { opacity: 1; transform: translateX(2px); }
 
 .project { display: flex; align-items: center; gap: 16px; min-width: 0; }
-.folder { flex-shrink: 0; height: auto; }
+.folder { flex-shrink: 0; height: auto; transition: transform 0.35s var(--ease-spring); }
 .titles { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .name { overflow: hidden; font: var(--text-body); font-weight: var(--font-weight-bold); text-overflow: ellipsis; white-space: nowrap; }
 .meta { display: flex; align-items: center; gap: 8px; min-width: 0; }
@@ -59,8 +61,9 @@
 
 .progress { display: flex; flex-direction: column; gap: 10px; }
 .segments { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; max-width: 132px; }
-.segment { height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.12); }
-.filled { background: rgba(255, 255, 255, 0.75); }
+.segment { height: 4px; overflow: hidden; border-radius: 2px; background: rgba(255, 255, 255, 0.12); }
+.filled { display: block; height: 100%; border-radius: inherit; background: rgba(255, 255, 255, 0.75); }
+.done .filled { background: var(--color-primary); }
 .progressText { font: var(--text-caption); color: var(--color-text-secondary); white-space: nowrap; }
 
 .scores { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }

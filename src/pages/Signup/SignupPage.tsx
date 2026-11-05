@@ -1,10 +1,15 @@
-import { useRef, useState, type ChangeEvent, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { TextField } from '../../components/ui'
 import { checkLoginId, isValidLoginId, isValidName, isValidPassword, LOGIN_ID_RULE, PASSWORD_RULE } from '../../features/auth'
 import { AuthLayout, AuthSwitch } from '../../layouts/AuthLayout'
+import styles from './SignupPage.module.css'
 
 type Values = { name: string; loginId: string; password: string; passwordConfirm: string }
-export type SignupErrors = Partial<Record<keyof Values, string>>
+/** 칸별 오류. form은 특정 칸과 상관없는 오류 (가입 버튼 위에 표시) */
+export type SignupErrors = Partial<Record<keyof Values | 'form', string>>
+
+/** 입력을 멈추고 이만큼 지나면 아이디 중복 확인 */
+const CHECK_DELAY = 450
 
 /** 아이디 중복 확인 상태 */
 type IdCheck = { loginId: string; state: 'checking' | 'available' | 'taken' | 'failed' }
@@ -34,7 +39,7 @@ export function SignupPage({ onSignup }: SignupPageProps) {
   const change = (key: keyof Values) => (e: ChangeEvent<HTMLInputElement>) => {
     setValues((prev) => ({ ...prev, [key]: e.target.value }))
     // 고치기 시작하면 그 칸의 오류는 지움
-    setErrors((prev) => ({ ...prev, [key]: undefined }))
+    setErrors((prev) => ({ ...prev, [key]: undefined, form: undefined }))
     if (key === 'loginId') {
       checkAbort.current?.abort()
       setIdCheck(undefined)
@@ -61,9 +66,18 @@ export function SignupPage({ onSignup }: SignupPageProps) {
     }
   }
 
+  // 아이디 입력을 멈추면 바로 중복 확인 (칸을 벗어날 때까지 기다리지 않음)
+  useEffect(() => {
+    const loginId = values.loginId.trim()
+    if (!isValidLoginId(loginId)) return
+    const timer = window.setTimeout(() => void verifyLoginId(loginId), CHECK_DELAY)
+    return () => window.clearTimeout(timer)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [values.loginId])
+
   function onLoginIdBlur() {
     const loginId = values.loginId.trim()
-    if (isValidLoginId(loginId)) void verifyLoginId(loginId)
+    if (isValidLoginId(loginId) && idCheck?.loginId !== loginId) void verifyLoginId(loginId)
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -89,7 +103,9 @@ export function SignupPage({ onSignup }: SignupPageProps) {
       ? '사용할 수 있는지 확인하는 중…'
       : idCheck?.state === 'available'
         ? '사용할 수 있는 아이디입니다.'
-        : LOGIN_ID_RULE
+        : idCheck?.state === 'failed'
+          ? '지금은 중복 여부를 확인하지 못했어요. 가입할 때 다시 확인합니다.'
+          : LOGIN_ID_RULE
 
   return (
     <AuthLayout
@@ -149,6 +165,11 @@ export function SignupPage({ onSignup }: SignupPageProps) {
         error={errors.passwordConfirm}
         onChange={change('passwordConfirm')}
       />
+      {errors.form && (
+        <p className={styles.formError} role="alert">
+          {errors.form}
+        </p>
+      )}
     </AuthLayout>
   )
 }

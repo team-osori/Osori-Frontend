@@ -101,7 +101,7 @@ function CreateProjectForm({ onClose, onSubmit }: Omit<CreateProjectModalProps, 
       title="새 프로젝트"
       onClose={onClose}
       subheader={<Stepper step={step} />}
-      decoration={<Sticker name="paperclipLime" width={34} className={styles.clip} />}
+      decoration={<Sticker name="paperclipLime" width={50} motion="sway" rot={34} className={styles.clip} />}
       secondaryAction={
         step === 2 && (
           <Button variant="tonal" size="xs" icon="arrowLeft" onClick={() => setStep(1)}>

@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import { cx } from '../../../lib/cx'
 import styles from './ProgressBar.module.css'
 
@@ -9,9 +10,11 @@ type ProgressBarProps = {
   size?: 'sm' | 'md'
   /** primary 분홍 · muted 어두운 회색 · mid 한 단계 밝은 회색 (버전 비교에서 오래된 쪽부터 muted → mid → primary) */
   tone?: 'primary' | 'muted' | 'mid'
+  /** 차오르는 움직임 시작 지연(ms) */
+  delay?: number
 }
 
-export function ProgressBar({ value, label, size = 'sm', tone = 'primary' }: ProgressBarProps) {
+export function ProgressBar({ value, label, size = 'sm', tone = 'primary', delay = 0 }: ProgressBarProps) {
   const clamped = value == null ? 0 : Math.min(100, Math.max(0, value))
   return (
     <div
@@ -22,7 +25,13 @@ export function ProgressBar({ value, label, size = 'sm', tone = 'primary' }: Pro
       aria-valuemax={100}
       aria-valuenow={value == null ? undefined : clamped}
     >
-      {value != null && <div className={styles.fill} style={{ width: `${clamped}%` }} />}
+      {value != null && (
+        <div
+          className={styles.fill}
+          data-motion="fill"
+          style={{ width: `${clamped}%`, '--delay': `${delay}ms` } as CSSProperties}
+        />
+      )}
     </div>
   )
 }

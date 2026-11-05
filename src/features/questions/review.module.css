@@ -1,0 +1,155 @@
+/* 06 시험지 · 검토 (Figma 305:3371) */
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 28px; align-items: stretch; }
+.main { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+
+/* 탭 오른쪽 검색 */
+.search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 240px;
+  height: 46px;
+  margin-bottom: 8px;
+  padding: 0 16px;
+  border: 1px solid var(--color-line);
+  border-radius: 12px;
+  background: var(--color-card);
+}
+.search:focus-within { border-color: var(--color-border-focus); }
+.search input { flex: 1; min-width: 0; border: none; outline: none; background: none; font-size: 17px; line-height: 20px; }
+.search input::placeholder { color: rgba(255, 255, 255, 0.5); }
+
+/* 문제 카드 */
+.card { padding: 36px 40px; }
+.cardBody { display: flex; flex-direction: column; gap: 26px; }
+.meta { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.number { display: inline-flex; align-items: baseline; gap: 6px; font-size: 20px; color: rgba(255, 255, 255, 0.5); }
+.number b { font-size: 30px; line-height: 36px; color: var(--color-text); }
+.divider { width: 1px; height: 26px; background: var(--color-chip); }
+.meta > :nth-child(4) { margin-left: -6px; }
+.status { margin-left: auto; }
+
+.question { margin: 0; font-size: clamp(28px, 2.7vw, 40px); line-height: 1.3; font-weight: 900; letter-spacing: -0.8px; word-break: keep-all; }
+.struck { text-decoration: line-through; text-decoration-color: var(--color-wrong); opacity: 0.6; }
+
+.answer { min-height: 304px; padding: 32px 34px 32px; }
+.expected { flex: 1; margin: 10px 0 0; font-size: clamp(20px, 1.8vw, 26px); line-height: 1.7; word-break: keep-all; }
+.grounded {
+  position: relative;
+  border-bottom: 2px solid var(--color-primary);
+  cursor: help;
+  outline: none;
+}
+.tooltip {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 10px);
+  z-index: 2;
+  padding: 8px 12px;
+  border: 1px solid var(--color-line);
+  border-radius: 10px;
+  background: var(--color-chip);
+  box-shadow: var(--shadow-popover);
+  font-size: 14px;
+  line-height: 1.4;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+  transition: opacity 0.15s, transform 0.15s;
+}
+.grounded:hover .tooltip,
+.grounded:focus .tooltip { opacity: 1; transform: none; }
+.hint { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 15px; line-height: 19px; color: rgba(255, 255, 255, 0.5); }
+.hintLine { width: 18px; height: 2px; background: var(--color-primary); }
+
+.actions { display: flex; align-items: center; gap: 12px; }
+.spacer { flex: 1; }
+.delete,
+.restore {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 6px;
+  border: none;
+  background: none;
+  font-size: 17px;
+  color: var(--color-wrong);
+}
+.restore { color: var(--color-text-secondary); text-decoration: underline; text-underline-offset: 3px; }
+.delete:hover { text-decoration: underline; text-underline-offset: 3px; }
+.edit,
+.approve {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 60px;
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  line-height: 21px;
+  transition: transform 0.12s, filter 0.15s, background-color 0.15s;
+}
+.edit { padding: 0 26px; background: var(--color-chip); font-weight: 500; }
+.edit:hover { background: #3a3a43; }
+.approve { padding: 0 30px; background: #fff; color: #000; font-weight: 900; }
+.approve:not(:disabled):hover { filter: brightness(0.94); }
+.approve:disabled { opacity: 0.35; cursor: not-allowed; }
+.approved { background: var(--color-correct); }
+.edit:active, .approve:not(:disabled):active { transform: scale(0.97); }
+
+.emptyCard { display: grid; place-items: center; min-height: 360px; color: var(--color-text-secondary); }
+
+/* 오른쪽 질문 구성 */
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 28px;
+  border-radius: 18px;
+  background: var(--color-card);
+}
+.sideTitle { margin: 0; font-size: 21px; line-height: 25px; font-weight: 900; }
+.types { display: flex; flex-direction: column; gap: 16px; margin: 0; padding: 0; list-style: none; }
+.typeRow { display: grid; grid-template-columns: 100px 1fr 32px; align-items: center; gap: 12px; font-size: 17px; }
+.typeName { color: rgba(255, 255, 255, 0.7); }
+.typeTrack { height: 8px; overflow: hidden; border-radius: 4px; background: var(--color-chip); }
+.typeFill { display: block; height: 100%; border-radius: inherit; background: rgba(255, 255, 255, 0.6); }
+.typeCount { text-align: right; }
+.rule { width: 100%; margin: 0; border: none; border-top: 1px solid var(--color-line); }
+.warn { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 17px; font-weight: 700; color: var(--color-review); }
+.sideActions { display: flex; flex-direction: column; gap: 10px; margin-top: auto; }
+.sideActions > button { width: 100%; }
+
+/* 머리 단계 표시 */
+.flow { display: flex; align-items: center; gap: 14px; margin: 0; padding: 0; list-style: none; }
+.flowStep { display: inline-flex; align-items: center; gap: 10px; font-size: 17px; line-height: 20px; color: rgba(255, 255, 255, 0.5); }
+.flowStep + .flowStep::before { content: ''; width: 36px; height: 1px; margin-right: 4px; background: var(--color-chip); }
+.flowMarker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 900;
+}
+.done { color: var(--color-text); }
+.done .flowMarker { border-color: rgba(255, 255, 255, 0.65); }
+.current { color: var(--color-text); font-weight: 700; }
+.current .flowMarker { border: none; background: var(--color-primary); color: #000; }
+
+@media (max-width: 1180px) {
+  .layout { grid-template-columns: 1fr; }
+  .sideActions { margin-top: 0; flex-direction: row; }
+}
+@media (max-width: 760px) {
+  .card { padding: 24px 20px; }
+  .answer { min-height: 0; padding: 22px; }
+  .actions { flex-wrap: wrap; }
+  .search { width: 160px; }
+  .flow { display: none; }
+}
