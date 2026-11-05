@@ -60,6 +60,8 @@ import warningAmber from './warning-amber.svg'
 import checkAccent from './check-accent.svg'
 import gridSm from './grid-sm.svg'
 import fileText from './file-text.svg'
+import eye from './eye.svg'
+import eyeOff from './eye-off.svg'
 
 export const icons = {
   arrowLeft,
@@ -123,6 +125,8 @@ export const icons = {
   checkAccent,
   gridSm,
   fileText,
+  eye,
+  eyeOff,
 }
 
 export type IconName = keyof typeof icons
