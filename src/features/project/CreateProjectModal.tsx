@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Dropzone } from '../../components/common'
 import { Button, Icon, Modal, Sticker, TextArea, TextField } from '../../components/ui'
 import { cx } from '../../lib/cx'
-import type { PolicyDoc } from '../connection/types'
+import { POLICY_RULES } from '../policy/api'
 import styles from './CreateProjectModal.module.css'
 
 export type NewProject = {
@@ -12,23 +12,29 @@ export type NewProject = {
   endpointUrl: string
   /** Authorization: Bearer 뒤에 붙는 토큰 (선택) */
   authToken: string
-  /** 응답에서 답변 · 근거를 읽을 위치 (선택) */
-  responsePath: string
+  /** 응답에서 답변을 읽을 위치(JSON Pointer, 선택). 비우면 /answer */
+  answerPointer: string
   systemPrompt: string
-  policyDocs: PolicyDoc[]
+  /** 정책 문서 파일. 프로젝트를 만든 뒤 하나씩 올립니다. */
+  policyFiles: File[]
 }
+
+/** 모달 목록에 보이는 파일 하나 */
+type PickedDoc = { id: string; file: File }
 
 type CreateProjectModalProps = {
   open: boolean
   onClose: () => void
   onSubmit: (project: NewProject) => void
+  /** 만드는 중이면 버튼을 잠금 */
+  submitting?: boolean
 }
 
 /** 03 · 04 새 프로젝트: 1 서비스 연결 → 2 프롬프트 · 정책 문서 */
-export function CreateProjectModal({ open, onClose, onSubmit }: CreateProjectModalProps) {
+export function CreateProjectModal({ open, onClose, onSubmit, submitting = false }: CreateProjectModalProps) {
   // 열릴 때마다 새 폼이 만들어지도록 open일 때만 렌더링해서 이전 입력값이 남지 않게 함
   if (!open) return null
-  return <CreateProjectForm onClose={onClose} onSubmit={onSubmit} />
+  return <CreateProjectForm onClose={onClose} onSubmit={onSubmit} submitting={submitting} />
 }
 
 const FORM_ID = 'create-project-form'
@@ -62,19 +68,22 @@ function Stepper({ step }: { step: number }) {
   )
 }
 
-function CreateProjectForm({ onClose, onSubmit }: Omit<CreateProjectModalProps, 'open'>) {
+function CreateProjectForm({ onClose, onSubmit, submitting }: Omit<CreateProjectModalProps, 'open'>) {
   const [step, setStep] = useState(1)
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [endpointUrl, setEndpointUrl] = useState('')
   const [authToken, setAuthToken] = useState('')
-  const [responsePath, setResponsePath] = useState('')
+  const [answerPointer, setAnswerPointer] = useState('')
   // 평가할 서비스: ▼를 누르면 아래로 연결 정보 입력칸이 펼쳐짐
   const [serviceOpen, setServiceOpen] = useState(false)
   const [systemPrompt, setSystemPrompt] = useState('')
-  const [docs, setDocs] = useState<PolicyDoc[]>([])
+  const [docs, setDocs] = useState<PickedDoc[]>([])
 
-  const stepOneDone = name.trim() !== '' && endpointUrl.trim() !== ''
+  // 서버는 https 주소만 호출합니다
+  const urlError = endpointUrl.trim() && !/^https:\/\/\S+$/.test(endpointUrl.trim()) ? 'https://로 시작하는 주소를 입력해 주세요.' : undefined
+  const pointerError = answerPointer.trim() && !answerPointer.trim().startsWith('/') ? '/로 시작하는 위치를 입력해 주세요. 예: /answer' : undefined
+  const stepOneDone = name.trim() !== '' && endpointUrl.trim() !== '' && !urlError && !pointerError
   const stepTwoDone = systemPrompt.trim() !== ''
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -83,25 +92,26 @@ function CreateProjectForm({ onClose, onSubmit }: Omit<CreateProjectModalProps, 
       if (stepOneDone) setStep(2)
       return
     }
-    if (!stepTwoDone) return
+    if (!stepTwoDone || submitting) return
     onSubmit({
       name: name.trim(),
       description: description.trim(),
       endpointUrl: endpointUrl.trim(),
       authToken: authToken.trim(),
-      responsePath: responsePath.trim(),
-      systemPrompt: systemPrompt.trim(),
-      policyDocs: docs,
+      answerPointer: answerPointer.trim(),
+      // 프롬프트는 공백 · 줄바꿈도 의미가 있을 수 있어 그대로 보냄
+      systemPrompt,
+      policyFiles: docs.map((doc) => doc.file),
     })
   }
 
-  // TODO: 문서 업로드 API 연동 후 실제 청크 수로 교체. 지금은 처리 중(null)으로 추가
+  // 프로젝트를 만든 뒤 올리므로 여기서는 파일만 모아 둠. 10MiB가 넘는 파일은 서버가 거절해서 미리 뺌
   const addDocs = (files: File[]) =>
     setDocs((prev) => [
       ...prev,
       ...files
-        .filter((f) => !prev.some((d) => d.name === f.name))
-        .map((f) => ({ id: `${f.name}-${f.lastModified}`, name: f.name, chunks: null })),
+        .filter((f) => f.size <= POLICY_RULES.fileMaxBytes && !prev.some((d) => d.file.name === f.name))
+        .map((file) => ({ id: `${file.name}-${file.lastModified}`, file })),
     ])
 
   return (
@@ -132,8 +142,8 @@ function CreateProjectForm({ onClose, onSubmit }: Omit<CreateProjectModalProps, 
               다음
             </Button>
           ) : (
-            <Button type="submit" size="xs" form={FORM_ID} icon="checkDark" disabled={!stepTwoDone}>
-              프로젝트 만들기
+            <Button type="submit" size="xs" form={FORM_ID} icon="checkDark" disabled={!stepTwoDone || submitting}>
+              {submitting ? '만드는 중…' : '프로젝트 만들기'}
             </Button>
           )}
         </>
@@ -189,6 +199,7 @@ function CreateProjectForm({ onClose, onSubmit }: Omit<CreateProjectModalProps, 
                     placeholder="https://cs-bot.example.com/v1/chat"
                     value={endpointUrl}
                     onChange={(e) => setEndpointUrl(e.target.value)}
+                    error={urlError}
                   />
                   <div className={styles.serviceRow}>
                     <TextField
@@ -202,13 +213,14 @@ function CreateProjectForm({ onClose, onSubmit }: Omit<CreateProjectModalProps, 
                       onChange={(e) => setAuthToken(e.target.value)}
                     />
                     <TextField
-                      label="응답에서 읽을 위치"
-                      name="responsePath"
+                      label="응답에서 답변을 읽을 위치"
+                      name="answerPointer"
                       autoComplete="off"
                       spellCheck={false}
-                      placeholder="답변 $.answer · 근거 $.contexts"
-                      value={responsePath}
-                      onChange={(e) => setResponsePath(e.target.value)}
+                      placeholder="/answer"
+                      value={answerPointer}
+                      onChange={(e) => setAnswerPointer(e.target.value)}
+                      error={pointerError}
                     />
                   </div>
                 </div>
@@ -228,20 +240,20 @@ function CreateProjectForm({ onClose, onSubmit }: Omit<CreateProjectModalProps, 
             />
             <div className={styles.docs}>
               <span className={styles.docsLabel}>정책 문서</span>
-              <Dropzone title="PDF를 끌어 놓거나 클릭해서 선택" accept=".pdf" multiple onFiles={addDocs} />
+              <Dropzone title="PDF · DOCX · TXT · MD를 끌어 놓거나 클릭해서 선택 (10MB 이하)" accept={POLICY_RULES.fileAccept} multiple onFiles={addDocs} />
               {docs.length > 0 && (
                 <ul className={styles.docList}>
                   {docs.map((doc) => (
                     <li key={doc.id} className={styles.doc}>
                       <Icon name="fileSm" />
-                      <span className={styles.docName} title={doc.name}>
-                        {doc.name}
+                      <span className={styles.docName} title={doc.file.name}>
+                        {doc.file.name}
                       </span>
-                      <span className={styles.docMeta}>{doc.chunks == null ? '처리 중' : `청크 ${doc.chunks}`}</span>
+                      <span className={styles.docMeta}>만들 때 업로드</span>
                       <button
                         type="button"
                         className={styles.docRemove}
-                        aria-label={`${doc.name} 빼기`}
+                        aria-label={`${doc.file.name} 빼기`}
                         onClick={() => setDocs((prev) => prev.filter((d) => d.id !== doc.id))}
                       >
                         <Icon name="xSm" />

@@ -21,8 +21,8 @@ export type ConnectionResponse = Schema<'ConnectionResponse'>
  */
 export const EXECUTION_MODES = ['PROMPT_BODY', 'CONNECTION_ONLY'] as const
 export type ExecutionMode = (typeof EXECUTION_MODES)[number]
-/** 연결 설정을 저장할 때 보내는 값. expectedRevision은 saveConnection이 채웁니다. */
-export type ConnectionInput = Omit<Schema<'ConnectionPut'>, 'expectedRevision' | 'executionMode'> & {
+/** 연결 설정을 저장할 때 보내는 값. expectedRevision · method는 saveConnection이 채웁니다. */
+export type ConnectionInput = Omit<Schema<'ConnectionPut'>, 'expectedRevision' | 'executionMode' | 'method'> & {
   executionMode: ExecutionMode
 }
 export type SecretResponse = Schema<'SecretResponse'>
