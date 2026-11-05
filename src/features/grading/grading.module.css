@@ -38,8 +38,90 @@
 }
 .judge:hover { text-decoration: underline; }
 
-/* ---------- 자동 채점 결과 (임시) ---------- */
-.callout { margin-top: 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; }
-.calloutText { display: flex; flex: 1 1 280px; flex-direction: column; gap: 4px; }
-.calloutTitle { display: flex; align-items: center; gap: 8px; margin: 0; font: var(--text-title); font-weight: var(--font-weight-bold); }
-.calloutDesc { margin: 0; font: var(--text-body-sm); color: var(--color-text-secondary); word-break: keep-all; }
+/* ---------- 06 자동 채점 결과 ---------- */
+.page { display: flex; flex-direction: column; gap: 24px; }
+
+/* 신뢰도 요약 바 */
+.confidence { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 32px; padding: 0 22px; min-height: 64px; }
+.confidenceTitle { margin: 0; font: var(--text-body); font-weight: var(--font-weight-bold); }
+.confidenceStats { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 32px; margin: 0; }
+.stat { display: flex; align-items: center; gap: 12px; }
+.stat dt { display: flex; align-items: center; gap: 8px; font: var(--text-body-sm); color: var(--color-text-secondary); }
+.stat dd { margin: 0; font: 20px / 24px var(--font-family); font-weight: var(--font-weight-bold); }
+.stat .statWarn { color: var(--color-caution); }
+.confidenceLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  padding: 0;
+  border: none;
+  background: none;
+  font: var(--text-body-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+.confidenceLink:hover { text-decoration: underline; }
+
+/* 지표 카드 4개 */
+.metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 0; padding: 0; list-style: none; }
+.metricCard { display: flex; flex-direction: column; gap: 14px; padding: 20px; }
+.metricHead { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.metricTitle { margin: 0; font: var(--text-title); font-weight: var(--font-weight-bold); }
+.delta { font: var(--text-label); font-weight: var(--font-weight-bold); color: var(--color-text-secondary); white-space: nowrap; }
+.deltaUp { color: var(--color-success); }
+.metricRows { display: flex; flex-direction: column; gap: 16px; margin: 0; padding: 0; list-style: none; }
+.metricRow { display: grid; grid-template-columns: 24px 1fr 40px; align-items: center; gap: 0 12px; font: var(--text-label); }
+.metricVersion { color: var(--color-text-secondary); }
+.metricScore { text-align: right; font-weight: var(--font-weight-bold); }
+
+/* 실패 원인 분포 + 프롬프트 버전 */
+.lower { display: grid; flex: 1; grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr); gap: 16px; align-items: stretch; }
+.chartCard, .versionCard { display: flex; flex-direction: column; gap: 22px; padding: 22px; }
+.legend { display: flex; gap: 16px; margin: 0; padding: 0; list-style: none; }
+.legendItem { display: flex; align-items: center; gap: 6px; font: var(--text-label); color: var(--color-text); }
+.legendSwatch { width: 10px; height: 10px; border-radius: var(--radius-full); }
+.bars { display: flex; flex-direction: column; gap: 20px; }
+.barRow { display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; align-items: center; gap: 0 22px; }
+.barVersion { font: var(--text-body); font-weight: var(--font-weight-bold); }
+.barTrack { display: flex; height: 40px; min-width: 0; }
+.barSegment {
+  display: flex;
+  flex-basis: 0;
+  align-items: center;
+  padding-left: 12px;
+  font: var(--text-label);
+  font-weight: var(--font-weight-bold);
+  color: #000;
+}
+.barSegment:first-child { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+.barTotal { min-width: 56px; text-align: right; font: var(--text-label); color: var(--color-text-secondary); white-space: nowrap; }
+.chartNote { margin: auto 0 0; font: var(--text-body-sm); line-height: 22.5px; color: var(--color-text-secondary); word-break: keep-all; }
+
+.versionList { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.versionItem {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 12px;
+  align-items: center;
+  padding: 13px 0;
+  border-top: 1px solid var(--color-surface-strong);
+}
+.versionTag {
+  grid-row: 1 / span 2;
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 9px;
+  border-radius: 12px;
+  background: var(--color-surface-strong);
+  font: var(--text-caption);
+  font-weight: var(--font-weight-bold);
+}
+.versionTagLatest { background: var(--color-primary); color: var(--color-on-primary); }
+.versionTitle { font: var(--text-body-sm); }
+.versionTime { font: var(--text-caption); color: var(--color-text-secondary); }
+
+@media (max-width: 1100px) {
+  .lower { grid-template-columns: 1fr; }
+}
