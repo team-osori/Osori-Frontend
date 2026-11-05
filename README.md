@@ -27,8 +27,15 @@ npm run build
 
 | 환경 변수 | 설명 |
 | --- | --- |
-| `VITE_API_BASE_URL` | API 주소. 비우면 같은 출처의 `/api` (개발 서버 프록시). 배포할 때만 넣습니다 |
-| `VITE_API_PROXY_TARGET` | 개발 서버 프록시가 넘길 백엔드 주소. 타입 생성(`npm run api:types`)도 이 주소를 씁니다 |
+| `VITE_API_BASE_URL` | API 주소. 비우면 같은 출처의 `/api` (개발 서버 프록시 · Vercel 프록시). 보통 비워 둡니다 |
+| `VITE_API_PROXY_TARGET` | `/api` 요청을 넘길 백엔드 주소. 개발 서버 프록시, Vercel 프록시, 타입 생성(`npm run api:types`)이 함께 씁니다 |
+
+### 배포 (Vercel)
+
+배포에는 개발 서버 프록시가 없어서, `api/proxy.js`(Vercel 서버 함수)가 같은 일을 합니다. `vercel.json`이 `/api/*` 요청을 이 함수로 보내고, 함수가 백엔드로 넘깁니다.
+
+- Vercel 프로젝트 설정 → Environment Variables에 `VITE_API_PROXY_TARGET`을 넣습니다. 바꾼 뒤에는 다시 배포해야 적용됩니다.
+- 백엔드가 http여도 서버끼리 통신이라 브라우저의 https → http 차단에 걸리지 않습니다.
 
 백엔드 스키마가 바뀌면 타입을 다시 만듭니다.
 
