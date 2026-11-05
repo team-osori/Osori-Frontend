@@ -21,3 +21,8 @@
 
 .added { background: rgba(74, 222, 128, 0.12); color: #a7f3c0; }
 .removed { background: rgba(255, 107, 107, 0.12); color: #ffb3b3; }
+/* 카드 안에 넣는 작은 표시: 줄 22px, 바깥 여백을 없애 줄 배경이 가장자리까지 닿음, 변경 없는 줄은 흐리게 */
+.compact { padding: 9px 0; background: var(--color-bg); }
+.compact .line { padding: 0 14px; line-height: 22px; color: var(--color-text-tertiary); }
+.compact .added { color: #a7f3c0; background: rgba(74, 222, 128, 0.12); }
+.compact .removed { color: #ffb3b3; background: rgba(255, 107, 107, 0.14); }
