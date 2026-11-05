@@ -163,12 +163,14 @@ export function ProjectSidebar({
     ? {
         projects: nav.projects,
         currentId: nav.projects.find((p) => p.name === projectName)?.id,
-        onSelect: (project) => goTo(stageRoute(project.currentStep)),
+        onSelect: (project) => (nav.onOpenProject ? nav.onOpenProject(project) : goTo(stageRoute(project.currentStep))),
         onCreate: nav.onCreateProject,
         onShowAll: () => goTo(ROUTES.projects),
       }
     : undefined
   const stage = (current && stageOf(current)) || 1
+  // 화면이 정한 값 · 프로젝트에서 이미 연 단계 · 지금 단계 중 가장 큰 값까지 열림
+  const reach = Math.max(stage, unlockedUntil ?? stage, nav?.unlockedStage ?? 0)
 
   return (
     <Sidebar
@@ -210,7 +212,7 @@ export function ProjectSidebar({
         stages={STAGES}
         current={stage}
         currentRoute={settingsActive ? undefined : current}
-        unlockedUntil={unlockedUntil}
+        unlockedUntil={reach}
         notes={stageNotes}
         onSelect={onSelect ?? goTo}
       />

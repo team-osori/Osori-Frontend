@@ -21,7 +21,7 @@ import WrongNotesPage from './pages/WrongNotesPage'
 import QuestionSetPage from './pages/QuestionSetPage'
 import { SettingsPage } from './pages/Settings'
 import { SignupPage, type SignupErrors } from './pages/Signup'
-import { ROUTES, stageRoute } from './routes'
+import { ROUTES, STAGES, stageOf, stageRoute } from './routes'
 import type { Project } from './types/project'
 
 /** 로그인하지 않아도 볼 수 있는 화면 */
@@ -52,16 +52,27 @@ export default function App() {
   const [createOpen, setCreateOpen] = useState(false)
   // 사람 판정 화면을 열 때 먼저 보여줄 문항 (06 불안정 문항 패널에서 고른 문항)
   const [judgeStartId, setJudgeStartId] = useState<string>()
+  // 지금 연 프로젝트에서 어디까지 진행했는지(1~3). 이전 단계로 돌아가도 이미 연 단계는 잠기지 않게 함
+  // TODO: 백엔드 프로젝트 진행 단계 API가 생기면 그 값으로 교체
+  const [unlockedStage, setUnlockedStage] = useState(1)
+
+  // 단계 화면에 들어가면 그 단계까지 열림
+  useEffect(() => {
+    const stage = stageOf(route)
+    if (stage) setUnlockedStage((prev) => Math.max(prev, stage))
+  }, [route])
 
   // TODO: 프로젝트 API 연동. 지금은 화면 안에서만 추가하고 1단계(시험지 만들기)로 이동
   function createProject(input: NewProject) {
     setProjects((prev) => [buildProject(input), ...prev])
     setCreateOpen(false)
+    setUnlockedStage(1)
     navigate(ROUTES.questions)
   }
 
   /** 프로젝트 목록에서 누르면 그 프로젝트가 진행 중인 단계의 화면을 엽니다. 완료된 프로젝트는 채점 결과 */
   function openProject(project: Project) {
+    setUnlockedStage(project.status === 'done' ? STAGES.length : project.currentStep)
     navigate(project.status === 'done' ? ROUTES.grading : (stageRoute(project.currentStep) ?? ROUTES.projects))
   }
 
@@ -192,7 +203,9 @@ export default function App() {
     <SidebarUserContext.Provider
       value={auth.user ? { name: auth.user.name, account: auth.user.loginId, menu: userMenu } : null}
     >
-      <ProjectNavContext.Provider value={{ projects, onCreateProject: () => setCreateOpen(true) }}>
+      <ProjectNavContext.Provider
+        value={{ projects, onCreateProject: () => setCreateOpen(true), onOpenProject: (p) => openProject(p as Project), unlockedStage }}
+      >
         {renderScreen()}
         <CreateProjectModal open={createOpen} onClose={() => setCreateOpen(false)} onSubmit={createProject} />
       </ProjectNavContext.Provider>
