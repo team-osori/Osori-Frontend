@@ -10,7 +10,8 @@ type SelectProps = {
   options: SelectOption[]
   value: string
   onChange: (value: string) => void
-  size?: 'md' | 'sm'
+  /** row: 표 안에서 쓰는 작은 선택 상자 (34px, 테두리) */
+  size?: 'md' | 'sm' | 'row'
   /** 부모 폭을 꽉 채움 */
   fullWidth?: boolean
   /** 목록을 오른쪽 끝에 맞춰 엶 */
@@ -163,7 +164,7 @@ export function Select({
         onKeyDown={onKeyDown}
       >
         <span className={cx(styles.value, !selected && styles.placeholder)}>{selected?.label ?? placeholder}</span>
-        <Icon name="chevronDown" className={styles.chevron} />
+        <Icon name={size === 'row' ? 'chevronDownXs' : 'chevronDown'} className={styles.chevron} />
       </button>
 
       {open &&
@@ -173,7 +174,7 @@ export function Select({
             id={listId}
             role="listbox"
             aria-label={ariaLabel}
-            className={cx(styles.list, size === 'sm' && styles.listSm)}
+            className={cx(styles.list, size !== 'md' && styles.listSm)}
             style={listStyle}
           >
             {options.map((option, index) => {
