@@ -1,4 +1,4 @@
-import { useEffect, type CSSProperties, type ReactNode } from 'react'
+import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
 import { Sticker } from '../../components/ui'
 import { cx } from '../../lib/cx'
 import arrowRight from '../../assets/icons/stage/arrow-right.svg'
@@ -99,8 +99,14 @@ export function Pager({ items, current, onChange, window: size = 9, keyboard = t
     return () => document.removeEventListener('keydown', onKey)
   })
 
-  // 현재 번호를 가운데 두고 앞뒤로 잘라 보여줌
-  const start = Math.max(0, Math.min(current - Math.floor(size / 2), items.length - size))
+  // 보이는 번호 범위는 그대로 두고, 현재 번호가 양 끝을 넘을 때만 그만큼 밀어 줌
+  // (넘길 때마다 가운데로 맞추면 누르려던 번호가 계속 움직여서 불편함)
+  const [windowStart, setWindowStart] = useState(0)
+  const maxStart = Math.max(0, items.length - size)
+  let start = Math.min(windowStart, maxStart)
+  if (current < start) start = current
+  else if (current >= start + size) start = current - size + 1
+  if (start !== windowStart) setWindowStart(start)
   const visible = items.slice(start, start + size)
 
   return (
