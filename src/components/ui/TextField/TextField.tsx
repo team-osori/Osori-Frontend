@@ -20,9 +20,11 @@ type TextFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   prefix?: string
   /** 코드·경로 입력용 고정폭 글꼴 */
   mono?: boolean
+  /** 되돌릴 수 없는 동작 확인용 빨간 테두리 */
+  danger?: boolean
 }
 
-export function TextField({ label, prefix, mono, className, id, ...rest }: TextFieldProps) {
+export function TextField({ label, prefix, mono, danger, className, id, ...rest }: TextFieldProps) {
   const autoId = useId()
   const inputId = id ?? autoId
 
@@ -46,19 +48,23 @@ export function TextField({ label, prefix, mono, className, id, ...rest }: TextF
 
   return (
     <Field label={label} htmlFor={inputId}>
-      <input id={inputId} className={cx(styles.control, styles.input, mono && styles.mono, className)} {...rest} />
+      <input id={inputId} className={cx(styles.control, styles.input, mono && styles.mono, danger && styles.danger, className)} {...rest} />
     </Field>
   )
 }
 
-type TextAreaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & { label: string }
+type TextAreaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
+  label: string
+  /** sm 72px (한두 줄) · md 88px */
+  size?: 'sm' | 'md'
+}
 
-export function TextArea({ label, className, id, ...rest }: TextAreaProps) {
+export function TextArea({ label, size = 'md', className, id, ...rest }: TextAreaProps) {
   const autoId = useId()
   const inputId = id ?? autoId
   return (
     <Field label={label} htmlFor={inputId}>
-      <textarea id={inputId} className={cx(styles.control, styles.textarea, className)} {...rest} />
+      <textarea id={inputId} className={cx(styles.control, styles.textarea, size === 'sm' && styles.textareaSm, className)} {...rest} />
     </Field>
   )
 }
