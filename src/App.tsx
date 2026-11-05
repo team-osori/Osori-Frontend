@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { HomeMenu, UserMenuActions } from './components/common'
+import { ProjectNavContext, type HomeMenu, type UserMenuActions } from './components/common'
 import { buildProject, CreateProjectModal, type NewProject } from './features/project'
 import { MOCK_JUDGE_ITEMS } from './features/grading/mock'
 import { MOCK_MEMBERS, type Member } from './features/settings'
@@ -118,9 +118,10 @@ export default function App() {
   }
 
   return (
-    <>
+    // 평가 화면 사이드바의 프로젝트 전환 팝오버가 이 목록과 만들기 동작을 씀
+    <ProjectNavContext.Provider value={{ projects, onCreateProject: () => setCreateOpen(true) }}>
       {renderScreen()}
       <CreateProjectModal open={createOpen} onClose={() => setCreateOpen(false)} onSubmit={createProject} />
-    </>
+    </ProjectNavContext.Provider>
   )
 }

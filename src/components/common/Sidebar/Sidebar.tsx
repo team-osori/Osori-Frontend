@@ -3,10 +3,12 @@ import { Divider, Icon, SearchInput, type SelectOption } from '../../ui'
 import { ROUTES, stepRoute } from '../../../routes'
 import { BrandMark } from '../BrandMark/BrandMark'
 import { NavItem } from '../NavItem/NavItem'
-import { ProjectSelector } from '../ProjectSelector/ProjectSelector'
+import { ProjectSelector, type ProjectSwitchOptions } from '../ProjectSelector/ProjectSelector'
+import type { PromptVersion } from '../ProjectSelector/PromptVersionPicker'
 import { StepList } from '../StepItem/StepItem'
 import { UserMenu, type UserMenuActions } from '../UserMenu/UserMenu'
 import { UserProfile } from '../UserProfile/UserProfile'
+import { useProjectNav } from './ProjectNavContext'
 import { useSidebarToggle } from './SidebarContext'
 import styles from './Sidebar.module.css'
 
@@ -125,7 +127,8 @@ export function HomeSidebar({
 type ProjectSidebarProps = {
   user: User
   projectName: string
-  promptOptions: SelectOption[]
+  /** promptVersions를 주면 쓰지 않음 */
+  promptOptions?: SelectOption[]
   promptValue: string
   onPromptChange: (value: string) => void
   questionSet: string
@@ -140,6 +143,12 @@ type ProjectSidebarProps = {
   /** 없으면 프로젝트 설정 화면으로 이동 */
   onSettings?: () => void
   onProjectClick?: () => void
+  /** 주면 프롬프트 칸이 버전 기록 팝오버로 바뀝니다. 최신 버전이 맨 앞 */
+  promptVersions?: PromptVersion[]
+  /** 없으면 새 버전을 만드는 개선안 적용(7단계) 화면으로 이동 */
+  onCreateVersion?: () => void
+  /** 없으면 버전 목록이 있는 자동 채점 결과(4단계) 화면으로 이동 */
+  onShowVersionHistory?: () => void
   onToggle?: () => void
   onUserClick?: () => void
   userMenu?: UserMenuActions
@@ -159,10 +168,25 @@ export function ProjectSidebar({
   onSelectStep,
   onSettings,
   onProjectClick,
+  promptVersions,
+  onCreateVersion,
+  onShowVersionHistory,
   onToggle,
   onUserClick,
   userMenu,
 }: ProjectSidebarProps) {
+  const nav = useProjectNav()
+  // 프로젝트 목록을 App이 내려줄 때만 프로젝트 전환 팝오버를 씀
+  const projectSwitch: ProjectSwitchOptions | undefined = nav
+    ? {
+        projects: nav.projects,
+        currentId: nav.projects.find((p) => p.name === projectName)?.id,
+        onSelect: (project) => goTo(stepRoute(project.currentStep)),
+        onCreate: nav.onCreateProject,
+        onShowAll: () => goTo(ROUTES.projects),
+      }
+    : undefined
+
   return (
     <Sidebar user={user} onToggle={onToggle} onUserClick={onUserClick} userMenu={userMenu}>
       <button type="button" className={styles.back} onClick={onBack ?? (() => goTo(ROUTES.projects))}>
@@ -176,6 +200,14 @@ export function ProjectSidebar({
         onPromptChange={onPromptChange}
         questionSet={questionSet}
         onProjectClick={onProjectClick}
+        projectSwitch={projectSwitch}
+        promptVersions={
+          promptVersions && {
+            versions: promptVersions,
+            onCreate: onCreateVersion ?? (() => goTo(stepRoute(7))),
+            onShowHistory: onShowVersionHistory ?? (() => goTo(stepRoute(4))),
+          }
+        }
       />
       <SidebarSectionLabel>평가 단계</SidebarSectionLabel>
       <StepList

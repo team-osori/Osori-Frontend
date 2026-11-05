@@ -26,3 +26,27 @@
 .label { flex-shrink: 0; width: 60px; font: var(--text-label); color: var(--color-text-secondary); }
 .value { font: var(--text-label); }
 .row > div { flex: 1; min-width: 0; }
+
+/* 프롬프트 버전 팝오버를 여는 버튼 (Select sm과 같은 모양) */
+.promptTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  height: 30px;
+  padding: 0 9px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-strong);
+  font: var(--text-label);
+  color: var(--color-text);
+  text-align: left;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+.promptTrigger:hover { background: #42424d; }
+.promptTrigger:focus-visible { box-shadow: none; border-color: var(--color-border-focus); }
+.promptOpen { border-color: var(--color-border-focus); }
+.promptValue { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chevron { transition: transform 0.15s; }
+.promptOpen .chevron { transform: rotate(180deg); }

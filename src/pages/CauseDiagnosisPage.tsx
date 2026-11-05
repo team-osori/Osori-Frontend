@@ -33,6 +33,8 @@ export default function CauseDiagnosisPage({
   // TODO: 진단 API 연동. 지금은 화면 안에서만 반영
   const [items, setItems] = useState(initialItems)
   const [filter, setFilter] = useState<Filter>('all')
+  const versions = MOCK_GRADING_SUMMARY.versions
+  const [baseVersion, setBaseVersion] = useState(versions[0]?.version ?? '')
   // 프롬프트 수정 제안을 고른 카드. Figma 기본 화면처럼 처음에는 제안 가능한 카드를 모두 골라 둠
   const [selected, setSelected] = useState<Set<string>>(
     () => new Set(initialItems.filter((i) => i.diff).map((i) => i.id)),
@@ -69,9 +71,9 @@ export default function CauseDiagnosisPage({
         <ProjectSidebar
           user={user}
           projectName={projectName}
-          promptOptions={[{ value: 'v3', label: 'v3 (최신)' }]}
-          promptValue="v3"
-          onPromptChange={() => {}}
+          promptVersions={versions}
+          promptValue={baseVersion}
+          onPromptChange={setBaseVersion}
           questionSet="v1 · 67문항"
           currentStep={6}
           unlockedUntil={7}

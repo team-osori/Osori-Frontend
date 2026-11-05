@@ -1,6 +1,8 @@
 import { useEffect, useLayoutEffect, useState, type CSSProperties, type RefObject } from 'react'
 
 const GAP = 6
+/** 화면 가장자리와 띄울 최소 여백 */
+const EDGE = 16
 
 /**
  * 드롭다운 목록 위치·닫기 공통 로직.
@@ -14,6 +16,7 @@ export function usePopover({
   popoverRef,
   align = 'start',
   maxHeight = 240,
+  gap = GAP,
 }: {
   open: boolean
   onClose: () => void
@@ -22,23 +25,30 @@ export function usePopover({
   popoverRef: RefObject<HTMLElement | null>
   align?: 'start' | 'end'
   maxHeight?: number
+  /** 트리거와 목록 사이 간격 (기본 6px) */
+  gap?: number
 }) {
   const [style, setStyle] = useState<CSSProperties>()
 
   useLayoutEffect(() => {
     if (!open) return
+    // 목록이 트리거보다 넓으면 오른쪽 화면 밖으로 나가지 않게 왼쪽으로 당김
+    const clampLeft = (left: number) => {
+      const width = popoverRef.current?.offsetWidth ?? 0
+      return Math.max(EDGE, Math.min(left, window.innerWidth - width - EDGE))
+    }
     const place = () => {
       const rect = triggerRef.current?.getBoundingClientRect()
       if (!rect) return
-      const below = window.innerHeight - rect.bottom - GAP - 8
-      const above = rect.top - GAP - 8
+      const below = window.innerHeight - rect.bottom - gap - 8
+      const above = rect.top - gap - 8
       const openUp = below < 160 && above > below
       setStyle({
         position: 'fixed',
         minWidth: rect.width,
         maxHeight: Math.min(maxHeight, openUp ? above : below),
-        ...(openUp ? { bottom: window.innerHeight - rect.top + GAP } : { top: rect.bottom + GAP }),
-        ...(align === 'end' ? { right: window.innerWidth - rect.right } : { left: rect.left }),
+        ...(openUp ? { bottom: window.innerHeight - rect.top + gap } : { top: rect.bottom + gap }),
+        ...(align === 'end' ? { right: window.innerWidth - rect.right } : { left: clampLeft(rect.left) }),
       })
     }
     place()
@@ -48,7 +58,7 @@ export function usePopover({
       window.removeEventListener('resize', place)
       window.removeEventListener('scroll', place, true)
     }
-  }, [open, align, maxHeight, triggerRef])
+  }, [open, align, maxHeight, gap, triggerRef, popoverRef])
 
   // 바깥 클릭 시 닫기
   useEffect(() => {

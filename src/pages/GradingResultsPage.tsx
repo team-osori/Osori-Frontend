@@ -31,6 +31,8 @@ export default function GradingResultsPage({
   onBack,
 }: GradingResultsPageProps) {
   const [drawerOpen, setDrawerOpen] = useState(false)
+  // TODO: 기준 버전을 바꾸면 그 버전 기준으로 결과를 다시 불러오기 (API 연동 후)
+  const [baseVersion, setBaseVersion] = useState(summary.versions[0]?.version ?? '')
   const { queue } = summary
 
   // 가장 최근 두 버전의 프롬프트 원인 실패 건수로 해설 문장을 만듦
@@ -46,9 +48,9 @@ export default function GradingResultsPage({
         <ProjectSidebar
           user={user}
           projectName={projectName}
-          promptOptions={[{ value: 'v3', label: 'v3 (최신)' }]}
-          promptValue="v3"
-          onPromptChange={() => {}}
+          promptVersions={summary.versions}
+          promptValue={baseVersion}
+          onPromptChange={setBaseVersion}
           questionSet="v1 · 67문항"
           currentStep={4}
           unlockedUntil={6}
