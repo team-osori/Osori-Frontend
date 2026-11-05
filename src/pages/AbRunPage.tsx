@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Button, StatCard } from '../components/ui'
 import { ActionBar, PageHeader, ProjectSidebar, type ActionBarStatus } from '../components/common'
 import { AppLayout } from '../layouts/AppLayout'
+import { ROUTES } from '../routes'
 import {
   MOCK_CONCURRENCY,
   MOCK_DIFF,
@@ -59,7 +60,7 @@ export default function AbRunPage({
           promptValue="ab"
           onPromptChange={() => {}}
           questionSet={questionSet}
-          currentStep={3}
+          current={ROUTES.abRun}
           onBack={onBack}
         />
       }

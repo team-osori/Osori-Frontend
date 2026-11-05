@@ -1,19 +1,81 @@
-.form { display: flex; flex-direction: column; }
+.form { display: flex; flex-direction: column; gap: 16px; }
 
-.fields { display: flex; flex-direction: column; gap: var(--space-4); }
+.clip { transform: rotate(32deg); height: auto; }
 
-.note {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  /* 문구가 입력창 폭보다 조금 길어서, Figma처럼 한 줄이 되도록 오른쪽 여백(28px) 안으로 16px 늘림 */
-  margin: var(--space-4) -16px 0 0;
-  font: var(--text-label);
-  line-height: 1.5;
-  color: var(--color-text-secondary);
-  word-break: keep-all;
+/* ---------- 단계 표시 ---------- */
+.stepper { display: flex; align-items: center; gap: 18px; margin: 0; padding: 0; list-style: none; }
+.step { display: inline-flex; align-items: center; gap: 7px; font: var(--text-caption); color: var(--color-text-tertiary); }
+.stepMarker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: var(--radius-full);
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
 }
-.note img { margin-top: 2px; }
+.current { color: var(--color-text); font-weight: var(--font-weight-bold); }
+.current .stepMarker { border-color: var(--color-primary); background: var(--color-primary); color: var(--color-on-primary); }
+.done { color: var(--color-text-secondary); }
+.done .stepMarker { border-color: var(--color-text-secondary); }
 
-/* 취소 버튼은 Figma에서 굵지 않은 글씨와 18px 좌우 여백 */
-.cancel { padding: 0 18px; font-weight: var(--font-weight-regular); }
+/* ---------- 1 서비스 연결 ---------- */
+.service {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-input);
+}
+.service:focus-within { border-color: var(--color-border-focus); }
+.serviceLabel { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; font: var(--text-label); font-weight: var(--font-weight-bold); }
+.serviceLabel img { width: 16px; height: 16px; opacity: 0.7; }
+.serviceInput {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  font: var(--text-caption);
+  font-family: var(--font-mono);
+  color: var(--color-text-secondary);
+  text-align: right;
+  outline: none;
+}
+.serviceInput::placeholder { color: var(--color-text-tertiary); }
+.serviceState { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: var(--color-surface-strong); }
+.serviceOn { background: var(--color-primary); box-shadow: 0 0 8px var(--color-primary); }
+
+.note { margin: -4px 0 0; font: var(--text-caption); line-height: 1.6; color: var(--color-text-tertiary); word-break: keep-all; }
+
+/* ---------- 2 프롬프트 · 정책 문서 ---------- */
+.prompt { height: 148px; font: var(--text-label); line-height: 1.75; }
+
+.docs { display: flex; flex-direction: column; gap: 8px; }
+.docsLabel { font: var(--text-label); color: var(--color-text-secondary); }
+
+.docList { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.doc {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 8px 0 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-input);
+}
+.docName { flex: 1; min-width: 0; overflow: hidden; font: var(--text-caption); font-weight: var(--font-weight-bold); text-overflow: ellipsis; white-space: nowrap; }
+.docMeta { flex-shrink: 0; font-size: 11px; color: var(--color-text-tertiary); }
+.docRemove { display: inline-flex; padding: 4px; border: none; border-radius: var(--radius-sm); background: none; opacity: 0.6; }
+.docRemove:hover { opacity: 1; background: rgba(255, 255, 255, 0.06); }
+
+@media (max-width: 560px) {
+  .docList { grid-template-columns: 1fr; }
+}

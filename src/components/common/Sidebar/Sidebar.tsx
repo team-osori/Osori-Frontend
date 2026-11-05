@@ -1,15 +1,15 @@
 import type { ReactNode } from 'react'
-import { Divider, Icon, SearchInput, type SelectOption } from '../../ui'
-import { ROUTES, stepRoute } from '../../../routes'
+import { cx } from '../../../lib/cx'
+import type { IconName } from '../../../assets/icons'
+import { Button, Icon, type SelectOption } from '../../ui'
+import { ROUTES, STAGES, stageOf, stageRoute } from '../../../routes'
 import { BrandMark } from '../BrandMark/BrandMark'
 import { NavItem } from '../NavItem/NavItem'
 import { ProjectSelector, type ProjectSwitchOptions } from '../ProjectSelector/ProjectSelector'
 import type { PromptVersion } from '../ProjectSelector/PromptVersionPicker'
-import { StepList } from '../StepItem/StepItem'
+import { StageList } from '../StepItem/StepItem'
 import { UserMenu, type UserMenuActions } from '../UserMenu/UserMenu'
-import { UserProfile } from '../UserProfile/UserProfile'
 import { useProjectNav } from './ProjectNavContext'
-import { useSidebarToggle } from './SidebarContext'
 import styles from './Sidebar.module.css'
 
 type User = { name: string; role: string; email?: string }
@@ -19,160 +19,159 @@ function goTo(route: string | undefined) {
   if (route) window.location.hash = route
 }
 
+/** 레일 메뉴. 휴지통은 아직 화면이 없음 */
+export type HomeMenu = 'projects' | 'create' | 'trash' | 'settings'
+
+const RAIL: Array<{ menu: HomeMenu; icon: IconName; label: string; route?: string }> = [
+  { menu: 'projects', icon: 'grid', label: '전체 프로젝트', route: ROUTES.projects },
+  { menu: 'trash', icon: 'trash', label: '휴지통 (준비 중)' },
+  { menu: 'settings', icon: 'settings', label: '설정', route: ROUTES.accountSettings },
+]
+
 type SidebarProps = {
-  user: User
-  onToggle?: () => void
-  onUserClick?: () => void
-  /** 주면 하단 프로필을 누를 때 계정 메뉴가 열립니다. (user.email 필요) */
+  /** 레일에서 강조할 메뉴 */
+  active?: HomeMenu
+  /** 없으면 App이 내려준 사용자(ProjectNavContext) 사용 */
+  user?: User
   userMenu?: UserMenuActions
+  /** 없으면 레일 메뉴의 경로로 이동 */
+  onNavigate?: (menu: HomeMenu) => void
+  /** 보조 패널 내용 */
   children: ReactNode
+  /** 패널 맨 아래 고정 영역 (예: 프로젝트 설정) */
+  panelFooter?: ReactNode
 }
 
-/** 사이드바 공통 틀: 브랜드 + 접기 버튼 / 본문 / 사용자 프로필 */
-export function Sidebar({ user, onToggle, onUserClick, userMenu, children }: SidebarProps) {
-  const layoutToggle = useSidebarToggle()
+/** 사이드바 공통 틀: 왼쪽 아이콘 레일 + 오른쪽 보조 패널 */
+export function Sidebar({ active, user, userMenu, onNavigate, children, panelFooter }: SidebarProps) {
+  const nav = useProjectNav()
+  const me = user ?? nav?.user
+  const menu = userMenu ?? nav?.userMenu
+  const email = me?.email ?? nav?.user?.email
+
   return (
     <aside className={styles.sidebar}>
-      <div className={styles.header}>
-        <BrandMark tone="sidebar" />
-        <button
-          type="button"
-          className={styles.toggle}
-          onClick={onToggle ?? layoutToggle}
-          aria-label="사이드바 접기"
-          data-sidebar-toggle
-        >
-          <Icon name="sidebar" />
-        </button>
+      <div className={styles.rail}>
+        <a href={`#${ROUTES.projects}`} className={styles.logo} aria-label="홈 · 전체 프로젝트">
+          <BrandMark variant="mark" />
+        </a>
+        <nav className={styles.railNav} aria-label="주 메뉴">
+          {RAIL.map((item) => (
+            <button
+              key={item.menu}
+              type="button"
+              className={cx(styles.railItem, active === item.menu && styles.railActive)}
+              aria-label={item.label}
+              title={item.label}
+              aria-current={active === item.menu ? 'page' : undefined}
+              disabled={!item.route && !onNavigate}
+              onClick={() => (onNavigate ? onNavigate(item.menu) : goTo(item.route))}
+            >
+              <Icon name={item.icon} />
+            </button>
+          ))}
+        </nav>
+        <div className={styles.railFooter}>
+          {me && menu && email ? (
+            <UserMenu name={me.name} role={me.role} email={email} {...menu} />
+          ) : (
+            me && (
+              <span className={styles.avatar} title={me.name}>
+                {me.name.slice(0, 1)}
+              </span>
+            )
+          )}
+        </div>
       </div>
-      <nav className={styles.body}>{children}</nav>
-      <div className={styles.footer}>
-        <Divider tone="strong" />
-        {userMenu && user.email ? (
-          <UserMenu name={user.name} role={user.role} email={user.email} {...userMenu} />
-        ) : (
-          <UserProfile name={user.name} role={user.role} onClick={onUserClick} />
-        )}
+
+      <div className={styles.panel}>
+        <div className={styles.panelBody}>{children}</div>
+        {panelFooter && <div className={styles.panelFooter}>{panelFooter}</div>}
       </div>
     </aside>
   )
+}
+
+/** 패널 맨 위 제목 */
+export function SidebarTitle({ children }: { children: ReactNode }) {
+  return <h2 className={styles.title}>{children}</h2>
 }
 
 export function SidebarSectionLabel({ children }: { children: ReactNode }) {
   return <p className={styles.sectionLabel}>{children}</p>
 }
 
-export function SidebarList({ children }: { children: ReactNode }) {
-  return <div className={styles.list}>{children}</div>
-}
-
-export function SidebarDivider() {
+export function SidebarList({ children, label }: { children: ReactNode; label?: string }) {
   return (
-    <div className={styles.divider}>
-      <Divider tone="strong" />
+    <div className={styles.list} role={label ? 'group' : undefined} aria-label={label}>
+      {children}
     </div>
   )
 }
 
-/* ---------- 홈(전체 프로젝트) 사이드바 ---------- */
-
-export type HomeMenu = 'projects' | 'create' | 'trash' | 'settings'
-
-type HomeSidebarProps = {
-  user: User
-  projectCount: number
-  active?: HomeMenu
-  onNavigate?: (menu: HomeMenu) => void
-  onSearch?: (keyword: string) => void
-  onToggle?: () => void
-  onUserClick?: () => void
-  userMenu?: UserMenuActions
-}
-
-export function HomeSidebar({
-  user,
-  projectCount,
-  active = 'projects',
-  onNavigate,
-  onSearch,
-  onToggle,
-  onUserClick,
-  userMenu,
-}: HomeSidebarProps) {
+/** 패널 상단의 "+ 새 프로젝트" 버튼 */
+export function SidebarCreateButton({ onClick, children = '새 프로젝트' }: { onClick?: () => void; children?: ReactNode }) {
+  const nav = useProjectNav()
   return (
-    <Sidebar user={user} onToggle={onToggle} onUserClick={onUserClick} userMenu={userMenu}>
-      <SearchInput placeholder="프로젝트 검색" onChange={(e) => onSearch?.(e.target.value)} />
-      <SidebarSectionLabel>프로젝트</SidebarSectionLabel>
-      <SidebarList>
-        <NavItem
-          icon="grid"
-          label="전체 프로젝트"
-          count={projectCount}
-          active={active === 'projects'}
-          onClick={() => onNavigate?.('projects')}
-        />
-        <NavItem icon="plus" label="프로젝트 만들기" active={active === 'create'} onClick={() => onNavigate?.('create')} />
-      </SidebarList>
-      <SidebarDivider />
-      <SidebarList>
-        <NavItem icon="trash" label="휴지통" active={active === 'trash'} onClick={() => onNavigate?.('trash')} />
-        <NavItem icon="settings" label="설정" active={active === 'settings'} onClick={() => onNavigate?.('settings')} />
-      </SidebarList>
-    </Sidebar>
+    <Button variant="tonal" size="xs" icon="plusSm" fullWidth className={styles.create} onClick={onClick ?? nav?.onCreateProject}>
+      {children}
+    </Button>
   )
 }
 
 /* ---------- 프로젝트 내부(평가 단계) 사이드바 ---------- */
 
 type ProjectSidebarProps = {
-  user: User
+  user?: User
   projectName: string
+  /** 평가 대상 서비스 주소 (프로젝트 이름 아래 작은 글씨) */
+  host?: string
   /** promptVersions를 주면 쓰지 않음 */
   promptOptions?: SelectOption[]
   promptValue: string
   onPromptChange: (value: string) => void
+  /** 시험지 상태 (예: "없음", "v1 · 67문항") */
   questionSet: string
-  /** 현재 단계(1~7). 프로젝트 설정 화면이면 settingsActive 사용 */
-  currentStep: number
+  /** 지금 보고 있는 화면 경로 (routes.ts) */
+  current?: string
+  /** 이 단계(1~3)까지 진행 가능. 이후는 잠금. 기본값은 현재 단계 */
   unlockedUntil?: number
+  /** 프로젝트 설정 화면. 단계 강조 대신 설정 메뉴를 강조 */
   settingsActive?: boolean
   /** 없으면 프로젝트 목록(#/projects)으로 이동 */
   onBack?: () => void
-  /** 없으면 그 단계의 화면으로 이동 (routes.ts의 STEP_ROUTES) */
-  onSelectStep?: (index: number) => void
+  /** 없으면 그 화면으로 이동 */
+  onSelect?: (route: string) => void
   /** 없으면 프로젝트 설정 화면으로 이동 */
   onSettings?: () => void
   onProjectClick?: () => void
   /** 주면 프롬프트 칸이 버전 기록 팝오버로 바뀝니다. 최신 버전이 맨 앞 */
   promptVersions?: PromptVersion[]
-  /** 없으면 새 버전을 만드는 개선안 적용(7단계) 화면으로 이동 */
+  /** 없으면 새 버전을 만드는 개선안 적용 화면으로 이동 */
   onCreateVersion?: () => void
-  /** 없으면 버전 목록이 있는 자동 채점 결과(4단계) 화면으로 이동 */
+  /** 없으면 버전 목록이 있는 채점 결과 화면으로 이동 */
   onShowVersionHistory?: () => void
-  onToggle?: () => void
-  onUserClick?: () => void
   userMenu?: UserMenuActions
 }
 
 export function ProjectSidebar({
   user,
   projectName,
+  host = 'cs-bot.moamall.internal',
   promptOptions,
   promptValue,
   onPromptChange,
   questionSet,
-  currentStep,
+  current,
   unlockedUntil,
   settingsActive,
   onBack,
-  onSelectStep,
+  onSelect,
   onSettings,
   onProjectClick,
   promptVersions,
   onCreateVersion,
   onShowVersionHistory,
-  onToggle,
-  onUserClick,
   userMenu,
 }: ProjectSidebarProps) {
   const nav = useProjectNav()
@@ -181,20 +180,34 @@ export function ProjectSidebar({
     ? {
         projects: nav.projects,
         currentId: nav.projects.find((p) => p.name === projectName)?.id,
-        onSelect: (project) => goTo(stepRoute(project.currentStep)),
+        onSelect: (project) => goTo(stageRoute(project.currentStep)),
         onCreate: nav.onCreateProject,
         onShowAll: () => goTo(ROUTES.projects),
       }
     : undefined
+  const stage = (current && stageOf(current)) || 1
 
   return (
-    <Sidebar user={user} onToggle={onToggle} onUserClick={onUserClick} userMenu={userMenu}>
+    <Sidebar
+      active="projects"
+      user={user}
+      userMenu={userMenu}
+      panelFooter={
+        <NavItem
+          icon="settingsSm"
+          label="프로젝트 설정"
+          active={settingsActive}
+          onClick={onSettings ?? (() => goTo(ROUTES.projectSettings))}
+        />
+      }
+    >
       <button type="button" className={styles.back} onClick={onBack ?? (() => goTo(ROUTES.projects))}>
         <Icon name="arrowLeft" />
         전체 프로젝트
       </button>
       <ProjectSelector
         projectName={projectName}
+        host={host}
         promptOptions={promptOptions}
         promptValue={promptValue}
         onPromptChange={onPromptChange}
@@ -204,25 +217,18 @@ export function ProjectSidebar({
         promptVersions={
           promptVersions && {
             versions: promptVersions,
-            onCreate: onCreateVersion ?? (() => goTo(stepRoute(7))),
-            onShowHistory: onShowVersionHistory ?? (() => goTo(stepRoute(4))),
+            onCreate: onCreateVersion ?? (() => goTo(ROUTES.improvement)),
+            onShowHistory: onShowVersionHistory ?? (() => goTo(ROUTES.grading)),
           }
         }
       />
       <SidebarSectionLabel>평가 단계</SidebarSectionLabel>
-      <StepList
-        current={currentStep}
+      <StageList
+        stages={STAGES}
+        current={stage}
+        currentRoute={settingsActive ? undefined : current}
         unlockedUntil={unlockedUntil}
-        highlightCurrent={!settingsActive}
-        onSelect={onSelectStep ?? ((step) => goTo(stepRoute(step)))}
-      />
-      <SidebarDivider />
-      <NavItem
-        size="sm"
-        icon="settings"
-        label="프로젝트 설정"
-        active={settingsActive}
-        onClick={onSettings ?? (() => goTo(ROUTES.projectSettings))}
+        onSelect={onSelect ?? goTo}
       />
     </Sidebar>
   )

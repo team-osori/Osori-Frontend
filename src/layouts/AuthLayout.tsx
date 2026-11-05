@@ -1,6 +1,6 @@
 import type { FormEvent, ReactNode } from 'react'
 import { AuthBrandPanel } from '../components/common'
-import { Button } from '../components/ui'
+import { Button, Sticker } from '../components/ui'
 import styles from './AuthLayout.module.css'
 
 type AuthLayoutProps = {
@@ -11,20 +11,30 @@ type AuthLayoutProps = {
   onSubmit: (event: FormEvent<HTMLFormElement>) => void
   /** 입력창들 */
   children: ReactNode
-  /** 제출 버튼 아래 영역 (다른 화면으로 가는 링크, 안내 문구 등) */
+  /** 제출 버튼 아래 영역 (다른 화면으로 가는 링크 등) */
   footer?: ReactNode
   submitting?: boolean
+  /** 폼 아래 연결 상태 문구에 붙는 인스턴스 버전 */
+  instanceVersion?: string
 }
 
-/** 로그인·회원가입 공통 화면: 좌측 브랜드 패널 + 우측 폼 */
-export function AuthLayout({ title, subtitle, submitLabel, onSubmit, children, footer, submitting }: AuthLayoutProps) {
+/** 로그인·회원가입 공통 화면: 왼쪽 브랜드 영역 + 오른쪽 폼 패널 */
+export function AuthLayout({
+  title,
+  subtitle,
+  submitLabel,
+  onSubmit,
+  children,
+  footer,
+  submitting,
+  instanceVersion = 'v1.4.2',
+}: AuthLayoutProps) {
   return (
     <div className={styles.page}>
-      <div className={styles.brand}>
-        <AuthBrandPanel connected />
-      </div>
+      <AuthBrandPanel />
 
-      <div className={styles.formSide}>
+      <section className={styles.formSide}>
+        <Sticker name="paperclipLime" width={58} className={styles.clip} />
         <form className={styles.form} onSubmit={onSubmit} noValidate>
           <header className={styles.header}>
             <h1 className={styles.title}>{title}</h1>
@@ -33,13 +43,18 @@ export function AuthLayout({ title, subtitle, submitLabel, onSubmit, children, f
 
           <div className={styles.fields}>{children}</div>
 
-          <Button type="submit" size="lg" fullWidth disabled={submitting}>
+          <Button type="submit" size="md" fullWidth disabled={submitting}>
             {submitLabel}
           </Button>
 
           {footer}
+
+          <p className={styles.status}>
+            <span className={styles.dot} aria-hidden />
+            셀프 호스팅 인스턴스에 연결됨 · {instanceVersion}
+          </p>
         </form>
-      </div>
+      </section>
     </div>
   )
 }

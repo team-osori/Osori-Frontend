@@ -1,3 +1,20 @@
+/* 레일 하단의 둥근 아바타 버튼 */
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-strong);
+  font: var(--text-caption);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+.trigger:hover, .trigger[aria-expanded='true'] { border-color: var(--color-primary); }
+
 .popover {
   position: fixed;
   z-index: 50;
@@ -10,8 +27,8 @@
 }
 
 @keyframes pop {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateX(-4px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 .header { display: flex; align-items: center; gap: 10px; padding: 17px 20px 18px; }
