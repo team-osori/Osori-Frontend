@@ -85,19 +85,18 @@
   font-size: 14px;
   font-weight: 700;
 }
-.more img { transition: transform 0.2s; }
-.up { transform: rotate(-90deg); }
+/* 2줄 반만 보이고 아래는 흐려짐 → 전체는 모달로 */
 .answerText {
-  display: -webkit-box;
+  max-height: calc(2.5em * 1.65);
   margin: 0;
   overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 6;
   font-size: 21px;
   line-height: 1.65;
   word-break: keep-all;
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent);
+  mask-image: linear-gradient(to bottom, #000 55%, transparent);
 }
-.expanded { -webkit-line-clamp: unset; }
+.fullAnswer { margin: 0; font-size: 19px; line-height: 1.9; word-break: keep-all; }
 
 .block { display: flex; flex-direction: column; gap: 10px; }
 .criteria { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none; }
@@ -156,6 +155,5 @@
 .layout { flex: 1; align-items: stretch; }
 .detail { display: flex; flex-direction: column; }
 .detailBody { flex: 1; }
-.answer { flex: 1; }
 .actions { margin-top: auto; }
 .toNotes { margin-top: auto; }

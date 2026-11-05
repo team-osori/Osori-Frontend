@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ProjectSidebar } from '../components/common'
+import { Modal } from '../components/ui'
 import { cx } from '../lib/cx'
 import { AppLayout } from '../layouts/AppLayout'
 import { ROUTES } from '../routes'
@@ -26,7 +27,7 @@ type ScoringPageProps = {
 export default function ScoringPage({ projectName = '모아몰 CS 챗봇', initialItems = MOCK_SCORE_ITEMS, onFinish }: ScoringPageProps) {
   const [items, setItems] = useState(initialItems)
   const [index, setIndex] = useState(() => Math.max(0, initialItems.findIndex((i) => i.verdict === null)))
-  const [expanded, setExpanded] = useState(false)
+  const [answerOpen, setAnswerOpen] = useState(false)
   const item = items[index]
 
   const correct = items.filter((i) => i.verdict === 'correct').length
@@ -35,7 +36,6 @@ export default function ScoringPage({ projectName = '모아몰 CS 챗봇', initi
 
   const go = (next: number) => {
     setIndex(Math.min(items.length - 1, Math.max(0, next)))
-    setExpanded(false)
   }
 
   /** 판정 후 다음 안 한 문항으로 */
@@ -156,13 +156,13 @@ export default function ScoringPage({ projectName = '모아몰 CS 챗봇', initi
                 label="챗봇 답변"
                 className={styles.answer}
                 aside={
-                  <button type="button" className={styles.more} onClick={() => setExpanded((v) => !v)} aria-expanded={expanded}>
-                    {expanded ? '접기' : '전체 보기'}
-                    <img src={chevronIcon} alt="" width={14} height={14} className={cx(expanded && styles.up)} />
+                  <button type="button" className={styles.more} onClick={() => setAnswerOpen(true)} aria-haspopup="dialog">
+                    전체 보기
+                    <img src={chevronIcon} alt="" width={14} height={14} />
                   </button>
                 }
               >
-                <p className={cx(styles.answerText, expanded && styles.expanded)}>{item.answer}</p>
+                <p className={styles.answerText}>{item.answer}</p>
               </Well>
 
               <section className={styles.block}>
@@ -219,6 +219,10 @@ export default function ScoringPage({ projectName = '모아몰 CS 챗봇', initi
           </StageCard>
         </div>
       </div>
+
+      <Modal open={answerOpen} onClose={() => setAnswerOpen(false)} size="xl" eyebrow={`챗봇 답변 · 프롬프트 ${item.promptVersion}`} title={item.question}>
+        <p className={styles.fullAnswer}>{item.answer}</p>
+      </Modal>
     </AppLayout>
   )
 }
