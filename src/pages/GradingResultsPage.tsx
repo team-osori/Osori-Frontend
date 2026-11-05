@@ -48,7 +48,6 @@ export default function GradingResultsPage({
         <ProjectSidebar
           user={user}
           projectName={projectName}
-          promptOptions={[]}
           promptVersions={summary.versions}
           promptValue={baseVersion}
           onPromptChange={setBaseVersion}

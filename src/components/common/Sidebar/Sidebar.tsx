@@ -127,7 +127,8 @@ export function HomeSidebar({
 type ProjectSidebarProps = {
   user: User
   projectName: string
-  promptOptions: SelectOption[]
+  /** promptVersions를 주면 쓰지 않음 */
+  promptOptions?: SelectOption[]
   promptValue: string
   onPromptChange: (value: string) => void
   questionSet: string

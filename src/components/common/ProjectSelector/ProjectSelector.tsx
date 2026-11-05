@@ -26,7 +26,8 @@ type Menu = 'project' | 'prompt'
 
 type ProjectSelectorProps = {
   projectName: string
-  promptOptions: SelectOption[]
+  /** promptVersions를 주면 쓰지 않음 */
+  promptOptions?: SelectOption[]
   promptValue: string
   onPromptChange: (value: string) => void
   questionSet: string
@@ -38,7 +39,7 @@ type ProjectSelectorProps = {
 /** 프로젝트 사이드바 상단의 프로젝트 / 프롬프트 버전 / 질문 세트 카드 */
 export function ProjectSelector({
   projectName,
-  promptOptions,
+  promptOptions = [],
   promptValue,
   onPromptChange,
   questionSet,
