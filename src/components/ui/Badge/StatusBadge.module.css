@@ -18,3 +18,5 @@
 .danger { background: var(--color-danger); }
 .primary { background: var(--color-primary); }
 .muted { background: var(--color-text-tertiary); }
+.caution { background: var(--color-caution); }
+.accent { background: var(--color-accent); }
