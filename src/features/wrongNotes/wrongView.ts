@@ -18,9 +18,26 @@ export function causeOf(item: Pick<EvaluationItemSummary, 'activeHypothesisAreas
 }
 
 /** 왜 틀렸나 문장 조각. mark가 있으면 형광 표시 (doc 근거 정책 원문 · prompt 프롬프트 지시) */
-export type WhyPart = { text: string; mark?: 'doc' | 'prompt' }
+export type WhyPart = { text: string; mark?: 'doc' | 'prompt'; source?: string }
 
-type Issue = { reason?: string | null; recommendation?: string | null; policyEvidence?: { quote?: string } }
+type PolicyEvidence = {
+  quote?: string
+  policyTitle?: string | null
+  fileName?: string | null
+  pageNumber?: number | null
+  chunkIndex?: number | null
+}
+type Issue = { reason?: string | null; recommendation?: string | null; policyEvidence?: PolicyEvidence }
+
+/** 마우스를 올렸을 때 보여줄 출처: 정책 이름 · 파일 · 페이지 · 청크 */
+export function sourceLabel(evidence: PolicyEvidence): string {
+  const where = [
+    evidence.pageNumber ? `${evidence.pageNumber}페이지` : null,
+    evidence.chunkIndex ? `청크 #${evidence.chunkIndex}` : null,
+  ].filter(Boolean)
+  const doc = [evidence.policyTitle, evidence.fileName].filter(Boolean).join(' · ')
+  return [doc || '정책 원문', where.join(' · ')].filter(Boolean).join(' — ')
+}
 type Hypothesis = { area: string; reason: string }
 type SideAnalysis = { issues?: Issue[]; activeHypotheses?: Hypothesis[] }
 
@@ -31,7 +48,11 @@ export function whyOf(item: EvaluationItem): { answer: string; why: WhyPart[] } 
   const hypothesis = side.activeHypotheses?.[0]
   const parts: WhyPart[] = []
   if (issue?.policyEvidence?.quote) {
-    parts.push({ text: '정책 원문 ' }, { text: `“${issue.policyEvidence.quote}”`, mark: 'doc' }, { text: ' ' })
+    parts.push(
+      { text: '정책 원문 ' },
+      { text: `“${issue.policyEvidence.quote}”`, mark: 'doc', source: sourceLabel(issue.policyEvidence) },
+      { text: ' ' },
+    )
   }
   parts.push({ text: issue?.reason ?? issue?.recommendation ?? '조건을 충족하지 못했습니다.' })
   if (hypothesis?.reason && hypothesis.reason !== issue?.reason) parts.push({ text: ` ${hypothesis.reason}` })

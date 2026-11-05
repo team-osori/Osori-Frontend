@@ -10,6 +10,7 @@ import chevronSmIcon from '../assets/icons/stage/chevron-right-sm.svg'
 import trendIcon from '../assets/icons/stage/trend-arrow.svg'
 import { useConnection } from '../features/connection/useConnection'
 import { getEvaluationItem, getGradingBoard, listEvaluationItems, rerunEvaluation } from '../features/evaluation/api'
+import { RunPicker, useRunHistory } from '../features/evaluation/RunPicker'
 import { getProject } from '../features/project'
 import { createPromptVersion, usePrompts } from '../features/prompt'
 import { useProjectService } from '../features/service'
@@ -56,7 +57,11 @@ export default function WrongNotesPage({ projectId, onRetest }: WrongNotesPagePr
   const { connection } = useConnection(projectId, serviceId)
   const prompts = usePrompts(projectId, serviceId)
   const prompt = prompts.items[0]
-  const evaluationId = project.data?.progress?.evaluation?.id
+  const latestId = project.data?.progress?.evaluation?.id
+  // 지난 응시의 오답 노트를 골라 보는 중이면 그 ID, 아니면 최신 응시
+  const [pickedId, setPickedId] = useState<string | null>(null)
+  const evaluationId = pickedId ?? latestId
+  const history = useRunHistory(projectId, serviceId, latestId)
 
   // 평가에 쓴 프롬프트 버전 (수정 제안의 기준 버전)
   const board = useApiQuery(
@@ -79,7 +84,14 @@ export default function WrongNotesPage({ projectId, onRetest }: WrongNotesPagePr
         : [],
     [projectId, serviceId, evaluationId],
   )
-  const items = useMemo(() => (wrong.data ?? []).map((it) => ({ ...it, cause: causeOf(it) })), [wrong.data])
+  // 채점 모델이 미충족 조건을 판정하지 못한 문항(원인을 짚을 근거가 없음)은 오답 노트에서 뺌
+  const items = useMemo(
+    () =>
+      (wrong.data ?? [])
+        .filter((it) => it.analysisStatus === 'HYPOTHESIS_AVAILABLE')
+        .map((it) => ({ ...it, cause: causeOf(it) })),
+    [wrong.data],
+  )
 
   // 이 평가로 만든 가장 최근 수정 제안 (실패한 것은 건너뜀)
   const [suggestion, setSuggestion] = useState<Suggestion | null>(null)
@@ -280,6 +292,17 @@ export default function WrongNotesPage({ projectId, onRetest }: WrongNotesPagePr
                 </b>
               </span>
               <span className={styles.forecastHint}>수정안 대상</span>
+              <RunPicker
+                runs={history.runs}
+                value={evaluationId}
+                latestId={latestId}
+                onChange={(id) => {
+                  setPickedId(id === latestId ? null : id)
+                  setIndex(0)
+                  setOpen(false)
+                  setSuggestion(null)
+                }}
+              />
             </div>
           }
         />
@@ -356,8 +379,18 @@ export default function WrongNotesPage({ projectId, onRetest }: WrongNotesPagePr
                 <p className={styles.whyText}>
                   {(view?.why ?? []).map((part, i) =>
                     part.mark ? (
-                      <mark key={i} className={cx(styles.mark, styles[part.mark])}>
+                      <mark
+                        key={i}
+                        className={cx(styles.mark, styles[part.mark], part.source && styles.sourced)}
+                        tabIndex={part.source ? 0 : undefined}
+                        aria-label={part.source ? `${part.text} (출처: ${part.source})` : undefined}
+                      >
                         {part.text}
+                        {part.source && (
+                          <span className={styles.sourceTip} role="tooltip">
+                            출처 · {part.source}
+                          </span>
+                        )}
                       </mark>
                     ) : (
                       <span key={i}>{part.text}</span>
@@ -412,14 +445,14 @@ export default function WrongNotesPage({ projectId, onRetest }: WrongNotesPagePr
                         <div className={styles.diff}>
                           <p className={styles.del}>
                             <span aria-hidden>−</span>
-                            {edit.originalText}
+                            <span className={styles.diffText}>{edit.originalText}</span>
                           </p>
                           <p className={styles.ins}>
                             <span aria-hidden>+</span>
-                            {edit.replacementText}
+                            <span className={styles.diffText}>{edit.replacementText}</span>
                           </p>
                         </div>
-                        <p className={styles.notFixable}>{edit.reason}</p>
+                        <p className={styles.editReason}>{edit.reason}</p>
                         <button
                           type="button"
                           className={cx(styles.apply, selected.includes(edit.id) && styles.applied)}

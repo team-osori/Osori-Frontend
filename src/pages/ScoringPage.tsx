@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ErrorNotice, ProjectSidebar, useProjectNav } from '../components/common'
-import { Modal, useToast } from '../components/ui'
+import { Button, Modal, useToast } from '../components/ui'
+import { RunPicker, useRunHistory } from '../features/evaluation/RunPicker'
 import { cx } from '../lib/cx'
 import { AppLayout } from '../layouts/AppLayout'
 import { errorMessage, isApiError, useApiQuery } from '../lib/api'
@@ -39,7 +40,11 @@ export default function ScoringPage({ projectId, onFinish }: ScoringPageProps) {
   const project = useApiQuery((signal) => getProject(projectId, { signal }), [projectId])
   const { service } = useProjectService(projectId)
   const serviceId = service?.id
-  const evaluationId = project.data?.progress?.evaluation?.id
+  const latestId = project.data?.progress?.evaluation?.id
+  // 지난 응시를 골라 보는 중이면 그 ID, 아니면 최신 응시
+  const [pickedId, setPickedId] = useState<string | null>(null)
+  const evaluationId = pickedId ?? latestId
+  const history = useRunHistory(projectId, service?.id, latestId)
 
   const board = useApiQuery(
     (signal) => (serviceId && evaluationId ? getGradingBoard(projectId, serviceId, evaluationId, { signal }) : Promise.resolve(null)),
@@ -56,6 +61,8 @@ export default function ScoringPage({ projectId, onFinish }: ScoringPageProps) {
 
   const items = useMemo(() => (board.data?.items ?? []).map(toSeat), [board.data])
   const [index, setIndex] = useState<number | null>(null)
+  // 끝난 응시를 두고 같은 시험지로 새로 응시하려고 시작 화면을 연 상태
+  const [again, setAgain] = useState(false)
   // 처음에는 아직 O/X를 안 남긴 첫 문항부터
   const current = index ?? Math.max(0, items.findIndex((i) => i.canReview && i.verdict === null))
   const seat = items[current]
@@ -130,14 +137,23 @@ export default function ScoringPage({ projectId, onFinish }: ScoringPageProps) {
   }
   if (!project.data || (evaluationId && !board.data)) return null
 
-  // 아직 응시하지 않았으면 시작 화면
-  if (!evaluationId || !seat) {
+  // 실패 · 취소된 응시는 이어서 할 수 없어서 다시 응시할 수 있게 시작 화면으로
+  // 지난 응시를 보고 있을 때는 시작 화면으로 넘기지 않고 그 결과를 그대로 보여줌
+  const retry = !pickedId && board.data && (board.data.evaluationStatus === 'FAILED' || board.data.evaluationStatus === 'CANCELLED')
+
+  // 아직 응시하지 않았거나, 지난 응시가 실패했거나, 새로 응시하려 하면 시작 화면
+  if (!evaluationId || !seat || retry || again) {
     return (
       <StartPanel
         projectId={projectId}
         serviceId={serviceId}
+        retry={Boolean(retry)}
+        onCancel={again && !retry ? () => setAgain(false) : undefined}
         testSet={project.data.progress?.testSet ?? null}
         onStarted={() => {
+          setAgain(false)
+          setPickedId(null)
+          setIndex(null)
           project.reload()
           refreshSummary?.()
         }}
@@ -172,6 +188,20 @@ export default function ScoringPage({ projectId, onFinish }: ScoringPageProps) {
               <span className={styles.position}>
                 <b>{current + 1}</b> / {items.length}
               </span>
+              <RunPicker
+                runs={history.runs}
+                value={evaluationId}
+                latestId={latestId}
+                onChange={(id) => {
+                  setPickedId(id === latestId ? null : id)
+                  setIndex(null)
+                }}
+              />
+              {!running && (
+                <Button variant="tonal" size="xxs" onClick={() => setAgain(true)}>
+                  새로 응시
+                </Button>
+              )}
             </div>
           }
         />
@@ -313,11 +343,15 @@ type StartPanelProps = {
   projectId: string
   serviceId?: string
   testSet: { versionId: string; label: string; status: 'draft' | 'confirmed'; questionCount: number } | null
+  /** 지난 응시가 실패 · 취소돼서 다시 시작하는 경우 */
+  retry?: boolean
+  /** 끝난 응시 결과로 돌아가기 (새로 응시하려다 취소할 때) */
+  onCancel?: () => void
   onStarted: () => void
 }
 
 /** 시험지 · 연결 · 프롬프트가 준비됐는지 보여주고, 챗봇에게 시험지 전체를 풀게 함 */
-function StartPanel({ projectId, serviceId, testSet, onStarted }: StartPanelProps) {
+function StartPanel({ projectId, serviceId, testSet, retry, onCancel, onStarted }: StartPanelProps) {
   const toast = useToast()
   const { connection, verified } = useConnection(projectId, serviceId)
   const prompts = usePrompts(projectId, serviceId)
@@ -341,7 +375,7 @@ function StartPanel({ projectId, serviceId, testSet, onStarted }: StartPanelProp
         testSetVersionId: testSet.versionId,
         promptVersionId: prompt.currentVersionId,
       })
-      toast.success('응시를 시작했습니다. 답이 들어오는 대로 채점할 수 있습니다.')
+      toast.success(retry ? '다시 응시를 시작했습니다. 답이 들어오는 대로 채점할 수 있습니다.' : '응시를 시작했습니다. 답이 들어오는 대로 채점할 수 있습니다.')
       onStarted()
     } catch (error) {
       toast.error(errorMessage(error, '응시를 시작하지 못했습니다.'))
@@ -357,6 +391,11 @@ function StartPanel({ projectId, serviceId, testSet, onStarted }: StartPanelProp
         <StageCard className={styles.start}>
           <h2 className={styles.startTitle}>챗봇에게 시험지를 풀게 할까요?</h2>
           <p className={styles.startLead}>시험지의 모든 문제를 챗봇에 보내고, 받은 답을 채점 기준으로 자동 판정합니다. 그다음 문제마다 맞음 · 틀림을 확인합니다.</p>
+          {retry && (
+            <p className={styles.startLead} role="status">
+              지난 응시가 끝까지 진행되지 못했습니다. 아래에서 다시 시작해 주세요.
+            </p>
+          )}
           <ul className={styles.startChecks}>
             {checks.map((c) => (
               <li key={c.text} className={c.ok ? styles.checkOk : styles.checkMissing}>
@@ -368,9 +407,19 @@ function StartPanel({ projectId, serviceId, testSet, onStarted }: StartPanelProp
               </li>
             ))}
           </ul>
+          {onCancel && (
+            <p className={styles.startLead}>
+              같은 시험지로 챗봇을 다시 응시시키고 새로 채점합니다. 지난 채점 결과는 그대로 남습니다.
+            </p>
+          )}
           <PrimaryAction disabled={!ready || starting} onClick={start}>
-            {starting ? '시작하는 중…' : '응시 시작'}
+            {starting ? '시작하는 중…' : onCancel ? '새로 응시 시작' : '응시 시작'}
           </PrimaryAction>
+          {onCancel && (
+            <Button variant="tonal" size="xxs" onClick={onCancel} disabled={starting}>
+              지난 결과로 돌아가기
+            </Button>
+          )}
         </StageCard>
       </div>
     </AppLayout>

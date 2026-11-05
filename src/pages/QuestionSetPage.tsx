@@ -101,10 +101,15 @@ export default function QuestionSetPage({ projectId, onConfirm, onBack }: Questi
     return { testSetId: created.testSet.id, version: created.version }
   }
 
-  /** 새로 만든 시험지면 목록 → 상세 → 버전 순으로 다시 불러오고, 기존 시험지면 받은 버전으로 바로 바꿈 */
+  /**
+   * 받은 버전을 화면에 반영. 기존 시험지면 받은 버전으로 바로 바꾸고,
+   * 이번에 새로 만든 시험지면(눌렀을 때의 version은 null) 상세와 버전을 둘 다 다시 받음.
+   * 생성은 오래 걸려서 그사이 빈 버전이 먼저 불러와져 있으므로 버전도 꼭 다시 받아야 함
+   */
   function show(next: TestSetVersion) {
-    if (version && next.id === version.id) set.setVersion(next)
-    else detail.reload()
+    if (version && next.id === version.id) return set.setVersion(next)
+    detail.reload()
+    set.reload()
   }
 
   async function runDraft() {
