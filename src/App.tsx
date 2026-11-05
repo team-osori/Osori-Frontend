@@ -11,6 +11,9 @@ export default function App() {
     // API 연동 전, 프로젝트가 없는 상태(02-1)를 확인하기 위한 경로
     case '/projects/empty':
       return <ProjectListPage user={MOCK_USER} projects={[]} />
+    // API 연동 전, 로그인 오류 상태(11)를 확인하기 위한 경로
+    case '/login/error':
+      return <LoginPage initialEmail={MOCK_USER.email} initialError="비밀번호가 일치하지 않습니다." />
     default:
       return <LoginPage onLogin={() => navigate('/projects')} />
   }

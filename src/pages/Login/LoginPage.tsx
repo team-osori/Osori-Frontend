@@ -1,67 +1,72 @@
 import { useState, type FormEvent } from 'react'
-import { AuthBrandPanel } from '../../components/common'
-import { Button, TextField } from '../../components/ui'
-import styles from './LoginPage.module.css'
+import { TextField } from '../../components/ui'
+import { AuthHint, AuthLayout, AuthSwitch } from '../../layouts/AuthLayout'
 
-/** 01 로그인 — 좌측 브랜드 패널 + 우측 로그인 폼 */
-export function LoginPage({ onLogin }: { onLogin?: () => void }) {
-  const [email, setEmail] = useState('')
+type Credentials = { email: string; password: string }
+
+type LoginPageProps = {
+  /** 로그인에 실패하면 비밀번호 칸 아래에 보여줄 문구를 돌려줍니다. 성공하면 아무것도 돌려주지 않습니다. */
+  onLogin?: (credentials: Credentials) => string | void | Promise<string | void>
+  initialEmail?: string
+  /** 처음부터 오류 상태로 보여줄 문구 (11 로그인 오류) */
+  initialError?: string
+}
+
+/** 01 로그인 · 11 로그인 오류 */
+export function LoginPage({ onLogin, initialEmail = '', initialError }: LoginPageProps) {
+  const [email, setEmail] = useState(initialEmail)
   const [password, setPassword] = useState('')
+  const [error, setError] = useState(initialError)
+  const [submitting, setSubmitting] = useState(false)
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    // TODO: 인증 API 연동. 지금은 입력값과 무관하게 다음 화면으로 이동
-    onLogin?.()
+    setSubmitting(true)
+    try {
+      setError((await onLogin?.({ email, password })) || undefined)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
-    <div className={styles.page}>
-      <div className={styles.brand}>
-        <AuthBrandPanel connected />
-      </div>
-
-      <div className={styles.formSide}>
-        <form className={styles.form} onSubmit={handleSubmit} noValidate>
-          <header className={styles.header}>
-            <h1 className={styles.title}>로그인</h1>
-            <p className={styles.subtitle}>팀 계정으로 로그인하세요.</p>
-          </header>
-
-          <div className={styles.fields}>
-            <TextField
-              label="이메일"
-              type="email"
-              name="email"
-              autoComplete="email"
-              placeholder="이메일을 입력하세요"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <TextField
-              label="비밀번호"
-              type="password"
-              name="password"
-              autoComplete="current-password"
-              placeholder="비밀번호를 입력하세요"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-
-          <Button type="submit" className={styles.submit}>
-            로그인
-          </Button>
-
-          <p className={styles.signup}>
-            계정이 없으신가요?{' '}
-            <a className={styles.signupLink} href="/signup">
-              회원가입
-            </a>
-          </p>
-
-          <p className={styles.hint}>비밀번호를 잊으셨나요? 인스턴스 관리자에게 문의하세요.</p>
-        </form>
-      </div>
-    </div>
+    <AuthLayout
+      title="로그인"
+      subtitle="팀 계정으로 로그인하세요."
+      submitLabel="로그인"
+      onSubmit={handleSubmit}
+      submitting={submitting}
+      footer={
+        <>
+          <AuthSwitch prompt="계정이 없으신가요?" linkLabel="회원가입" href="#/signup" />
+          <AuthHint>비밀번호를 잊으셨나요? 인스턴스 관리자에게 문의하세요.</AuthHint>
+        </>
+      }
+    >
+      <TextField
+        label="이메일"
+        size="lg"
+        type="email"
+        name="email"
+        autoComplete="email"
+        placeholder="이메일을 입력하세요"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <TextField
+        label="비밀번호"
+        size="lg"
+        type="password"
+        name="password"
+        autoComplete="current-password"
+        placeholder="비밀번호를 입력하세요"
+        value={password}
+        error={error}
+        onChange={(e) => {
+          setPassword(e.target.value)
+          setError(undefined)
+        }}
+      />
+    </AuthLayout>
   )
 }

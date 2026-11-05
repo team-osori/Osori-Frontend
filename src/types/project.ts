@@ -13,4 +13,4 @@ export type Project = {
   progressText: string
 }
 
-export type CurrentUser = { name: string; role: string }
+export type CurrentUser = { name: string; role: string; email: string }
