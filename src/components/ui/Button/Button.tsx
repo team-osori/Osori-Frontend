@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes } from 'react'
+import type { ButtonHTMLAttributes, Ref } from 'react'
 import { cx } from '../../../lib/cx'
 import type { IconName } from '../../../assets/icons'
 import { Icon } from '../Icon/Icon'
@@ -13,6 +13,8 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   /** 글자 뒤에 붙는 아이콘 (예: 다음 단계 →) */
   iconEnd?: IconName
   fullWidth?: boolean
+  /** 팝업 위치 계산·포커스 복귀용 (React 19는 ref를 일반 prop으로 전달) */
+  ref?: Ref<HTMLButtonElement>
 }
 
 export function Button({
