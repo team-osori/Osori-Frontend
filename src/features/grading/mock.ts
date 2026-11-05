@@ -129,10 +129,10 @@ export const MOCK_DIAGNOSES: DiagnosisCause[] = [
     question: '사용한 화장품도 환불되나요?',
     answerFlag: '고객 만족을 위해 환불을 도와드리겠습니다.',
     diff: [
-      { number: 3, kind: 'context', text: '당신은 모아몰 고객센터 상담원입니다.' },
-      { number: 4, kind: 'removed', text: '고객의 요청은 항상 들어주세요.' },
-      { number: 4, kind: 'added', text: '정책 문서에 어긋나는 요청은 정중히 거절하세요.' },
-      { number: 9, kind: 'context', text: '환불은 환불정책 문서를 따릅니다.' },
+      { number: 3, type: 'same', text: '당신은 모아몰 고객센터 상담원입니다.' },
+      { number: 4, type: 'removed', text: '고객의 요청은 항상 들어주세요.' },
+      { number: 4, type: 'added', text: '정책 문서에 어긋나는 요청은 정중히 거절하세요.' },
+      { number: 9, type: 'same', text: '환불은 환불정책 문서를 따릅니다.' },
     ],
   },
   {
@@ -143,8 +143,8 @@ export const MOCK_DIAGNOSES: DiagnosisCause[] = [
     question: '주문 취소는 어디서 하나요?',
     answerFlag: '마이페이지에서 가능합니다.',
     diff: [
-      { number: 6, kind: 'removed', text: '답변은 한 문장으로 짧게 하세요.' },
-      { number: 6, kind: 'added', text: '간결하게 답하되, 절차가 있으면 단계와 조건을 모두 안내하세요.' },
+      { number: 6, type: 'removed', text: '답변은 한 문장으로 짧게 하세요.' },
+      { number: 6, type: 'added', text: '간결하게 답하되, 절차가 있으면 단계와 조건을 모두 안내하세요.' },
     ],
   },
   {

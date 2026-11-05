@@ -1,3 +1,5 @@
+import type { DiffLine } from '../../components/ui'
+
 /** 판정이 갈린 평가 기준 */
 export type GradingCriterion = '검색' | '근거' | '응답' | '정책'
 
@@ -80,10 +82,6 @@ export type JudgeItem = {
 
 /* ---------- 08 원인 진단 ---------- */
 
-export type DiffKind = 'context' | 'removed' | 'added'
-
-export type CauseDiffLine = { number: number; kind: DiffKind; text: string }
-
 export type DiagnosisCause = {
   id: string
   cause: FailureCause
@@ -100,7 +98,7 @@ export type DiagnosisCause = {
   /** 검색된 청크 안내 (검색 · 모델 원인) */
   chunk?: { title: string; text: string }
   /** 프롬프트 수정 제안 diff (프롬프트 원인) */
-  diff?: CauseDiffLine[]
+  diff?: DiffLine[]
   /** 카드 맨 아래 안내 (검색 · 모델 원인) */
   note?: string
 }
