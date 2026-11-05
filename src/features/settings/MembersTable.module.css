@@ -1,0 +1,98 @@
+.card {
+  overflow: hidden;
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+}
+
+/* 좁은 화면에서는 표를 가로로 스크롤 */
+.scroll { overflow-x: auto; }
+
+.table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+  text-align: left;
+}
+
+/* 열 너비: Figma 1094px 기준 비율 */
+.colAvatar { width: 6.95%; }
+.colName { width: 23%; }
+.colEmail { width: 30.15%; }
+.colRole { width: 14.25%; }
+
+.table th,
+.table td { border-bottom: 1px solid var(--color-surface-strong); }
+
+.table th {
+  height: 44px;
+  padding: 0;
+  font: var(--text-label);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+}
+
+.table td {
+  height: 64px;
+  padding: 0;
+  font: var(--text-body-sm);
+  color: var(--color-text-secondary);
+}
+
+.avatarCell { padding-left: 20px; }
+
+.name { font-weight: var(--font-weight-bold); color: var(--color-text); }
+.muted { font-weight: var(--font-weight-regular); color: var(--color-text-secondary); }
+.me { color: var(--color-text-secondary); white-space: pre; }
+
+.email { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.emailPending { color: var(--color-text); }
+
+.adminRole { font-weight: var(--font-weight-bold); color: var(--color-primary); }
+
+.pendingAvatar {
+  display: block;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: var(--radius-full);
+}
+
+.lastSeen { display: flex; align-items: center; justify-content: space-between; padding-right: 4px; }
+
+.more {
+  padding: 0 4px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  font: 18px / 21px var(--font-family);
+  letter-spacing: 1px;
+  color: var(--color-text);
+}
+.more:hover { background: var(--color-surface-strong); }
+
+.actions { display: flex; align-items: center; gap: 6px; }
+
+.rowButton {
+  height: 34px;
+  padding: 0 12px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-strong);
+  font: var(--text-label);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  white-space: nowrap;
+}
+.rowButton:hover { background: #42424d; }
+.rowButtonDanger { color: var(--color-danger); }
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
