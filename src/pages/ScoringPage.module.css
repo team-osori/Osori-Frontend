@@ -159,13 +159,5 @@
 .toNotes { margin-top: auto; }
 
 /* ---------- 한 화면에 들어오게 ---------- */
-/* 문항 칸 높이는 화면 높이로만 정함 (오른쪽 내용 길이에 따라 늘었다 줄었다 하지 않게) */
-.sheet { min-height: 0; }
-.grid { grid-auto-rows: clamp(64px, calc((var(--vh) - 420px) / 6), 122px); }
-.seat { aspect-ratio: auto; height: 100%; max-height: none; }
 .detail { padding: 32px 40px; }
 .detailBody { gap: 18px; }
-@media (max-width: 1180px) {
-  .grid { grid-auto-rows: auto; }
-  .seat { aspect-ratio: 1; height: auto; }
-}
