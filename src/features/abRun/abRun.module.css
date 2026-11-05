@@ -1,0 +1,61 @@
+.card { display: flex; flex-direction: column; gap: 14px; min-width: 0; container-type: inline-size; }
+
+/* 비교 버전 */
+.versionLabel { font: var(--text-label); color: var(--color-text-secondary); }
+.versions { display: flex; align-items: center; gap: 10px; }
+.versions > div { flex: 1; min-width: 0; }
+.vs { flex-shrink: 0; font: var(--text-body-sm); color: var(--color-text-secondary); }
+@container (max-width: 340px) {
+  .versions { flex-direction: column; align-items: stretch; }
+  .vs { text-align: center; }
+}
+
+/* 버전별 진행률 */
+.progress { display: flex; flex-direction: column; gap: 8px; }
+.progressHead { display: flex; align-items: center; gap: 10px; font: var(--text-body-sm); }
+.progressCount { margin-left: auto; font-weight: var(--font-weight-bold); }
+
+/* 문항별 상태 표 */
+.table {
+  width: 100%;
+  margin-top: 4px;
+  overflow: hidden;
+  border-collapse: collapse;
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  table-layout: fixed;
+}
+.table th {
+  height: 40px;
+  padding: 0 12px;
+  font: var(--text-caption);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+  text-align: left;
+}
+.table td {
+  height: 46px;
+  padding: 0 12px;
+  border-top: 1px solid var(--color-surface);
+  font: var(--text-label);
+}
+.table th:first-child,
+.table td:first-child { padding-left: 16px; }
+.colQuestion { width: auto; }
+.colStatus { width: 102px; }
+.colTime { width: 86px; }
+.question { overflow: hidden; font: var(--text-body-sm); text-overflow: ellipsis; white-space: nowrap; }
+.time { color: var(--color-text-secondary); }
+.status { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+
+@container (max-width: 460px) {
+  .colStatus { width: 78px; }
+  .colTime { width: 0; }
+  .table th:last-child,
+  .table td:last-child { display: none; }
+}
+
+/* 변경 내용 */
+.diffHead { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.diffCount { font: var(--text-label); color: var(--color-text-secondary); }
+.memo { margin: 0; font: var(--text-label); line-height: 19.5px; color: var(--color-text-secondary); }
