@@ -57,3 +57,15 @@
 .chunkList { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; }
 
 .note { margin: 0; font: var(--text-label); line-height: 19.5px; color: var(--color-text-secondary); word-break: keep-all; }
+
+/* 카드 제목 옆 상태 표시 */
+.status { display: inline-flex; align-items: center; gap: 6px; font: var(--text-label); color: var(--color-text-secondary); }
+
+/* 접어 두는 고급 설정 (요청 형식) */
+.details { border-top: 1px solid var(--color-border); padding-top: 12px; }
+.summary { cursor: pointer; font: var(--text-label); font-weight: var(--font-weight-bold); color: var(--color-text-secondary); }
+.detailsBody { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+.fieldError { margin: 0; font: var(--text-caption); color: var(--color-danger); }
+
+/* 카드 아래 저장 줄: 왼쪽 안내, 오른쪽 버튼 */
+.actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }

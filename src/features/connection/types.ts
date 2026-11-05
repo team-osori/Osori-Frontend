@@ -1,24 +1,7 @@
+/** 정책 문서 카드에 보이는 문서 하나 */
 export type PolicyDoc = {
   id: string
   name: string
-  /** 청크로 나눈 개수. 업로드 직후 처리 중이면 null */
-  chunks: number | null
+  /** 이름 옆 작은 글씨 (예: "2026-11-06 저장", "올리는 중") */
+  meta: string
 }
-
-export type ConnectionConfig = {
-  serviceName: string
-  endpointUrl: string
-  /** Authorization: Bearer 뒤에 붙는 토큰 */
-  authToken: string
-  /** 응답 JSON에서 답변·근거 청크를 꺼내는 경로 */
-  responsePath: string
-  systemPrompt: string
-  promptVersion: string
-  policyDocs: PolicyDoc[]
-  graderA: string
-  graderB: string
-}
-
-export type ConnectionTestResult =
-  | { ok: true; status: number; elapsedMs: number; answer: string; chunks: string[] }
-  | { ok: false; status: number | null; elapsedMs: number; message: string }

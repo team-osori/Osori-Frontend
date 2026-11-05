@@ -5,6 +5,7 @@ export {
   listServices,
   SERVICE_RULES,
   servicePath,
+  updateService,
   type ServiceCreateInput,
   type ServiceResponse,
 } from './api'
