@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { HomeSidebar, PageHeader, ProjectCard, ProjectCardGrid } from '../../components/common'
+import { EmptyState, HomeSidebar, PageHeader, ProjectCard, ProjectCardGrid } from '../../components/common'
 import { Button, Select, type SelectOption } from '../../components/ui'
 import { AppLayout } from '../../layouts/AppLayout'
 import type { CurrentUser, Project } from '../../types/project'
@@ -75,19 +75,31 @@ export function ProjectListPage({ user, projects, onCreateProject, onOpenProject
           }
         />
 
-        <ProjectCardGrid>
-          {visibleProjects.map((project) => (
-            <ProjectCard
-              key={project.id}
-              name={project.name}
-              meta={metaText(project)}
-              status={project.status}
-              scores={project.scores}
-              progressText={project.progressText}
-              onAction={() => onOpenProject?.(project)}
-            />
-          ))}
-        </ProjectCardGrid>
+        {projects.length === 0 ? (
+          /* 02-1 빈 상태 */
+          <EmptyState
+            icon="gridLg"
+            title="아직 프로젝트가 없습니다"
+            description="연결 설정부터 개선안 적용까지 7단계로 챗봇 프롬프트를 평가합니다."
+            action={<Button onClick={onCreateProject}>첫 프로젝트 만들기</Button>}
+          />
+        ) : visibleProjects.length === 0 ? (
+          <EmptyState icon="search" title="검색 결과가 없습니다" description={`'${keyword.trim()}'와 일치하는 프로젝트가 없습니다.`} />
+        ) : (
+          <ProjectCardGrid>
+            {visibleProjects.map((project) => (
+              <ProjectCard
+                key={project.id}
+                name={project.name}
+                meta={metaText(project)}
+                status={project.status}
+                scores={project.scores}
+                progressText={project.progressText}
+                onAction={() => onOpenProject?.(project)}
+              />
+            ))}
+          </ProjectCardGrid>
+        )}
       </div>
     </AppLayout>
   )
