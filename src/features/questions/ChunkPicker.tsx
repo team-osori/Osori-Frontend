@@ -6,11 +6,11 @@ import { usePopover } from '../../components/ui/Select/usePopover'
 import styles from './questions.module.css'
 
 type ChunkPickerProps = {
-  /** 연결할 수 있는 청크 전체 */
-  options: string[]
+  /** 연결할 수 있는 근거 전체 */
+  options: { value: string; label: string }[]
   /** 이미 연결된 청크 (목록에서 제외) */
   linked: string[]
-  onPick: (chunk: string) => void
+  onPick: (value: string) => void
 }
 
 /** "청크 연결" 버튼 + 고를 수 있는 청크 목록 */
@@ -24,12 +24,12 @@ export function ChunkPicker({ options, linked, onPick }: ChunkPickerProps) {
   const close = useCallback(() => setOpen(false), [])
   const style = usePopover({ open, onClose: close, triggerRef, rootRef, popoverRef: listRef })
 
-  const available = options.filter((o) => !linked.includes(o))
+  const available = options.filter((o) => !linked.includes(o.value))
 
   const pick = (index: number) => {
-    const chunk = available[index]
-    if (!chunk) return
-    onPick(chunk)
+    const option = available[index]
+    if (!option) return
+    onPick(option.value)
     setOpen(false)
     triggerRef.current?.focus()
   }
@@ -68,14 +68,14 @@ export function ChunkPicker({ options, linked, onPick }: ChunkPickerProps) {
         }}
         onKeyDown={onKeyDown}
       >
-        청크 연결
+        근거 연결
       </Button>
       {open &&
         createPortal(
           <ul ref={listRef} id={listId} role="listbox" aria-label="연결할 근거 청크" className={styles.pickerList} style={style}>
-            {available.map((chunk, index) => (
+            {available.map((option, index) => (
               <li
-                key={chunk}
+                key={option.value}
                 role="option"
                 aria-selected={index === highlight}
                 className={cx(styles.pickerOption, index === highlight && styles.pickerHighlighted)}
@@ -83,7 +83,7 @@ export function ChunkPicker({ options, linked, onPick }: ChunkPickerProps) {
                 onClick={() => pick(index)}
               >
                 <Icon name="fileChip" />
-                {chunk}
+                {option.label}
               </li>
             ))}
           </ul>,

@@ -4,7 +4,6 @@ import { useToast } from './components/ui'
 import { useAuth } from './features/auth'
 import { CreateProjectModal, setupProject, toProject, useProjects, type NewProject } from './features/project'
 import { MOCK_JUDGE_ITEMS } from './features/grading/mock'
-import { MOCK_REVIEW_QUESTIONS } from './features/questions/mock'
 import { MOCK_MEMBERS, type Member } from './features/settings'
 import { useHashRoute } from './hooks/useHashRoute'
 import { errorMessage, isApiError, setSessionExpiredHandler } from './lib/api'
@@ -66,9 +65,10 @@ export default function App() {
     if (stage) setUnlockedStage((prev) => Math.max(prev, stage))
   }, [route])
 
-  // 프로젝트를 고르지 않고 프로젝트 설정에 들어오면 목록으로 보냄
+  // 프로젝트를 고르지 않고 프로젝트 화면(설정 · 평가 단계)에 들어오면 목록으로 보냄
   useEffect(() => {
-    if (auth.status === 'signedIn' && route === ROUTES.projectSettings && !currentProjectId) navigate(ROUTES.projects)
+    const projectScreen = route === ROUTES.projectSettings || stageOf(route) !== undefined
+    if (auth.status === 'signedIn' && projectScreen && !currentProjectId) navigate(ROUTES.projects)
   }, [auth.status, route, currentProjectId, navigate])
 
   function selectProject(projectId: string | null) {
@@ -216,10 +216,9 @@ export default function App() {
       // 평가 3단계. 사이드바의 단계 · 프로젝트 설정 이동은 ProjectSidebar가 직접 처리합니다.
       // 1 시험지 만들기
       case ROUTES.questions:
-        return <QuestionSetPage onConfirm={() => navigate(ROUTES.scoring)} />
-      // API 연동 전, 문제가 이미 있는 시험지 검토 화면을 확인하기 위한 경로
-      case '/questions/sample':
-        return <QuestionSetPage initialQuestions={MOCK_REVIEW_QUESTIONS} onConfirm={() => navigate(ROUTES.scoring)} />
+        return currentProjectId ? (
+          <QuestionSetPage key={currentProjectId} projectId={currentProjectId} onConfirm={() => navigate(ROUTES.scoring)} />
+        ) : null
       // 2 채점: A/B 실행 → 채점 결과 → 사람 판정
       case ROUTES.scoring:
         return <ScoringPage onFinish={() => navigate(ROUTES.wrongNotes)} />

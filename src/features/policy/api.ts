@@ -10,7 +10,13 @@ export type PolicyRule = Schema<'Rule'>
 /** 파일에서 뽑은 정책 초안. 아직 저장되지 않았고, createPolicy로 보내야 저장됩니다. */
 export type PolicyDraft = Schema<'PolicyDraft'>
 
-export type PolicyCreateInput = { name: string; content: string; rules: PolicyRule[] }
+export type PolicyCreateInput = {
+  name: string
+  content: string
+  rules: PolicyRule[]
+  /** 파일에서 가져온 정책이면 원본 파일 · 청크 위치 정보 (근거를 문서 위치로 보여줄 때 씀) */
+  sourceDocument?: PolicyDraft['sourceDocument']
+}
 export type PolicyVersionCreateInput = {
   content: string
   rules: PolicyRule[]
@@ -40,14 +46,14 @@ const policyPath = (projectId: string, policyId: string) =>
 export function createPolicy(projectId: string, input: PolicyCreateInput, extras: RequestExtras = {}) {
   return api.post<PolicyDetail>(
     policiesPath(projectId),
-    { name: input.name.trim(), content: input.content, rules: input.rules },
+    { name: input.name.trim(), content: input.content, rules: input.rules, ...(input.sourceDocument ? { sourceDocument: input.sourceDocument } : {}) },
     { signal: extras.signal },
   )
 }
 
 /**
  * 정책 파일(PDF · DOCX · TXT · MD, 10MiB 이하)에서 본문과 규칙 초안을 뽑습니다. 이 요청만으로는 저장되지 않습니다.
- * 배포 서버 기준 경로는 /import(파일 하나)입니다. 백엔드 main에는 여러 파일용 /imports도 있지만 아직 배포되지 않았습니다.
+ * 파일 하나씩 보내는 /import를 씁니다(여러 파일을 한 번에 받는 /imports도 있음).
  */
 export function importPolicyFile(projectId: string, file: File, name: string, extras: RequestExtras = {}) {
   const form = new FormData()
@@ -64,7 +70,11 @@ export function policyNameOf(file: File) {
 /** 파일을 올려 초안을 받고 그대로 정책으로 저장합니다. 규칙을 하나도 못 뽑았으면 서버가 저장을 거절합니다. */
 export async function uploadPolicyFile(projectId: string, file: File, extras: RequestExtras = {}) {
   const draft = await importPolicyFile(projectId, file, policyNameOf(file), extras)
-  return createPolicy(projectId, { name: draft.name, content: draft.content, rules: draft.rules }, extras)
+  return createPolicy(
+    projectId,
+    { name: draft.name, content: draft.content, rules: draft.rules, sourceDocument: draft.sourceDocument },
+    extras,
+  )
 }
 
 export function listPolicies(projectId: string, query: PageQuery & RequestExtras = {}) {
