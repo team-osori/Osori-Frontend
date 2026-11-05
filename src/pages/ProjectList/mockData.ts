@@ -14,6 +14,7 @@ export const MOCK_PROJECTS: Project[] = [
     lastEvaluatedAt: '2026-11-04 14:20',
     promptVersion: 3,
     progressText: '7단계 중 6단계 완료',
+    currentStep: 4,
   },
   {
     id: 'moamall-cs-staging',
@@ -23,6 +24,7 @@ export const MOCK_PROJECTS: Project[] = [
     lastEvaluatedAt: '2026-11-05 09:12',
     promptVersion: 2,
     progressText: '5 · 사람 판정 진행 중',
+    currentStep: 5,
   },
   {
     id: 'new-project',
@@ -32,5 +34,6 @@ export const MOCK_PROJECTS: Project[] = [
     lastEvaluatedAt: null,
     promptVersion: null,
     progressText: '1 · 연결 설정',
+    currentStep: 1,
   },
 ]

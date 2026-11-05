@@ -12,5 +12,6 @@ export function buildProject({ name, description }: NewProject): Project {
     lastEvaluatedAt: null,
     promptVersion: null,
     progressText: '1 · 연결 설정',
+    currentStep: 1,
   }
 }
