@@ -1,7 +1,7 @@
 .layout {
   position: relative;
   display: flex;
-  min-height: 100vh;
+  min-height: var(--vh);
   background: var(--gradient-page);
 }
 /* 미리보기처럼 부모 박스 안에 넣을 때 */
@@ -11,7 +11,7 @@
   position: sticky;
   top: 0;
   flex-shrink: 0;
-  height: 100vh;
+  height: var(--vh);
 }
 .contained .slot { position: relative; height: 100%; }
 

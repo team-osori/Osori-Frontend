@@ -2,7 +2,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: var(--vh);
   padding: clamp(28px, 3.5vw, 48px);
   overflow: hidden;
   background: var(--gradient-page);

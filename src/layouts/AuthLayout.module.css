@@ -1,7 +1,7 @@
 .page {
   display: grid;
   grid-template-columns: minmax(0, 1.6fr) minmax(360px, 1fr);
-  min-height: 100vh;
+  min-height: var(--vh);
   background: var(--color-bg);
 }
 
