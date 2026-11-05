@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { ProjectNavContext, type HomeMenu, type UserMenuActions } from './components/common'
 import { buildProject, CreateProjectModal, type NewProject } from './features/project'
 import { MOCK_JUDGE_ITEMS } from './features/grading/mock'
+import { MOCK_QUESTIONS } from './features/questions/mock'
 import { MOCK_MEMBERS, type Member } from './features/settings'
 import { useHashRoute } from './hooks/useHashRoute'
 import { setSessionExpiredHandler } from './lib/api'
@@ -103,6 +104,9 @@ export default function App() {
       // 1 시험지 만들기
       case ROUTES.questions:
         return <QuestionSetPage onConfirm={() => navigate(ROUTES.abRun)} />
+      // API 연동 전, 문제가 이미 있는 시험지 검토 화면을 확인하기 위한 경로
+      case '/questions/sample':
+        return <QuestionSetPage initialQuestions={MOCK_QUESTIONS} onConfirm={() => navigate(ROUTES.abRun)} />
       // 2 채점: A/B 실행 → 채점 결과 → 사람 판정
       case ROUTES.abRun:
         return <AbRunPage onShowResults={() => navigate(ROUTES.grading)} />
