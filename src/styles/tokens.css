@@ -2,8 +2,8 @@
 :root {
   /* Color · Surface */
   --color-bg: #1a1c1e;
-  --color-rail: #141617;            /* 왼쪽 아이콘 레일 */
-  --color-panel: #1b1d1f;           /* 보조 패널 (상태 필터 · 평가 단계) */
+  --color-rail: #242429;            /* 왼쪽 아이콘 레일 */
+  --color-panel: #242429;           /* 보조 패널 (상태 필터 · 평가 단계) */
   --color-surface: #232527;         /* 카드 · 입력 */
   --color-surface-strong: #2c2f31;
   --color-surface-raised: #2a2d2f;  /* 모달 */
@@ -101,8 +101,8 @@
   --space-14: 56px;
 
   /* Layout */
-  --rail-width: 56px;
-  --panel-width: clamp(200px, 15vw, 232px);
+  --rail-width: 72px;
+  --panel-width: clamp(220px, 16.4vw, 248px);
   --sidebar-width: calc(var(--rail-width) + var(--panel-width));
   --page-padding-x: clamp(16px, 4vw, 56px);
   --page-padding-y: clamp(24px, 3vw, 40px);
