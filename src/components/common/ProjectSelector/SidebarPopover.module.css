@@ -1,0 +1,83 @@
+/* 위치는 usePopover가 화면 기준(fixed)으로 계산 */
+.popover {
+  position: fixed;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  width: min(360px, calc(100vw - 32px));
+  padding: 8px;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+  box-shadow: 0 16px 24px rgba(0, 0, 0, 0.55);
+  animation: pop 0.12s ease-out;
+}
+
+@keyframes pop {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 49px;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+.option:hover,
+.option:focus-visible { background: #34343d; }
+.option.selected { background: var(--color-surface-strong); }
+.optionBody { display: flex; flex: 1; align-items: center; gap: 10px; min-width: 0; }
+.check { margin-left: auto; }
+
+/* 구분선 + 하단 동작 */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 8px -4px 0;
+  padding: 10px 4px 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.action {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 40px;
+  padding: 0 12px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: none;
+  font: var(--text-body-sm);
+  color: var(--color-text);
+  text-align: left;
+  transition: background-color 0.15s;
+}
+.action:hover { background: #34343d; }
+.action:focus-visible { box-shadow: none; background: #34343d; }
+
+/* 두 줄 텍스트 (제목 + 보조 설명) */
+.text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.title {
+  overflow: hidden;
+  font: var(--text-body-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bold { font-weight: var(--font-weight-bold); }
+.sub { font: var(--text-caption); color: var(--color-text-secondary); }
