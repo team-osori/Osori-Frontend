@@ -106,7 +106,7 @@ export default function App() {
       if (isApiError(error) && error.status === 409) return { loginId: '이미 사용 중인 아이디입니다.' }
       const fields = isApiError(error) ? error.fieldMessages() : {}
       if (Object.keys(fields).length > 0) return fields
-      return { passwordConfirm: errorMessage(error, '계정을 만들지 못했습니다. 잠시 후 다시 시도해 주세요.') }
+      return { form: errorMessage(error, '계정을 만들지 못했습니다. 잠시 후 다시 시도해 주세요.') }
     }
   }
 
