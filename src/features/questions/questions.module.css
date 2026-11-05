@@ -137,3 +137,13 @@
 .pickerHighlighted { background: var(--color-surface-strong); }
 
 .fieldLabel { margin: 0 0 8px; font: var(--text-label); color: var(--color-text-secondary); }
+
+/* ---------- 질문 세트 확정 요약 ---------- */
+.summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 0; }
+.summaryItem { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; border-radius: var(--radius-lg); background: var(--color-bg); }
+.summaryItem dt { display: flex; align-items: center; gap: 6px; font: var(--text-label); color: var(--color-text-secondary); }
+.summaryItem dd { margin: 0; font: 22px / 26px var(--font-family); font-weight: var(--font-weight-bold); }
+.cautionDot { width: 8px; height: 8px; border-radius: var(--radius-full); background: var(--color-caution); }
+@media (max-width: 420px) {
+  .summary { grid-template-columns: minmax(0, 1fr); }
+}
