@@ -1,5 +1,6 @@
 /* ---------- 두 가지 방법 ---------- */
-.choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+/* 남은 높이를 두 카드가 채움 → 화면 비율이 달라도 아래 여백 없음 */
+.choices { display: grid; flex: 1; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 
 .choice {
   display: flex;
