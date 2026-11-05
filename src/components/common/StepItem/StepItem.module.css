@@ -14,7 +14,7 @@
   color: var(--color-text);
   text-align: left;
 }
-.item:not(:disabled):hover { background: rgba(46, 46, 54, 0.6); }
+.item:not(:disabled):hover { background: rgba(255, 255, 255, 0.04); }
 .item:disabled { cursor: default; }
 
 .marker {

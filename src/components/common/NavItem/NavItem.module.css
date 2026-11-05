@@ -13,7 +13,7 @@
   text-align: left;
   text-decoration: none;
 }
-.item:hover { background: rgba(46, 46, 54, 0.6); }
+.item:hover { background: rgba(255, 255, 255, 0.04); }
 
 .sm { height: 46px; }
 

@@ -1,44 +1,50 @@
-/* Osori 디자인 토큰 — Figma "컴포넌트 · 공통 UI" 기준 */
+/* Osori 디자인 토큰 — 라임그린 다크 테마 */
 :root {
   /* Color · Surface */
-  --color-bg: #24242a;
-  --color-surface: #2e2e36;
-  --color-surface-strong: #3a3a44;
-  --color-border: #3a3a44;
+  --color-bg: #1a1c1e;
+  --color-rail: #141617;            /* 왼쪽 아이콘 레일 */
+  --color-panel: #1b1d1f;           /* 보조 패널 (상태 필터 · 평가 단계) */
+  --color-surface: #232527;         /* 카드 · 입력 */
+  --color-surface-strong: #2c2f31;
+  --color-surface-raised: #2a2d2f;  /* 모달 */
+  --color-border: #303335;
+  --color-border-soft: rgba(255, 255, 255, 0.06);
+  --color-input: #161819;          /* 입력창 바탕 */
   --color-divider: rgba(255, 255, 255, 0.85);
-  --color-border-focus: rgba(255, 76, 216, 0.6);
-  --color-focus-ring: rgba(255, 76, 216, 0.45);
+  --color-border-focus: rgba(180, 244, 97, 0.6);
+  --color-focus-ring: rgba(180, 244, 97, 0.45);
 
   /* Color · Brand */
-  --color-primary: #ff4cd8;
-  --color-on-primary: #000000;
+  --color-primary: #b4f461;
+  --color-primary-strong: #a3e635;
+  --color-on-primary: #11240a;
 
   /* Color · Text */
-  --color-text: #ffffff;
-  --color-text-secondary: rgba(255, 255, 255, 0.65);
-  --color-text-tertiary: rgba(255, 255, 255, 0.55);
+  --color-text: #f3f6f2;
+  --color-text-secondary: rgba(243, 246, 242, 0.65);
+  --color-text-tertiary: rgba(243, 246, 242, 0.5);
 
   /* Color · Status */
-  --color-success: #4ade80;
+  --color-success: #84cc5a;
   --color-warning: #fbbf24;
   --color-neutral: #9ca3af;
   --color-danger: #ff6b6b;
   --color-danger-border: rgba(255, 107, 107, 0.4);
   --color-caution: #f5b544; /* 주의 (라벨 없음 등) */
-  --color-accent: #8b7cff; /* 검색 원인 · 합의 샘플 구분 */
+  --color-accent: #b4f461; /* 검색 원인 · 합의 샘플 구분 */
 
   /* Overlay · Shadow */
-  --color-overlay: rgba(14, 14, 18, 0.66);
+  --color-overlay: rgba(8, 10, 8, 0.66);
   --shadow-modal: 0 24px 32px rgba(0, 0, 0, 0.5);
   --shadow-popover: 0 16px 24px rgba(0, 0, 0, 0.55);
 
   /* Gradient */
-  --gradient-sidebar: linear-gradient(180deg, #3a3a44 0%, #3a3a44 50%, #4a3550 100%);
-  --gradient-brand-panel: linear-gradient(170deg, #3a3a44 25%, #5e3a5c 80%, #7a3a6e 100%);
+  --gradient-sidebar: linear-gradient(180deg, #1f2224 0%, #1b1f1c 55%, #1a2416 100%);
+  --gradient-brand-panel: linear-gradient(170deg, #1f2224 20%, #233021 70%, #2c3d1e 100%);
   --gradient-page:
-    radial-gradient(1361px 687px at 100% 100%, rgba(255, 76, 216, 0.18) 0%, rgba(128, 38, 108, 0.09) 35%, transparent 70%),
-    radial-gradient(907px 491px at 0% 100%, rgba(140, 60, 200, 0.12) 0%, transparent 70%),
-    #24242a;
+    linear-gradient(118deg, transparent 52%, rgba(255, 255, 255, 0.025) 52%, rgba(255, 255, 255, 0.025) 68%, transparent 68%),
+    linear-gradient(118deg, transparent 72%, rgba(255, 255, 255, 0.018) 72%, rgba(255, 255, 255, 0.018) 80%, transparent 80%),
+    #1f2123;
 
   /* Typography */
   --font-family: 'Noto Sans KR', system-ui, sans-serif;
@@ -81,6 +87,9 @@
   --space-14: 56px;
 
   /* Layout */
-  --sidebar-width: clamp(260px, 21vw, 306px);
+  --rail-width: 56px;
+  --panel-width: clamp(200px, 15vw, 232px);
+  --sidebar-width: calc(var(--rail-width) + var(--panel-width));
   --page-padding-x: clamp(16px, 4vw, 56px);
-  --page-padding-y: clamp(24px, 3.5vw, 48px);}
+  --page-padding-y: clamp(24px, 3vw, 40px);
+}
