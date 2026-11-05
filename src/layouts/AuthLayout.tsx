@@ -14,8 +14,6 @@ type AuthLayoutProps = {
   /** 제출 버튼 아래 영역 (다른 화면으로 가는 링크 등) */
   footer?: ReactNode
   submitting?: boolean
-  /** 폼 아래 연결 상태 문구에 붙는 인스턴스 버전 */
-  instanceVersion?: string
 }
 
 /** 로그인·회원가입 공통 화면: 왼쪽 브랜드 영역 + 오른쪽 폼 패널 */
@@ -27,7 +25,6 @@ export function AuthLayout({
   children,
   footer,
   submitting,
-  instanceVersion = 'v1.4.2',
 }: AuthLayoutProps) {
   return (
     <div className={styles.page}>
@@ -50,11 +47,6 @@ export function AuthLayout({
           </Button>
 
           {footer && <div style={{ '--i': 3 } as CSSProperties}>{footer}</div>}
-
-          <p className={styles.status} style={{ '--i': 4 } as CSSProperties}>
-            <span className={styles.dot} aria-hidden />
-            셀프 호스팅 인스턴스에 연결됨 · {instanceVersion}
-          </p>
         </form>
       </section>
     </div>
