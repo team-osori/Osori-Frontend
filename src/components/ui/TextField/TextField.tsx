@@ -1,12 +1,25 @@
 import { useId, type InputHTMLAttributes, type ReactNode, type TextareaHTMLAttributes } from 'react'
 import { cx } from '../../../lib/cx'
+import { Icon } from '../Icon/Icon'
 import styles from './TextField.module.css'
 
+type FieldSize = 'md' | 'lg'
+
 /** 라벨 + 컨트롤 묶음. 직접 만든 컨트롤을 넣을 때도 사용합니다. */
-export function Field({ label, htmlFor, children }: { label: string; htmlFor?: string; children: ReactNode }) {
+export function Field({
+  label,
+  htmlFor,
+  size = 'md',
+  children,
+}: {
+  label: string
+  htmlFor?: string
+  size?: FieldSize
+  children: ReactNode
+}) {
   return (
     <div className={styles.field}>
-      <label className={styles.label} htmlFor={htmlFor}>
+      <label className={cx(styles.label, size === 'lg' && styles.labelLg)} htmlFor={htmlFor}>
         {label}
       </label>
       {children}
@@ -14,14 +27,64 @@ export function Field({ label, htmlFor, children }: { label: string; htmlFor?: s
   )
 }
 
-type TextFieldProps = InputHTMLAttributes<HTMLInputElement> & { label: string }
+type MessageProps = {
+  /** 입력값이 잘못됐을 때 보여줄 문구. 있으면 빨간 테두리 */
+  error?: string
+  /** 입력창 아래 안내 문구 */
+  hint?: string
+  /** success면 초록색 체크와 함께 표시 */
+  hintTone?: 'neutral' | 'success'
+}
 
-export function TextField({ label, className, id, ...rest }: TextFieldProps) {
+/** 입력창 아래 오류·안내 문구 */
+function FieldMessage({ id, error, hint, hintTone = 'neutral' }: MessageProps & { id: string }) {
+  if (error) {
+    return (
+      <p id={id} role="alert" className={cx(styles.message, styles.error)}>
+        {error}
+      </p>
+    )
+  }
+  if (!hint) return null
+  const success = hintTone === 'success'
+  return (
+    <p id={id} className={cx(styles.message, styles.hint, success && styles.hintSuccess)}>
+      {success && <Icon name="checkSuccess" />}
+      {hint}
+    </p>
+  )
+}
+
+/** input 기본 속성 size(글자 수)는 쓰지 않고, 같은 이름으로 화면 크기를 받습니다. */
+type TextFieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> &
+  MessageProps & { label: string; size?: FieldSize }
+
+/** size="lg"는 로그인·회원가입처럼 입력창이 큰 화면용 (48px) */
+export function TextField({
+  label,
+  size = 'md',
+  error,
+  hint,
+  hintTone,
+  className,
+  id,
+  'aria-describedby': describedBy,
+  ...rest
+}: TextFieldProps) {
   const autoId = useId()
   const inputId = id ?? autoId
+  const messageId = `${inputId}-message`
+  const hasMessage = Boolean(error || hint)
   return (
-    <Field label={label} htmlFor={inputId}>
-      <input id={inputId} className={cx(styles.control, styles.input, className)} {...rest} />
+    <Field label={label} htmlFor={inputId} size={size}>
+      <input
+        id={inputId}
+        className={cx(styles.control, styles.input, size === 'lg' && styles.inputLg, error && styles.invalid, className)}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={cx(describedBy, hasMessage && messageId) || undefined}
+        {...rest}
+      />
+      <FieldMessage id={messageId} error={error} hint={hint} hintTone={hintTone} />
     </Field>
   )
 }
