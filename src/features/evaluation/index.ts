@@ -8,6 +8,7 @@ export {
   getEvaluationComparison,
   getEvaluationItem,
   getEvaluationSummary,
+  getGradingBoard,
   isEvaluationFinished,
   listEvaluationItems,
   listAnswerReviews,
@@ -40,5 +41,9 @@ export {
   type EvaluationSide,
   type EvaluationStatus,
   type EvaluationSummary,
+  type GradingBoard,
+  type GradingTile,
+  type ScreenCounts,
+  type ScreenStatus,
 } from './api'
 export { useEvaluationItems, useEvaluationRun, useEvaluations } from './useEvaluations'

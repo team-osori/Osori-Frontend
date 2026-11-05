@@ -21,6 +21,11 @@ export type EvaluationSummary = Schema<'EvaluationSummary'>
 export type EvaluationItemSummary = Schema<'EvaluationItemSummary'>
 export type EvaluationItem = Schema<'EvaluationItemResponse'>
 export type EvaluationSide = Schema<'EvaluationSide'>
+/** 채점 화면 칸 전체(단일 평가 전용). 문항별 화면 상태 · 담당자 O/X를 답변 원문 없이 한 번에 줍니다. */
+export type GradingBoard = Schema<'GradingBoard'>
+export type GradingTile = Schema<'GradingTile'>
+export type ScreenStatus = GradingTile['screenStatus']
+export type ScreenCounts = Schema<'ScreenCounts'>
 
 /**
  * 서버가 요약 · 항목 결과에 실제로 담아 주는 평가 기준 3가지.
@@ -54,20 +59,8 @@ export type ItemReviewInput = {
   reason: string
 }
 
-/*
- * 답변 전체 O/X 판정. 배포 서버 OpenAPI에 아직 없어 schema.ts에서 가져오지 못하고,
- * 백엔드 main의 AnswerReviewCreate · AnswerReviewOut에 맞춰 직접 적었습니다. 배포되면 Schema 타입으로 바꿉니다.
- */
-export type AnswerReview = {
-  id: string
-  itemId: string
-  revision: number
-  side: 'a' | 'b'
-  verdict: ReviewVerdict
-  reason: string | null
-  reviewedBy: string
-  createdAt: string
-}
+/** 답변 전체 O/X 판정 기록 (조건별 판정과 별개) */
+export type AnswerReview = Schema<'AnswerReviewOut'>
 export type AnswerReviewInput = {
   /** 항목을 마지막으로 본 reviewRevision (처음이면 0). 조건별 판정과 같은 revision을 함께 씁니다. */
   expectedRevision: number
@@ -340,6 +333,11 @@ export function reviewItem(
     },
     { signal: extras.signal },
   )
+}
+
+/** 채점 화면 칸(최대 200문항). 단일 평가만 됩니다(비교 평가는 409). */
+export function getGradingBoard(projectId: string, serviceId: string, evaluationId: string, extras: RequestExtras = {}) {
+  return api.get<GradingBoard>(`${evaluationPath(projectId, serviceId, evaluationId)}/grading`, { signal: extras.signal })
 }
 
 /** 항목의 답변 전체 O/X 판정 기록 목록 */

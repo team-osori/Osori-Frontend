@@ -222,7 +222,7 @@ export default function App() {
         ) : null
       // 2 채점: A/B 실행 → 채점 결과 → 사람 판정
       case ROUTES.scoring:
-        return <ScoringPage onFinish={() => navigate(ROUTES.wrongNotes)} />
+        return currentProjectId ? <ScoringPage key={currentProjectId} projectId={currentProjectId} onFinish={() => navigate(ROUTES.wrongNotes)} /> : null
       case ROUTES.wrongNotes:
         return <WrongNotesPage onRetest={() => navigate(ROUTES.scoring)} />
       case ROUTES.abRun:
