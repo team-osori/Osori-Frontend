@@ -1,3 +1,10 @@
-.zone { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 23px 24px; }
-.text { display: flex; flex-direction: column; gap: 6px; }
-.description { margin: 0; font: var(--text-body-sm); line-height: 21px; color: var(--color-text-secondary); }
+.zone {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
+  padding: 23px 24px;
+}
+.text { display: flex; flex: 1 1 280px; flex-direction: column; gap: 6px; }
+.description { margin: 0; font: var(--text-body-sm); line-height: 21px; color: var(--color-text-secondary); word-break: keep-all; }

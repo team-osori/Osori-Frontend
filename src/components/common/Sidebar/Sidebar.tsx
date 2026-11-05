@@ -5,6 +5,7 @@ import { NavItem } from '../NavItem/NavItem'
 import { ProjectSelector } from '../ProjectSelector/ProjectSelector'
 import { StepList } from '../StepItem/StepItem'
 import { UserProfile } from '../UserProfile/UserProfile'
+import { useSidebarToggle } from './SidebarContext'
 import styles from './Sidebar.module.css'
 
 type User = { name: string; role: string }
@@ -18,11 +19,12 @@ type SidebarProps = {
 
 /** 사이드바 공통 틀: 브랜드 + 접기 버튼 / 본문 / 사용자 프로필 */
 export function Sidebar({ user, onToggle, onUserClick, children }: SidebarProps) {
+  const layoutToggle = useSidebarToggle()
   return (
     <aside className={styles.sidebar}>
       <div className={styles.header}>
         <BrandMark tone="sidebar" />
-        <button type="button" className={styles.toggle} onClick={onToggle} aria-label="사이드바 접기">
+        <button type="button" className={styles.toggle} onClick={onToggle ?? layoutToggle} aria-label="사이드바 접기">
           <Icon name="sidebar" />
         </button>
       </div>

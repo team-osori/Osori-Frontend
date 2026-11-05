@@ -1,8 +1,15 @@
-.card { display: flex; flex-direction: column; padding: 23px; }
+.card { display: flex; flex-direction: column; min-width: 0; padding: clamp(16px, 1.6vw, 23px); }
 
 .header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .titles { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-.title { margin: 0; font: var(--text-title-lg); font-weight: var(--font-weight-bold); }
+.title {
+  margin: 0;
+  overflow: hidden;
+  font: var(--text-title-lg);
+  font-weight: var(--font-weight-bold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .meta { font: var(--text-label); color: var(--color-text-secondary); }
 
 .metrics {
@@ -18,8 +25,10 @@
 
 .footer {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
   margin-top: 18px;
   padding-top: 18px;
   border-top: 1px solid var(--color-surface-strong);

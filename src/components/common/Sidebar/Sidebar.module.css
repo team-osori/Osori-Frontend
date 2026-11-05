@@ -1,16 +1,18 @@
 .sidebar {
   display: flex;
   flex-direction: column;
-  flex-shrink: 0;
   width: var(--sidebar-width);
-  min-height: 100vh;
+  height: 100%;
+  min-height: 100%;
   padding: 24px;
+  overflow-y: auto;
   background: var(--gradient-sidebar);
 }
 
-.header { display: flex; align-items: center; justify-content: space-between; }
+.header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .toggle {
   display: inline-flex;
+  flex-shrink: 0;
   padding: 0;
   border: none;
   border-radius: var(--radius-sm);

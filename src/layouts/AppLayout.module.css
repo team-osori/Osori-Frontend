@@ -1,2 +1,63 @@
-.layout { display: flex; min-height: 100vh; background: var(--gradient-page); }
-.main { flex: 1; min-width: 0; padding: 48px 56px; }
+.layout {
+  position: relative;
+  display: flex;
+  min-height: 100vh;
+  background: var(--gradient-page);
+}
+/* 미리보기처럼 부모 박스 안에 넣을 때 */
+.contained { height: 100%; min-height: 0; overflow: hidden; }
+
+.slot {
+  position: sticky;
+  top: 0;
+  flex-shrink: 0;
+  height: 100vh;
+}
+.contained .slot { position: relative; height: 100%; }
+
+.content { display: flex; flex: 1; flex-direction: column; min-width: 0; }
+.contained .content { overflow-y: auto; }
+
+.main { flex: 1; padding: var(--page-padding-y) var(--page-padding-x); }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px var(--page-padding-x) 0;
+}
+.menu {
+  display: inline-flex;
+  padding: 8px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+.topbarTitle { font: var(--text-title-lg); font-weight: var(--font-weight-bold); color: var(--color-primary); }
+
+/* 데스크톱에서 접힘 */
+.collapsed .slot { display: none; }
+
+/* 좁은 화면: 드로어 */
+.narrow .slot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 20;
+  height: auto;
+  transform: translateX(-100%);
+  transition: transform 0.2s ease;
+}
+.narrow.contained .slot { position: absolute; }
+.narrow.drawerOpen .slot { transform: translateX(0); box-shadow: 0 0 40px rgba(0, 0, 0, 0.5); }
+.narrow .slot aside { width: min(306px, 85vw); }
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  border: none;
+  background: rgba(0, 0, 0, 0.5);
+}
+.contained .backdrop { position: absolute; }

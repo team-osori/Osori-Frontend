@@ -1,21 +1,30 @@
 .panel {
   display: flex;
   flex-direction: column;
+  height: 100%;
   min-height: 100vh;
-  padding: 56px;
+  padding: clamp(24px, 4vw, 56px);
   background: var(--gradient-brand-panel);
 }
 
-.content { display: flex; flex: 1; flex-direction: column; justify-content: center; gap: 20px; padding: 40px 0; }
+.content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(12px, 1.5vw, 20px);
+  padding: clamp(24px, 4vh, 40px) 0;
+}
 
 .headline {
   margin: 0;
   font: var(--text-display);
   font-weight: var(--font-weight-bold);
   letter-spacing: -1px;
+  word-break: keep-all;
 }
 .highlight { color: var(--color-primary); }
 
-.lead { max-width: 507px; margin: 0; font: var(--text-lead); color: var(--color-text-secondary); }
+.lead { max-width: 507px; margin: 0; font: var(--text-lead); color: var(--color-text-secondary); word-break: keep-all; }
 
-.badge { align-self: flex-start; }
+.badge { align-self: flex-start; max-width: 100%; }
