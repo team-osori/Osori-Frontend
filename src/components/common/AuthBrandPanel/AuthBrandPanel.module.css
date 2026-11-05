@@ -40,7 +40,7 @@
 
 .lead { margin: 0; font: var(--text-body); line-height: 1.7; color: var(--color-text-secondary); word-break: keep-all; max-width: 460px; }
 
-.highlighterWrap { position: absolute; left: -36px; bottom: -40px; pointer-events: none; }
+.highlighterWrap { position: absolute; left: -36px; bottom: clamp(8px, 3vh, 32px); pointer-events: none; }
 .highlighter { display: block; width: clamp(180px, 20vw, 280px); height: auto; }
 .squiggleWrap {
   position: absolute;
