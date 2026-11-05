@@ -26,6 +26,13 @@
 .queueTitle { margin: 0; font: 20px / 24px var(--font-family); font-weight: var(--font-weight-bold); }
 .queueCount { margin-left: 4px; font: var(--text-body); font-weight: var(--font-weight-regular); color: var(--color-text-secondary); }
 .reasonChips { display: flex; flex-wrap: wrap; gap: 6px; margin: 16px 0 0; padding: 0; list-style: none; }
+/* 분류 칩: 누르면 그 분류만 보기 */
+.reasonChip { padding: 0; border: 1.5px solid transparent; border-radius: var(--radius-full); background: none; transition: opacity 0.15s, border-color 0.15s, transform 0.12s; }
+.reasonChip:hover { transform: translateY(-1px); }
+.reasonChip:active { transform: scale(0.97); }
+.reasonChipActive { border-color: var(--color-primary); }
+.reasonChipDim { opacity: 0.45; }
+.queueEmpty { margin: 0; padding: 24px; font: var(--text-label); color: var(--color-text-tertiary); text-align: center; }
 
 .queueList { margin: 0; padding: 0; list-style: none; }
 .queueItem {
