@@ -7,16 +7,17 @@ import styles from './UserMenu.module.css'
 const GAP_ABOVE = 10
 
 export type UserMenuActions = {
-  /** 인스턴스 버전 표시 (예: v1.4.2) */
-  instanceVersion: string
+  /** 예전 메뉴 호환용 (지금은 메뉴에 표시하지 않음) */
+  instanceVersion?: string
+  /** 예전 메뉴 호환용 (지금은 메뉴에 표시하지 않음) */
   onAccountSettings?: () => void
   onLogout?: () => void
 }
 
 type UserMenuProps = UserMenuActions & { name: string; role: string; email: string }
 
-/** 사이드바 맨 아래 계정 버튼. 누르면 계정 설정 · 인스턴스 정보 · 로그아웃 메뉴가 위로 열립니다. */
-export function UserMenu({ name, role, email, instanceVersion, onAccountSettings, onLogout }: UserMenuProps) {
+/** 사이드바 맨 아래 계정 버튼. 누르면 이름 · 아이디와 로그아웃 메뉴가 위로 열립니다. */
+export function UserMenu({ name, role, email, onLogout }: UserMenuProps) {
   const [open, setOpen] = useState(false)
   const [position, setPosition] = useState<CSSProperties>()
   const triggerRef = useRef<HTMLButtonElement>(null)
@@ -116,22 +117,6 @@ export function UserMenu({ name, role, email, instanceVersion, onAccountSettings
               <div className={styles.identity}>
                 <span className={styles.name}>{name}</span>
                 <span className={styles.email}>{email}</span>
-              </div>
-            </div>
-
-            <div className={styles.divider}>
-              <Divider />
-            </div>
-
-            <div className={styles.list}>
-              <button type="button" className={styles.item} onClick={() => choose(onAccountSettings)}>
-                <Icon name="settingsSm" />
-                계정 설정
-              </button>
-              <div className={styles.info}>
-                <Icon name="server" />
-                <span className={styles.infoLabel}>인스턴스 정보</span>
-                <span className={styles.version}>{instanceVersion}</span>
               </div>
             </div>
 
