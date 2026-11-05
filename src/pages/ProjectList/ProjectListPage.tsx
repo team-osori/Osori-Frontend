@@ -63,7 +63,7 @@ export function ProjectListPage({ user, projects, onCreateProject, onOpenProject
     <AppLayout
       sidebar={
         <Sidebar active="projects" user={user} userMenu={userMenu} onNavigate={onNavigate}>
-          <SidebarTitle>프로젝트</SidebarTitle>
+          <SidebarTitle>Pebble</SidebarTitle>
           <SidebarCreateButton onClick={onCreateProject} />
           <SidebarSectionLabel>상태</SidebarSectionLabel>
           <SidebarList label="상태 필터">
