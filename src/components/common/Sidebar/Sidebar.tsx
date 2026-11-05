@@ -1,6 +1,4 @@
 import type { ReactNode } from 'react'
-import { cx } from '../../../lib/cx'
-import type { IconName } from '../../../assets/icons'
 import { Button, Icon, type SelectOption } from '../../ui'
 import { ROUTES, STAGES, stageOf, stageRoute } from '../../../routes'
 import { BrandMark } from '../BrandMark/BrandMark'
@@ -20,22 +18,16 @@ function goTo(route: string | undefined) {
   if (route) window.location.hash = route
 }
 
-/** 레일 메뉴. 휴지통은 아직 화면이 없음 */
+/** 화면 이동 메뉴. 레일 아이콘은 없앴고 로고(전체 프로젝트) · 아바타 메뉴(계정 설정)로 이동 */
 export type HomeMenu = 'projects' | 'create' | 'trash' | 'settings'
 
-const RAIL: Array<{ menu: HomeMenu; icon: IconName; label: string; route?: string }> = [
-  { menu: 'projects', icon: 'grid', label: '전체 프로젝트', route: ROUTES.projects },
-  { menu: 'trash', icon: 'trash', label: '휴지통 (준비 중)' },
-  { menu: 'settings', icon: 'settings', label: '설정', route: ROUTES.accountSettings },
-]
-
 type SidebarProps = {
-  /** 레일에서 강조할 메뉴 */
+  /** 예전 레일 아이콘 강조용 (지금은 쓰지 않음) */
   active?: HomeMenu
   /** 없으면 App이 내려준 사용자(ProjectNavContext) 사용 */
   user?: User
   userMenu?: UserMenuActions
-  /** 없으면 레일 메뉴의 경로로 이동 */
+  /** 예전 레일 아이콘 이동용 (지금은 쓰지 않음) */
   onNavigate?: (menu: HomeMenu) => void
   /** 보조 패널 내용 */
   children: ReactNode
@@ -43,8 +35,8 @@ type SidebarProps = {
   panelFooter?: ReactNode
 }
 
-/** 사이드바 공통 틀: 왼쪽 아이콘 레일 + 오른쪽 보조 패널 */
-export function Sidebar({ active, user, userMenu, onNavigate, children, panelFooter }: SidebarProps) {
+/** 사이드바 공통 틀: 왼쪽 레일(로고 · 아바타) + 오른쪽 보조 패널 */
+export function Sidebar({ user, userMenu, children, panelFooter }: SidebarProps) {
   const nav = useProjectNav()
   const signedIn = useSidebarUser()
   const base = user ?? nav?.user
@@ -59,22 +51,6 @@ export function Sidebar({ active, user, userMenu, onNavigate, children, panelFoo
         <a href={`#${ROUTES.projects}`} className={styles.logo} aria-label="홈 · 전체 프로젝트">
           <BrandMark variant="mark" />
         </a>
-        <nav className={styles.railNav} aria-label="주 메뉴">
-          {RAIL.map((item) => (
-            <button
-              key={item.menu}
-              type="button"
-              className={cx(styles.railItem, active === item.menu && styles.railActive)}
-              aria-label={item.label}
-              title={item.label}
-              aria-current={active === item.menu ? 'page' : undefined}
-              disabled={!item.route && !onNavigate}
-              onClick={() => (onNavigate ? onNavigate(item.menu) : goTo(item.route))}
-            >
-              <Icon name={item.icon} />
-            </button>
-          ))}
-        </nav>
         <div className={styles.railFooter}>
           {me && menu && email ? (
             <UserMenu name={me.name} role={me.role} email={email} {...menu} />
