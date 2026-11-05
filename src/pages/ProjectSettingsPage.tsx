@@ -117,7 +117,8 @@ export default function ProjectSettingsPage({ projectId, stage = 1, onProjectCha
     }
   }
 
-  const loadingService = serviceQuery.loading || connection.loading
+  // 처음 불러올 때만 비워 둠. 저장 · 테스트 뒤 다시 불러올 때 탭을 지우면 입력값과 테스트 결과가 사라짐
+  const loadingService = service === undefined || (Boolean(serviceId) && !connection.loaded)
 
   return (
     <AppLayout

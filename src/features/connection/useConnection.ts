@@ -78,6 +78,8 @@ export function useConnection(projectId: string | undefined, serviceId: string |
   return {
     connection: connection ?? null,
     loading: query.loading,
+    /** 한 번이라도 불러왔는지. 다시 불러오는 중에도 이전 값을 보여줄 때 씀 */
+    loaded: connection !== undefined,
     error: query.error,
     /** 지금 설정으로 연결 테스트를 통과했는지 */
     verified: connection ? isConnectionVerified(connection) : false,
