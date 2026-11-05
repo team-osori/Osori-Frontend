@@ -1,0 +1,11 @@
+/* 특정 칸과 상관없는 가입 오류 (서버 연결 실패 등) */
+.formError {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--color-danger-border);
+  border-radius: var(--radius-md);
+  background: rgba(255, 107, 107, 0.08);
+  font: var(--text-label);
+  line-height: 1.5;
+  color: var(--color-danger);
+}
