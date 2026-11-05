@@ -3,6 +3,13 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
+/*
+ * 앱 전체 배율. --app-zoom은 src/lib/appScale.ts가 화면 폭에 맞춰 정합니다.
+ * 배율을 주면 vh도 함께 커지므로, 화면 높이는 100vh 대신 var(--vh)를 씁니다.
+ */
+:root { --app-zoom: 1; --vh: calc(100vh / var(--app-zoom)); }
+#root { zoom: var(--app-zoom); }
+
 body {
   margin: 0;
   font-family: var(--font-family);

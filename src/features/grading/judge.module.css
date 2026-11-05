@@ -1,6 +1,6 @@
 /* ---------- 07 사람 판정: 대기열 + 상세 ---------- */
 /* 화면 높이에 고정해서 대기열과 상세가 각자 안에서 스크롤되게 함 (내용이 길어져도 하단 바가 밀려나지 않음) */
-.layout { display: flex; flex: 1 1 0; height: 100vh; max-height: 100vh; min-height: 0; overflow: hidden; }
+.layout { display: flex; flex: 1 1 0; height: var(--vh); max-height: var(--vh); min-height: 0; overflow: hidden; }
 
 /* 대기열 (320px) */
 .queue {
