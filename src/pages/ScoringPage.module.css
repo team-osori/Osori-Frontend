@@ -157,3 +157,15 @@
 .detailBody { flex: 1; }
 .actions { margin-top: auto; }
 .toNotes { margin-top: auto; }
+
+/* ---------- 한 화면에 들어오게 ---------- */
+/* 문항 칸은 비율 대신 남은 높이를 나눠 가짐 (화면이 낮으면 칸이 납작해짐) */
+.sheet { min-height: 0; }
+.grid { flex: 1; grid-auto-rows: minmax(64px, 1fr); }
+.seat { aspect-ratio: auto; height: 100%; max-height: 122px; }
+.detail { padding: 32px 40px; }
+.detailBody { gap: 18px; }
+@media (max-width: 1180px) {
+  .grid { grid-auto-rows: auto; }
+  .seat { aspect-ratio: 1; height: auto; }
+}
