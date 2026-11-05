@@ -61,7 +61,7 @@ export function SidebarDivider() {
 
 /* ---------- 홈(전체 프로젝트) 사이드바 ---------- */
 
-type HomeMenu = 'projects' | 'create'
+type HomeMenu = 'projects' | 'create' | 'trash' | 'settings'
 
 type HomeSidebarProps = {
   user: User
@@ -95,6 +95,11 @@ export function HomeSidebar({
           onClick={() => onNavigate?.('projects')}
         />
         <NavItem icon="plus" label="프로젝트 만들기" active={active === 'create'} onClick={() => onNavigate?.('create')} />
+      </SidebarList>
+      <SidebarDivider />
+      <SidebarList>
+        <NavItem icon="trash" label="휴지통" active={active === 'trash'} onClick={() => onNavigate?.('trash')} />
+        <NavItem icon="settings" label="설정" active={active === 'settings'} onClick={() => onNavigate?.('settings')} />
       </SidebarList>
     </Sidebar>
   )
