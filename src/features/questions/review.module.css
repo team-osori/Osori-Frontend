@@ -153,3 +153,10 @@
   .search { width: 160px; }
   .flow { display: none; }
 }
+
+/* ---------- 화면 높이 채우기 ---------- */
+.layout { flex: 1; }
+.card { display: flex; flex: 1; flex-direction: column; }
+.cardBody { flex: 1; }
+.answer { flex: 1; }
+.emptyCard { flex: 1; }

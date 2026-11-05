@@ -1,5 +1,5 @@
 /* 02-1 프로젝트 목록 · 빈 상태 (Figma 330:3368) */
-.root { display: flex; flex-direction: column; gap: 20px; }
+.root { display: flex; flex: 1; flex-direction: column; gap: 20px; }
 
 .hero {
   display: flex;
@@ -33,12 +33,12 @@
 .create:hover { filter: brightness(1.06); }
 .create:active { transform: scale(0.97); }
 
-.stages { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin: 0; padding: 0; list-style: none; }
+.stages { display: grid; flex: 1; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin: 0; padding: 0; list-style: none; }
 .stage {
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: clamp(460px, 60vh, 590px);
+  min-height: 460px;
   padding: 36px;
   overflow: hidden;
   border-radius: 18px;

@@ -151,3 +151,11 @@
   .actions { flex-wrap: wrap; }
   .verdict { flex: 1; width: auto; }
 }
+
+/* ---------- 화면 높이 채우기 ---------- */
+.layout { flex: 1; align-items: stretch; }
+.detail { display: flex; flex-direction: column; }
+.detailBody { flex: 1; }
+.answer { flex: 1; }
+.actions { margin-top: auto; }
+.toNotes { margin-top: auto; }
