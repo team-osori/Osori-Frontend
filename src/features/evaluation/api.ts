@@ -335,6 +335,22 @@ export function reviewItem(
   )
 }
 
+/** 대기 · 진행 중인 평가 중단. 이미 받은 결과는 남고, 이미 보낸 호출은 결과 불확실로 표시됩니다. */
+export function cancelEvaluation(projectId: string, serviceId: string, evaluationId: string, extras: RequestExtras = {}) {
+  return api.post<Evaluation>(`${evaluationPath(projectId, serviceId, evaluationId)}/cancel`, {}, { signal: extras.signal })
+}
+
+/** 중단한 평가에서 아직 호출하지 않은 문항만 이어서 실행. 연결 설정 revision이 실행 때와 같아야 합니다. */
+export function resumeEvaluation(
+  projectId: string,
+  serviceId: string,
+  evaluationId: string,
+  connectionRevision: number,
+  extras: RequestExtras = {},
+) {
+  return api.post<Evaluation>(`${evaluationPath(projectId, serviceId, evaluationId)}/resume`, { connectionRevision }, { signal: extras.signal })
+}
+
 /** 채점 화면 칸(최대 200문항). 단일 평가만 됩니다(비교 평가는 409). */
 export function getGradingBoard(projectId: string, serviceId: string, evaluationId: string, extras: RequestExtras = {}) {
   return api.get<GradingBoard>(`${evaluationPath(projectId, serviceId, evaluationId)}/grading`, { signal: extras.signal })

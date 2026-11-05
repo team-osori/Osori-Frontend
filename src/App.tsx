@@ -226,7 +226,7 @@ export default function App() {
       case ROUTES.wrongNotes:
         return <WrongNotesPage onRetest={() => navigate(ROUTES.scoring)} />
       case ROUTES.abRun:
-        return <AbRunPage onShowResults={() => navigate(ROUTES.grading)} />
+        return currentProjectId ? <AbRunPage key={currentProjectId} projectId={currentProjectId} onShowResults={() => navigate(ROUTES.grading)} /> : null
       case ROUTES.grading:
         return <GradingResultsPage onJudge={(item) => judgeFrom(item?.question)} />
       case ROUTES.judge:

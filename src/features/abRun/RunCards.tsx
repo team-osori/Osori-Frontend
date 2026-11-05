@@ -74,8 +74,9 @@ export function RunProgressCard({ total, versions, rows, statusOf, latencyOf }: 
     <Card className={styles.card}>
       <CardTitle>실행 현황</CardTitle>
 
-      {versions.map((v) => (
-        <div key={v.version} className={styles.progress}>
+      {/* 실행 전에는 두 버전 이름이 같을 수 있어 순서로 구분 */}
+      {versions.map((v, i) => (
+        <div key={i} className={styles.progress}>
           <div className={styles.progressHead}>
             <Tag tone={v.tone === 'primary' ? 'primary' : 'default'}>{v.version}</Tag>
             {v.label}
@@ -83,7 +84,7 @@ export function RunProgressCard({ total, versions, rows, statusOf, latencyOf }: 
               {v.done} / {total}
             </span>
           </div>
-          <ProgressBar size="md" tone={v.tone} value={(v.done / total) * 100} label={`${v.version} 진행률`} />
+          <ProgressBar size="md" tone={v.tone} value={total > 0 ? (v.done / total) * 100 : 0} label={`${v.version} 진행률`} />
         </div>
       ))}
 
@@ -103,6 +104,13 @@ export function RunProgressCard({ total, versions, rows, statusOf, latencyOf }: 
           </tr>
         </thead>
         <tbody>
+          {rows.length === 0 && (
+            <tr>
+              <td colSpan={4} className={styles.question}>
+                아직 실행하지 않았습니다.
+              </td>
+            </tr>
+          )}
           {rows.map((row) => {
             const latency = latencyOf(row)
             return (
