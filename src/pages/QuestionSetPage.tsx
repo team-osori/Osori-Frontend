@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Button, FilterChips, SearchInput } from '../components/ui'
 import { ActionBar, PageHeader, ProjectSidebar } from '../components/common'
 import { AppLayout } from '../layouts/AppLayout'
+import { ROUTES } from '../routes'
 import { generateDraft } from '../features/questions/api'
 import { questionsFromCsv } from '../features/questions/csv'
 import { MOCK_CHUNK_OPTIONS, MOCK_DOC_OPTIONS, MOCK_DRAFT_COUNTS, MOCK_QUESTIONS } from '../features/questions/mock'
@@ -97,7 +98,7 @@ export default function QuestionSetPage({
           promptValue="v1"
           onPromptChange={() => {}}
           questionSet="작성 중"
-          currentStep={2}
+          current={ROUTES.questions}
           onBack={onBack}
         />
       }

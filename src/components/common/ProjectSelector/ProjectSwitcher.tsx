@@ -1,8 +1,8 @@
 import { useId, useState, type RefObject } from 'react'
 import { cx } from '../../../lib/cx'
 import { SearchInput } from '../../ui'
-import type { ProjectStatus } from '../ProjectCard/ProjectCard'
-import { EVALUATION_STEPS } from '../StepItem/StepItem'
+import type { ProjectStatus } from '../ProjectTable/ProjectTable'
+import { STAGES } from '../../../routes'
 import { PopoverAction, PopoverActions, PopoverList, PopoverOption, SidebarPopover } from './SidebarPopover'
 import styles from './SidebarPopover.module.css'
 
@@ -11,14 +11,14 @@ export type ProjectSwitchItem = {
   id: string
   name: string
   status: ProjectStatus
-  /** 진행 중인 평가 단계(1~7) */
+  /** 진행 중인 평가 단계(1~3) */
   currentStep: number
 }
 
-/** "4 · 자동 채점 결과", 진행 중이면 "5 · 사람 판정 진행 중" */
+/** "3 / 3 · 오답 노트", 진행 중이면 "2 / 3 · 채점 진행 중" */
 function progressOf(project: ProjectSwitchItem) {
-  const step = EVALUATION_STEPS[project.currentStep - 1] ?? ''
-  return `${project.currentStep} · ${step}${project.status === 'running' ? ' 진행 중' : ''}`
+  const step = STAGES[project.currentStep - 1]?.label ?? ''
+  return `${project.currentStep} / ${STAGES.length} · ${step}${project.status === 'running' ? ' 진행 중' : ''}`
 }
 
 type ProjectSwitcherProps = {

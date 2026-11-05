@@ -1,18 +1,7 @@
 /**
- * 화면 경로(해시) 정의. 사이드바, 프로젝트 카드, 각 화면의 이전/다음 버튼이 모두 여기를 기준으로 이동합니다.
+ * 화면 경로(해시) 정의. 사이드바, 프로젝트 목록, 각 화면의 이전/다음 버튼이 모두 여기를 기준으로 이동합니다.
  * 라우터 라이브러리를 도입하면 이 파일만 바꾸면 됩니다.
  */
-
-/** 평가 단계(1~7)와 경로. 배열 순서가 곧 단계 번호입니다. */
-export const STEP_ROUTES = [
-  '/connection', // 1 연결 설정
-  '/questions', // 2 질문 세트
-  '/ab-run', // 3 프롬프트 A/B 실행
-  '/grading', // 4 자동 채점 결과
-  '/judge', // 5 사람 판정
-  '/diagnosis', // 6 원인 진단
-  '/improvement', // 7 개선안 적용
-] as const
 
 export const ROUTES = {
   login: '/login',
@@ -20,17 +9,61 @@ export const ROUTES = {
   projects: '/projects',
   /** 앱 전체 설정 (내 계정 · 멤버 · 인스턴스) */
   accountSettings: '/account-settings',
-  /** 프로젝트 설정 (일반 · 서비스 연결 · 채점자 · 멤버) */
+  /** 프로젝트 설정 (일반 · 서비스 연결 · 프롬프트 · 채점자) */
   projectSettings: '/settings',
+
+  /* 평가 단계 화면 */
+  questions: '/questions',
+  abRun: '/ab-run',
+  grading: '/grading',
+  judge: '/judge',
+  diagnosis: '/diagnosis',
+  improvement: '/improvement',
 } as const
 
-/** 1부터 시작하는 단계 번호의 경로. 범위를 벗어나면 undefined */
-export function stepRoute(step: number): string | undefined {
-  return STEP_ROUTES[step - 1]
+export type StageScreen = { route: string; label: string }
+
+export type Stage = {
+  label: string
+  /** 사이드바 단계 아래 작은 글씨 */
+  hint: string
+  /** 단계 안의 화면들. 첫 화면이 단계의 시작 화면 */
+  screens: StageScreen[]
 }
 
-/** 현재 경로가 몇 단계 화면인지. 평가 화면이 아니면 undefined */
-export function stepOf(route: string): number | undefined {
-  const index = STEP_ROUTES.indexOf(route as (typeof STEP_ROUTES)[number])
+/** 평가 3단계. 배열 순서가 곧 단계 번호(1~3)입니다. */
+export const STAGES: Stage[] = [
+  {
+    label: '시험지 만들기',
+    hint: '정책 문서로 문제를 만들고 검토',
+    screens: [{ route: ROUTES.questions, label: '시험지' }],
+  },
+  {
+    label: '채점',
+    hint: '챗봇 답을 O / X로 채점',
+    screens: [
+      { route: ROUTES.abRun, label: 'A/B 실행' },
+      { route: ROUTES.grading, label: '채점 결과' },
+      { route: ROUTES.judge, label: '사람 판정' },
+    ],
+  },
+  {
+    label: '오답 노트',
+    hint: '틀린 이유를 보고 프롬프트 고치기',
+    screens: [
+      { route: ROUTES.diagnosis, label: '원인 진단' },
+      { route: ROUTES.improvement, label: '개선안 적용' },
+    ],
+  },
+]
+
+/** 1부터 시작하는 단계의 시작 화면 경로. 범위를 벗어나면 undefined */
+export function stageRoute(stage: number): string | undefined {
+  return STAGES[stage - 1]?.screens[0].route
+}
+
+/** 현재 경로가 몇 단계 화면인지(1~3). 평가 화면이 아니면 undefined */
+export function stageOf(route: string): number | undefined {
+  const index = STAGES.findIndex((s) => s.screens.some((screen) => screen.route === route))
   return index === -1 ? undefined : index + 1
 }
