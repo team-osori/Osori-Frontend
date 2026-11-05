@@ -1,0 +1,5 @@
+.header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.titles { display: flex; flex-direction: column; gap: 8px; }
+.title { margin: 0; font: var(--text-heading); font-weight: var(--font-weight-bold); letter-spacing: -0.5px; }
+.description { margin: 0; font: var(--text-body); color: var(--color-text-secondary); }
+.actions { display: flex; align-items: center; gap: 16px; }

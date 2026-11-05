@@ -1,0 +1,77 @@
+.root { position: relative; display: inline-flex; min-width: 0; }
+.full { display: flex; width: 100%; }
+
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  border: 1px solid transparent;
+  color: var(--color-text);
+  text-align: left;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+.trigger:focus-visible { box-shadow: none; border-color: var(--color-border-focus); }
+.open .trigger { border-color: var(--color-border-focus); }
+
+.value { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.placeholder { color: var(--color-text-tertiary); }
+
+.chevron { transition: transform 0.15s; }
+.open .chevron { transform: rotate(180deg); }
+
+.md .trigger {
+  height: 40px;
+  padding: 0 13px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  font: var(--text-body-sm);
+}
+.md .trigger:hover { background: #34343d; }
+
+.sm .trigger {
+  height: 30px;
+  padding: 0 9px;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-strong);
+  font: var(--text-label);
+}
+.sm .trigger:hover { background: #42424d; }
+
+/* 옵션 목록 */
+/* 위치는 Select.tsx에서 화면 기준(fixed)으로 계산 */
+.list {
+  position: fixed;
+  z-index: 50;
+  margin: 0;
+  padding: 4px;
+  overflow-y: auto;
+  list-style: none;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  animation: pop 0.12s ease-out;
+}
+
+@keyframes pop {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 10px;
+  border-radius: var(--radius-sm);
+  font: var(--text-body-sm);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.listSm .option { padding: 8px 9px; font: var(--text-label); }
+.highlighted { background: var(--color-surface-strong); }
+.selected { color: var(--color-primary); font-weight: var(--font-weight-bold); }
+.check { width: 6px; height: 6px; border-radius: var(--radius-full); background: var(--color-primary); }

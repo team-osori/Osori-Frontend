@@ -1,0 +1,9 @@
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  padding: clamp(16px, 2vw, 24px);
+}
+.danger { border: 1px solid var(--color-danger-border); }
+
+.title { margin: 0; font: var(--text-title); font-weight: var(--font-weight-bold); }
+.dangerTitle { color: var(--color-danger); }

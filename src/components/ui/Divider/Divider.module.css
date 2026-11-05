@@ -1,0 +1,2 @@
+.divider { flex-shrink: 0; height: 1px; margin: 0; border: none; background: var(--color-surface-strong); }
+.strong { background: var(--color-divider); }

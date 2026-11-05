@@ -1,0 +1,75 @@
+/* Osori 디자인 토큰 — Figma "컴포넌트 · 공통 UI" 기준 */
+:root {
+  /* Color · Surface */
+  --color-bg: #24242a;
+  --color-surface: #2e2e36;
+  --color-surface-strong: #3a3a44;
+  --color-border: #3a3a44;
+  --color-divider: rgba(255, 255, 255, 0.85);
+  --color-border-focus: rgba(255, 76, 216, 0.6);
+  --color-focus-ring: rgba(255, 76, 216, 0.45);
+
+  /* Color · Brand */
+  --color-primary: #ff4cd8;
+  --color-on-primary: #000000;
+
+  /* Color · Text */
+  --color-text: #ffffff;
+  --color-text-secondary: rgba(255, 255, 255, 0.65);
+  --color-text-tertiary: rgba(255, 255, 255, 0.55);
+
+  /* Color · Status */
+  --color-success: #4ade80;
+  --color-warning: #fbbf24;
+  --color-neutral: #9ca3af;
+  --color-danger: #ff6b6b;
+  --color-danger-border: rgba(255, 107, 107, 0.4);
+
+  /* Gradient */
+  --gradient-sidebar: linear-gradient(180deg, #3a3a44 0%, #3a3a44 50%, #4a3550 100%);
+  --gradient-brand-panel: linear-gradient(170deg, #3a3a44 25%, #5e3a5c 80%, #7a3a6e 100%);
+  --gradient-page:
+    radial-gradient(1361px 687px at 100% 100%, rgba(255, 76, 216, 0.18) 0%, rgba(128, 38, 108, 0.09) 35%, transparent 70%),
+    radial-gradient(907px 491px at 0% 100%, rgba(140, 60, 200, 0.12) 0%, transparent 70%),
+    #24242a;
+
+  /* Typography */
+  --font-family: 'Noto Sans KR', system-ui, sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-bold: 700;
+
+  --text-caption: 12px / 14px var(--font-family);   /* 배지 */
+  --text-label: 13px / 15px var(--font-family);     /* 보조 라벨, 메트릭 */
+  --text-body-sm: 14px / 16px var(--font-family);   /* 입력, 작은 버튼 */
+  --text-body: 15px / 18px var(--font-family);      /* 내비게이션, 버튼 */
+  --text-title-sm: 16px / 19px var(--font-family);  /* 프로젝트 선택 */
+  --text-title: 17px / 20px var(--font-family);     /* 섹션 제목 */
+  --text-title-lg: 18px / 21px var(--font-family);  /* 카드 제목, 브랜드 */
+  /* 큰 글자는 화면 폭에 따라 줄어듦 (최대값 = Figma 기준) */
+  --text-lead: clamp(15px, 1.4vw, 18px) / 1.6 var(--font-family);      /* 리드 문단 */
+  --text-heading: clamp(22px, 2vw, 28px) / 1.22 var(--font-family);    /* 페이지 제목 */
+  --text-display: clamp(28px, 3.2vw, 44px) / 1.25 var(--font-family);  /* 히어로 */
+
+  /* Radius */
+  --radius-xs: 3px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-full: 9999px;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-14: 56px;
+
+  /* Layout */
+  --sidebar-width: clamp(260px, 21vw, 306px);
+  --page-padding-x: clamp(16px, 4vw, 56px);
+  --page-padding-y: clamp(24px, 3.5vw, 48px);}

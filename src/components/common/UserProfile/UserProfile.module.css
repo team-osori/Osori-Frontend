@@ -1,0 +1,13 @@
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+}
+.text { display: flex; flex: 1; flex-direction: column; gap: 2px; min-width: 0; }
+.name { font: var(--text-body); }
+.role { font: var(--text-body-sm); color: var(--color-primary); }

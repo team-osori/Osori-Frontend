@@ -1,0 +1,17 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 13px;
+  background: var(--color-surface-strong);
+  font: var(--text-caption);
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.dot { border-radius: var(--radius-full); flex-shrink: 0; }
+.success { background: var(--color-success); }
+.warning { background: var(--color-warning); }
+.neutral { background: var(--color-neutral); }

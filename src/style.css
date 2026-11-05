@@ -4,6 +4,6 @@ body { margin: 0; min-width: 320px; min-height: 100vh; }
 .welcome { min-height: 100vh; padding: 48px clamp(24px, 8vw, 120px); background: radial-gradient(ellipse at 15% 85%, #792f60 0, transparent 52%), radial-gradient(ellipse at 75% 10%, #4c254b 0, transparent 48%); }
 .brand { font-size: 24px; font-weight: 700; }
 .eyebrow { margin-top: clamp(100px, 20vh, 200px); color: #f1add0; font-size: 14px; }
-h1 { margin: 24px 0; font-size: clamp(40px, 6vw, 72px); line-height: 1.2; letter-spacing: -0.04em; }
+.welcome h1 { margin: 24px 0; font-size: clamp(40px, 6vw, 72px); line-height: 1.2; letter-spacing: -0.04em; }
 .description { color: #dbcbd7; line-height: 1.8; }
 .note { margin-top: 80px; color: #bfa9ba; font-size: 13px; }

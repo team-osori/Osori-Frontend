@@ -1,0 +1,26 @@
+@import './tokens.css';
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+
+/* 기본 외곽선 제거. 버튼·링크는 키보드 포커스일 때만 얇은 링 표시 */
+:focus { outline: none; }
+button:focus-visible,
+a:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-focus-ring);
+}
+/* 입력 요소는 각 컴포넌트에서 테두리 색으로만 포커스 표시 */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible { outline: none; }
