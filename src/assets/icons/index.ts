@@ -43,6 +43,21 @@ import verdictPass from './verdict-pass.svg'
 import verdictFail from './verdict-fail.svg'
 import chevronRightAccent from './chevron-right-accent.svg'
 
+import alertTriangleAccent from './alert-triangle-accent.svg'
+import alertTriangleAmber from './alert-triangle-amber.svg'
+import circleCheckDark from './circle-check-dark.svg'
+import circleXDanger from './circle-x-danger.svg'
+import cpuAmber from './cpu-amber.svg'
+import cpuDark from './cpu-dark.svg'
+import databaseAccent from './database-accent.svg'
+import databaseDark from './database-dark.svg'
+import layoutGridDark from './layout-grid-dark.svg'
+import messageAccent from './message-accent.svg'
+import messageDark from './message-dark.svg'
+import verdictFailSm from './verdict-fail-sm.svg'
+import verdictPassSm from './verdict-pass-sm.svg'
+import warningAmber from './warning-amber.svg'
+
 export const icons = {
   arrowLeft,
   arrowRight,
@@ -88,6 +103,20 @@ export const icons = {
   verdictPass,
   verdictFail,
   chevronRightAccent,
+  alertTriangleAccent,
+  alertTriangleAmber,
+  circleCheckDark,
+  circleXDanger,
+  cpuAmber,
+  cpuDark,
+  databaseAccent,
+  databaseDark,
+  layoutGridDark,
+  messageAccent,
+  messageDark,
+  verdictFailSm,
+  verdictPassSm,
+  warningAmber,
 }
 
 export type IconName = keyof typeof icons

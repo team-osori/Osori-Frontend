@@ -1,6 +1,9 @@
 .group { display: flex; flex-wrap: wrap; gap: 8px; }
 
 .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   height: 32px;
   padding: 0 12px;
   border: none;
@@ -15,3 +18,5 @@
 .chip:hover { background: var(--color-surface-strong); }
 .active,
 .active:hover { background: var(--color-text); color: var(--color-on-primary); }
+.lg { height: 36px; padding: 0 14px; border-radius: 18px; font: var(--text-body-sm); font-weight: var(--font-weight-bold); }
+.count { opacity: 0.7; }

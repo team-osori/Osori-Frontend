@@ -18,3 +18,5 @@
 .status { display: flex; align-items: center; gap: 6px; font: var(--text-body-sm); white-space: nowrap; }
 .actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 12px 16px; margin-left: auto; }
 .hint { font: var(--text-label); color: var(--color-text-secondary); }
+.summary { font: var(--text-body-sm); }
+.summary b { color: var(--color-primary); font-weight: var(--font-weight-bold); }

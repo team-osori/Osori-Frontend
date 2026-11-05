@@ -13,6 +13,8 @@ export type Project = {
   promptVersion: number | null
   /** 카드 하단 진행 상황 문구 */
   progressText: string
+  /** 지금 진행 중인 평가 단계(1~7). 카드 버튼이 이 단계의 화면을 엽니다. 완료된 프로젝트는 결과를 보는 4단계 */
+  currentStep: number
 }
 
 export type CurrentUser = { name: string; role: string; email: string }

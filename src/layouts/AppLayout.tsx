@@ -14,10 +14,12 @@ type AppLayoutProps = {
   footer?: ReactNode
   /** 화면 전체가 아니라 부모 박스 크기에 맞출 때 */
   contained?: boolean
+  /** 본문 바깥 여백을 없애 자식이 본문 영역을 가득 채움 (예: 대기열 + 상세 2단 화면) */
+  flush?: boolean
 }
 
 /** 사이드바 + 본문 레이아웃. 넓은 화면은 접기, 좁은 화면은 드로어로 동작합니다. */
-export function AppLayout({ sidebar, children, footer, contained }: AppLayoutProps) {
+export function AppLayout({ sidebar, children, footer, contained, flush }: AppLayoutProps) {
   const ref = useRef<HTMLDivElement>(null)
   const slotRef = useRef<HTMLDivElement>(null)
   const menuRef = useRef<HTMLButtonElement>(null)
@@ -123,7 +125,7 @@ export function AppLayout({ sidebar, children, footer, contained }: AppLayoutPro
               <span className={styles.topbarTitle}>프롬프트 평가</span>
             </div>
           )}
-          <main className={styles.main}>{children}</main>
+          <main className={cx(styles.main, flush && styles.flush)}>{children}</main>
           {footer}
         </div>
       </div>

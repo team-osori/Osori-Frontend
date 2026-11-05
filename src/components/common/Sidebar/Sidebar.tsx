@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Divider, Icon, SearchInput, type SelectOption } from '../../ui'
+import { ROUTES, stepRoute } from '../../../routes'
 import { BrandMark } from '../BrandMark/BrandMark'
 import { NavItem } from '../NavItem/NavItem'
 import { ProjectSelector } from '../ProjectSelector/ProjectSelector'
@@ -10,6 +11,11 @@ import { useSidebarToggle } from './SidebarContext'
 import styles from './Sidebar.module.css'
 
 type User = { name: string; role: string; email?: string }
+
+/** 사이드바의 기본 이동. 해시 주소를 바꾸면 App의 useHashRoute가 화면을 바꿉니다. */
+function goTo(route: string | undefined) {
+  if (route) window.location.hash = route
+}
 
 type SidebarProps = {
   user: User
@@ -127,12 +133,16 @@ type ProjectSidebarProps = {
   currentStep: number
   unlockedUntil?: number
   settingsActive?: boolean
+  /** 없으면 프로젝트 목록(#/projects)으로 이동 */
   onBack?: () => void
+  /** 없으면 그 단계의 화면으로 이동 (routes.ts의 STEP_ROUTES) */
   onSelectStep?: (index: number) => void
+  /** 없으면 프로젝트 설정 화면으로 이동 */
   onSettings?: () => void
   onProjectClick?: () => void
   onToggle?: () => void
   onUserClick?: () => void
+  userMenu?: UserMenuActions
 }
 
 export function ProjectSidebar({
@@ -151,10 +161,11 @@ export function ProjectSidebar({
   onProjectClick,
   onToggle,
   onUserClick,
+  userMenu,
 }: ProjectSidebarProps) {
   return (
-    <Sidebar user={user} onToggle={onToggle} onUserClick={onUserClick}>
-      <button type="button" className={styles.back} onClick={onBack}>
+    <Sidebar user={user} onToggle={onToggle} onUserClick={onUserClick} userMenu={userMenu}>
+      <button type="button" className={styles.back} onClick={onBack ?? (() => goTo(ROUTES.projects))}>
         <Icon name="arrowLeft" />
         전체 프로젝트
       </button>
@@ -171,10 +182,16 @@ export function ProjectSidebar({
         current={currentStep}
         unlockedUntil={unlockedUntil}
         highlightCurrent={!settingsActive}
-        onSelect={onSelectStep}
+        onSelect={onSelectStep ?? ((step) => goTo(stepRoute(step)))}
       />
       <SidebarDivider />
-      <NavItem size="sm" icon="settings" label="프로젝트 설정" active={settingsActive} onClick={onSettings} />
+      <NavItem
+        size="sm"
+        icon="settings"
+        label="프로젝트 설정"
+        active={settingsActive}
+        onClick={onSettings ?? (() => goTo(ROUTES.projectSettings))}
+      />
     </Sidebar>
   )
 }

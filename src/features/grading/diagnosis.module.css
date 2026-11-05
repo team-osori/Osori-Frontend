@@ -1,0 +1,65 @@
+/* ---------- 08 원인 진단 ---------- */
+.page { display: flex; flex-direction: column; gap: 22px; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px; align-items: stretch; }
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 22px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+}
+/* 프롬프트 수정 제안을 고른 카드 */
+.cardSelected { border-color: var(--color-primary); }
+
+.cardHead { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 13px;
+  font: var(--text-caption);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-on-primary);
+}
+.meta { font: var(--text-caption); color: var(--color-text-secondary); }
+
+.question { margin: 0; font: var(--text-title); font-weight: var(--font-weight-bold); }
+.answer { margin: 0; font: var(--text-body-sm); line-height: 23px; }
+/* 문제가 된 답변 구간: 빨간 배경 + 밑줄 */
+.flag {
+  padding: 0;
+  background: rgba(255, 107, 107, 0.18);
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--color-danger);
+  text-underline-offset: 3px;
+}
+
+.chunk {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 11px 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  font: var(--text-body-sm);
+  line-height: 20px;
+}
+.chunk strong { font-weight: var(--font-weight-regular); color: var(--color-text-secondary); }
+
+.note { display: flex; align-items: center; gap: 8px; margin: 0; font: var(--text-body-sm); font-weight: var(--font-weight-bold); }
+.noteAccent { color: var(--color-accent); }
+.noteAmber { color: var(--color-caution); }
+
+.actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: auto; padding-top: 1px; }
+/* Figma 카드 안 버튼은 36px (공통 xs는 34px) */
+.actionButton { height: 36px; padding: 0 14px; }
+.actionStrong { font-weight: var(--font-weight-bold); }
+
+.empty { margin: 0; padding: 48px 0; text-align: center; font: var(--text-body); color: var(--color-text-secondary); }

@@ -25,6 +25,7 @@
   --color-danger: #ff6b6b;
   --color-danger-border: rgba(255, 107, 107, 0.4);
   --color-caution: #f5b544; /* 주의 (라벨 없음 등) */
+  --color-accent: #8b7cff; /* 검색 원인 · 합의 샘플 구분 */
 
   /* Overlay · Shadow */
   --color-overlay: rgba(14, 14, 18, 0.66);
