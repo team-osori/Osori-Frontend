@@ -1,22 +1,23 @@
 import { cx } from '../../../lib/cx'
+import logo from '../../../assets/brand/pebble-logo.png'
+import mark from '../../../assets/brand/pebble-mark.png'
 import styles from './BrandMark.module.css'
 
 type BrandMarkProps = {
-  tone?: 'sidebar' | 'panel'
-  title?: string
-  subtitle?: string
+  /** mark: 조약돌 마크만 (아이콘 레일) · full: 마크 + Pebble 글자 (로그인 · 상단 바) */
+  variant?: 'mark' | 'full'
+  className?: string
 }
 
-export function BrandMark({ tone = 'sidebar', title = '프롬프트 평가', subtitle = '셀프 호스팅' }: BrandMarkProps) {
+/** Pebble 로고. scripts/cut-logo.py로 만든 이미지 */
+export function BrandMark({ variant = 'full', className }: BrandMarkProps) {
   return (
-    <div className={cx(styles.brand, styles[tone])}>
-      <span className={styles.logo} aria-hidden>
-        평가
-      </span>
-      <div className={styles.text}>
-        <span className={styles.title}>{title}</span>
-        <span className={styles.subtitle}>{subtitle}</span>
-      </div>
-    </div>
+    <span className={cx(styles.brand, className)}>
+      {variant === 'full' ? (
+        <img className={styles.logo} src={logo} alt="Pebble" />
+      ) : (
+        <img className={styles.mark} src={mark} alt="Pebble" />
+      )}
+    </span>
   )
 }

@@ -18,7 +18,7 @@
 .full { width: 100%; }
 
 .tonal { background: var(--color-surface-strong); color: var(--color-text); }
-.tonal:not(:disabled):hover { background: #44444f; }
+.tonal:not(:disabled):hover { background: #33383a; }
 
 /* 완료 상태를 보여주는 연한 초록 (예: 승인됨) */
 .success { background: rgba(74, 222, 128, 0.15); color: var(--color-success); }

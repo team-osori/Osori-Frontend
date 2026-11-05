@@ -1,0 +1,82 @@
+/* 화면 위쪽 가운데. 하단 작업 막대와 겹치지 않게 위에 띄움 */
+.viewport {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: min(420px, calc(100vw - 32px));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 10px 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: 0 16px 24px rgba(0, 0, 0, 0.45);
+  pointer-events: auto;
+  animation: enter 0.18s ease-out;
+}
+.leaving { animation: leave 0.16s ease-in forwards; }
+
+@keyframes enter {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes leave {
+  to { opacity: 0; transform: translateY(-8px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .toast, .leaving { animation: none; }
+}
+
+.badge {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-full);
+}
+.success .badge { background: rgba(74, 222, 128, 0.16); }
+.warning .badge { background: rgba(245, 181, 68, 0.16); }
+
+.message {
+  flex: 1;
+  min-width: 0;
+  margin: 2px 0 0;
+  font: var(--text-body-sm);
+  color: var(--color-text);
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.close {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  opacity: 0.6;
+  transition: opacity 0.15s, background-color 0.15s;
+}
+.close:hover,
+.close:focus-visible { opacity: 1; box-shadow: none; background: rgba(255, 255, 255, 0.06); }

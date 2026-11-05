@@ -1,6 +1,22 @@
 .page {
+  position: relative;
   display: flex;
   flex-direction: column;
-  /* 헤더와 카드 사이 간격은 Figma 기준 28px */
   gap: 28px;
+}
+
+.search { width: clamp(160px, 16vw, 220px); }
+
+/* 오른쪽 아래 비스듬히 누운 클립 */
+.clip {
+  position: fixed;
+  right: clamp(12px, 2vw, 32px);
+  bottom: 18px;
+  height: auto;
+  transform: rotate(-58deg);
+  opacity: 0.9;
+  pointer-events: none;
+}
+@media (max-width: 1024px) {
+  .clip { display: none; }
 }

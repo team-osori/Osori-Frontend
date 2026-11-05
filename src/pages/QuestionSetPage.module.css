@@ -12,3 +12,6 @@
 }
 
 .list { display: flex; flex-direction: column; gap: 24px; }
+
+.message { margin: -12px 0 0; font: var(--text-label); color: var(--color-success); }
+.error { margin: -12px 0 0; font: var(--text-label); color: var(--color-danger); }

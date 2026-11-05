@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Button } from '../components/ui'
 import { ActionBar, PageHeader, ProjectSidebar } from '../components/common'
 import { AppLayout } from '../layouts/AppLayout'
+import { ROUTES } from '../routes'
 import { ConfidenceBar } from '../features/grading/ConfidenceBar'
 import { FailureChart } from '../features/grading/FailureChart'
 import { MetricCard } from '../features/grading/MetricCards'
@@ -52,8 +53,8 @@ export default function GradingResultsPage({
           promptValue={baseVersion}
           onPromptChange={setBaseVersion}
           questionSet="v1 · 67문항"
-          currentStep={4}
-          unlockedUntil={6}
+          current={ROUTES.grading}
+          unlockedUntil={3}
           onBack={onBack}
         />
       }

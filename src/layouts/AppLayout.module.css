@@ -30,7 +30,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px var(--page-padding-x) 0;
+  padding: 14px var(--page-padding-x);
+  border-bottom: 1px solid var(--color-border-soft);
 }
 .menu {
   display: inline-flex;
@@ -39,10 +40,6 @@
   border-radius: var(--radius-md);
   background: var(--color-surface);
 }
-.topbarTitle { font: var(--text-title-lg); font-weight: var(--font-weight-bold); color: var(--color-primary); }
-
-/* 데스크톱에서 접힘 */
-.collapsed .slot { display: none; }
 
 /* 좁은 화면: 드로어 */
 .narrow .slot {
@@ -57,7 +54,6 @@
 }
 .narrow.contained .slot { position: absolute; }
 .narrow.drawerOpen .slot { transform: translateX(0); box-shadow: 0 0 40px rgba(0, 0, 0, 0.5); }
-.narrow .slot aside { width: min(306px, 85vw); }
 
 .backdrop {
   position: fixed;
@@ -68,6 +64,3 @@
 }
 .contained .backdrop { position: absolute; }
 
-/* 박스 안에 넣은 레이아웃: 드로어 폭을 부모 기준으로 제한 */
-.narrow.contained .slot { width: min(306px, 85%); }
-.narrow.contained .slot aside { width: 100%; }

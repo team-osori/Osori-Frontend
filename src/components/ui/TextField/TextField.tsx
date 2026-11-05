@@ -1,4 +1,4 @@
-import { useId, type InputHTMLAttributes, type ReactNode, type TextareaHTMLAttributes } from 'react'
+import { useId, useState, type InputHTMLAttributes, type ReactNode, type TextareaHTMLAttributes } from 'react'
 import { cx } from '../../../lib/cx'
 import { Icon } from '../Icon/Icon'
 import styles from './TextField.module.css'
@@ -80,10 +80,12 @@ export function TextField({
   danger,
   className,
   id,
+  type,
   'aria-describedby': describedBy,
   ...rest
 }: TextFieldProps) {
   const autoId = useId()
+  const [revealed, setRevealed] = useState(false)
   const inputId = id ?? autoId
   const messageId = `${inputId}-message`
   const hasMessage = Boolean(error || hint)
@@ -100,6 +102,34 @@ export function TextField({
   }
   const message = <FieldMessage id={messageId} error={error} hint={hint} hintTone={hintTone} />
 
+  // 비밀번호 칸은 오른쪽에 보기 · 숨기기 버튼
+  if (type === 'password' && !prefix) {
+    return (
+      <Field label={label} htmlFor={inputId} size={size}>
+        <div className={cx(controlClass, styles.withPrefix)}>
+          <input
+            id={inputId}
+            type={revealed ? 'text' : 'password'}
+            className={cx(styles.bare, mono && styles.mono)}
+            {...a11y}
+            {...rest}
+          />
+          <button
+            type="button"
+            className={styles.reveal}
+            onClick={() => setRevealed((v) => !v)}
+            aria-label={revealed ? '비밀번호 숨기기' : '비밀번호 보기'}
+            aria-pressed={revealed}
+            aria-controls={inputId}
+          >
+            <Icon name={revealed ? 'eyeOff' : 'eye'} />
+          </button>
+        </div>
+        {message}
+      </Field>
+    )
+  }
+
   if (prefix) {
     return (
       <Field label={label} htmlFor={inputId} size={size}>
@@ -110,6 +140,7 @@ export function TextField({
           <input
             id={inputId}
             className={cx(styles.bare, mono && styles.mono)}
+            type={type}
             aria-label={`${label} (${prefix})`}
             {...a11y}
             {...rest}
@@ -122,7 +153,7 @@ export function TextField({
 
   return (
     <Field label={label} htmlFor={inputId} size={size}>
-      <input id={inputId} className={cx(controlClass, mono && styles.mono)} {...a11y} {...rest} />
+      <input id={inputId} type={type} className={cx(controlClass, mono && styles.mono)} {...a11y} {...rest} />
       {message}
     </Field>
   )

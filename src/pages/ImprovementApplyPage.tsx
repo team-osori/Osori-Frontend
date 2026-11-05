@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Button } from '../components/ui'
 import { PageHeader, ProjectSidebar } from '../components/common'
 import { AppLayout } from '../layouts/AppLayout'
+import { ROUTES } from '../routes'
 import { ReevaluationBar } from '../features/improvement/ReevaluationBar'
 import { MOCK_IMPROVEMENT_PLAN } from '../features/improvement/mock'
 import type { ImprovementPlan, ReevaluationScope } from '../features/improvement/types'
@@ -21,7 +22,7 @@ type ImprovementApplyPageProps = {
   /** v4 저장 후 재평가 실행 */
   onReevaluate?: (result: ImprovementApplyResult) => void
   onBack?: () => void
-  onSelectStep?: (index: number) => void
+  onSelectScreen?: (route: string) => void
 }
 
 /** 저장·재평가 시 상위로 전달하는 선택 결과 */
@@ -38,7 +39,7 @@ export default function ImprovementApplyPage({
   onSaveOnly,
   onReevaluate,
   onBack,
-  onSelectStep,
+  onSelectScreen,
 }: ImprovementApplyPageProps) {
   const [selected, setSelected] = useState<Set<string>>(
     () => new Set(plan.suggestions.filter((s) => s.defaultChecked).map((s) => s.id)),
@@ -72,9 +73,9 @@ export default function ImprovementApplyPage({
           promptValue={plan.toVersion}
           onPromptChange={() => {}}
           questionSet={`v1 · ${plan.allCount}문항`}
-          currentStep={7}
+          current={ROUTES.improvement}
           onBack={onBack}
-          onSelectStep={onSelectStep}
+          onSelect={onSelectScreen}
         />
       }
     >

@@ -2,13 +2,14 @@ import { useMemo, useState } from 'react'
 import { Button, FilterChips, SearchInput } from '../components/ui'
 import { ActionBar, PageHeader, ProjectSidebar } from '../components/common'
 import { AppLayout } from '../layouts/AppLayout'
+import { ROUTES } from '../routes'
 import { generateDraft } from '../features/questions/api'
 import { questionsFromCsv } from '../features/questions/csv'
-import { MOCK_CHUNK_OPTIONS, MOCK_DOC_OPTIONS, MOCK_DRAFT_COUNTS, MOCK_QUESTIONS } from '../features/questions/mock'
+import { MOCK_CHUNK_OPTIONS, MOCK_DOC_OPTIONS, MOCK_DRAFT_COUNTS } from '../features/questions/mock'
 import { QuestionEditModal } from '../features/questions/QuestionEditModal'
 import { ConfirmSetModal } from '../features/questions/ConfirmSetModal'
 import type { Question } from '../features/questions/types'
-import { DraftCard, UploadCard } from '../features/questions/SourceCards'
+import { DraftModal, StartChoices, TypeGuide, useCsvPicker } from '../features/questions/StartSources'
 import { QuestionTable } from '../features/questions/QuestionTable'
 import questionStyles from '../features/questions/questions.module.css'
 import styles from './QuestionSetPage.module.css'
@@ -26,11 +27,11 @@ type QuestionSetPageProps = {
   onBack?: () => void
 }
 
-/** 평가 2단계 · 질문 세트 */
+/** 1단계 · 시험지 만들기 (05 시작 화면 → 문제 검토) */
 export default function QuestionSetPage({
   projectName = '모아몰 CS 챗봇',
   setVersion = 'v1',
-  initialQuestions = MOCK_QUESTIONS,
+  initialQuestions = [],
   onConfirm,
   onBack,
 }: QuestionSetPageProps) {
@@ -40,6 +41,7 @@ export default function QuestionSetPage({
   const [docs, setDocs] = useState(['refund', 'shipping', 'order'])
   const [counts, setCounts] = useState(MOCK_DRAFT_COUNTS)
   const [generating, setGenerating] = useState(false)
+  const [draftOpen, setDraftOpen] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [uploadMessage, setUploadMessage] = useState<{ text: string; error?: boolean }>()
@@ -80,12 +82,15 @@ export default function QuestionSetPage({
       const drafted = await generateDraft(names, counts)
       setQuestions((list) => [...drafted, ...list])
       setFilter('pending')
+      setDraftOpen(false)
     } finally {
       setGenerating(false)
     }
   }
 
   const canConfirm = tally.pending === 0 && tally.approved > 0
+  const csv = useCsvPicker(uploadCsv)
+  const empty = questions.length === 0
 
   return (
     <AppLayout
@@ -96,12 +101,13 @@ export default function QuestionSetPage({
           promptOptions={[{ value: 'v1', label: 'v1 (초안)' }]}
           promptValue="v1"
           onPromptChange={() => {}}
-          questionSet="작성 중"
-          currentStep={2}
+          questionSet={empty ? '없음' : `작성 중 · ${questions.length}문항`}
+          current={ROUTES.questions}
           onBack={onBack}
         />
       }
       footer={
+        !empty && (
         <ActionBar
           status={[
             { tone: 'success', label: `승인 ${tally.approved}` },
@@ -114,30 +120,45 @@ export default function QuestionSetPage({
             disabled={!canConfirm}
             onClick={() => setConfirmOpen(true)}
           >
-            질문 세트 {setVersion}로 확정
+            시험지 {setVersion}로 확정
           </Button>
         </ActionBar>
+        )
       }
     >
       <div className={styles.page}>
-        <PageHeader title="질문 세트" />
+        <PageHeader
+          title="시험지 만들기"
+          description={empty ? '어떻게 문제를 넣을까요?' : '문제를 하나씩 보고 승인하거나 고치세요.'}
+          actions={
+            !empty && (
+              <>
+                <Button size="xs" variant="tonal" icon="upload" onClick={csv.open}>
+                  CSV 올리기
+                </Button>
+                <Button size="xs" icon="sparkleSm" onClick={() => setDraftOpen(true)}>
+                  문서로 더 만들기
+                </Button>
+              </>
+            )
+          }
+        />
+        {csv.input}
+        {uploadMessage && (
+          <p className={uploadMessage.error ? styles.error : styles.message} role={uploadMessage.error ? 'alert' : 'status'}>
+            {uploadMessage.text}
+          </p>
+        )}
 
-        <div className={styles.sources}>
-          <UploadCard onFiles={uploadCsv} message={uploadMessage} />
-          <DraftCard
-            docOptions={MOCK_DOC_OPTIONS}
-            docs={docs}
-            onDocsChange={setDocs}
-            counts={counts}
-            onCountsChange={setCounts}
-            generating={generating}
-            onGenerate={runDraft}
-          />
-        </div>
-
+        {empty ? (
+          <>
+            <StartChoices onDraft={() => setDraftOpen(true)} onUpload={csv.open} />
+            <TypeGuide />
+          </>
+        ) : (
         <section className={styles.list} aria-label="질문 목록">
           <div className={questionStyles.toolbar}>
-            <h2 className={questionStyles.count}>질문 {questions.length}</h2>
+            <h2 className={questionStyles.count}>문제 {questions.length}</h2>
             <FilterChips
               ariaLabel="질문 필터"
               value={filter}
@@ -151,7 +172,7 @@ export default function QuestionSetPage({
             />
             <SearchInput
               size="sm"
-              placeholder="질문 검색"
+              placeholder="문제 검색"
               className={questionStyles.search}
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
@@ -165,7 +186,20 @@ export default function QuestionSetPage({
             onEdit={(q) => setEditingId(q.id)}
           />
         </section>
+        )}
       </div>
+
+      <DraftModal
+        open={draftOpen}
+        onClose={() => setDraftOpen(false)}
+        docOptions={MOCK_DOC_OPTIONS}
+        docs={docs}
+        onDocsChange={setDocs}
+        counts={counts}
+        onCountsChange={setCounts}
+        generating={generating}
+        onGenerate={runDraft}
+      />
 
       <ConfirmSetModal
         open={confirmOpen}

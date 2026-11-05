@@ -1,1 +1,1 @@
-export { SignupPage } from './SignupPage'
+export { SignupPage, type SignupErrors } from './SignupPage'

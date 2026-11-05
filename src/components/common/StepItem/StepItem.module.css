@@ -3,18 +3,18 @@
 .item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
-  height: 46px;
-  padding: 0 12px;
+  min-height: 44px;
+  padding: 6px 10px;
   border: none;
   border-radius: var(--radius-md);
   background: transparent;
-  font: var(--text-body);
   color: var(--color-text);
   text-align: left;
+  transition: background-color 0.12s;
 }
-.item:not(:disabled):hover { background: rgba(46, 46, 54, 0.6); }
+.item:not(:disabled):hover { background: rgba(255, 255, 255, 0.04); }
 .item:disabled { cursor: default; }
 
 .marker {
@@ -22,27 +22,48 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   border-radius: var(--radius-full);
-  border: 1px solid var(--color-text-tertiary);
-  font: var(--text-caption);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-size: 11px;
   font-weight: var(--font-weight-bold);
 }
-.label { flex: 1; min-width: 0; }
+.texts { display: flex; flex: 1; flex-direction: column; gap: 2px; min-width: 0; }
+.label { font: var(--text-label); font-weight: var(--font-weight-bold); }
+.status { font-size: 11px; line-height: 13px; color: var(--color-text-tertiary); }
+.lock { width: 14px; height: 14px; opacity: 0.6; }
 
 .done .marker { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-on-primary); }
 
 .current,
-.current:not(:disabled):hover { background: var(--color-surface); font-weight: var(--font-weight-bold); }
-.current .marker { border-color: var(--color-primary); }
+.current:not(:disabled):hover { background: var(--color-surface-strong); }
+.current .marker { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-on-primary); }
+.current .status { color: var(--color-primary); }
 
-.locked { opacity: 0.4; }
+.locked { opacity: 0.45; }
 
-@media (max-height: 880px) {
-  .item { height: 40px; }
+/* 현재 단계 안의 화면 목록 */
+.screens {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin: 4px 0 6px 19px;
+  padding: 0 0 0 12px;
+  border-left: 1px solid var(--color-border);
+  list-style: none;
 }
-@media (max-height: 720px) {
-  .item { height: 34px; }
-  .marker { width: 22px; height: 22px; }
+.screen {
+  width: 100%;
+  height: 28px;
+  padding: 0 8px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  font: var(--text-caption);
+  color: var(--color-text-secondary);
+  text-align: left;
 }
+.screen:hover { color: var(--color-text); background: rgba(255, 255, 255, 0.04); }
+.screenActive,
+.screenActive:hover { color: var(--color-primary); font-weight: var(--font-weight-bold); }

@@ -11,5 +11,5 @@
   background: var(--color-surface-strong);
   transition: background-color 0.15s;
 }
-.button:not(:disabled):hover { background: #44444f; }
+.button:not(:disabled):hover { background: #33383a; }
 .button:disabled { opacity: 0.4; cursor: not-allowed; }
