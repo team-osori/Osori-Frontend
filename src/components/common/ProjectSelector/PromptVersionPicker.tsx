@@ -3,14 +3,14 @@ import { cx } from '../../../lib/cx'
 import { PopoverAction, PopoverActions, PopoverList, PopoverOption, SidebarPopover } from './SidebarPopover'
 import styles from './SidebarPopover.module.css'
 
+/** 프롬프트 버전 (자동 채점 결과의 버전 목록과 같은 모양) */
 export type PromptVersion = {
   /** 버전 이름 (v3) */
-  value: string
+  version: string
   /** 이 버전에서 바꾼 내용 */
   title: string
   /** 만든 시각 (YYYY-MM-DD HH:mm) */
   createdAt: string
-  latest?: boolean
 }
 
 type PromptVersionPickerProps = {
@@ -18,6 +18,7 @@ type PromptVersionPickerProps = {
   onClose: () => void
   triggerRef: RefObject<HTMLElement | null>
   rootRef: RefObject<HTMLElement | null>
+  /** 최신 버전이 맨 앞 */
   versions: PromptVersion[]
   value: string
   onChange: (value: string) => void
@@ -54,15 +55,15 @@ export function PromptVersionPicker({
     >
       <p className={styles.heading}>기준 버전</p>
       <PopoverList label="기준 버전">
-        {versions.map((version) => {
-          const selected = version.value === value
+        {versions.map((version, index) => {
+          const selected = version.version === value
           return (
-            <PopoverOption key={version.value} selected={selected} onSelect={() => run(() => onChange(version.value))}>
-              <span className={cx(styles.pill, selected && styles.pillOn)}>{version.value}</span>
+            <PopoverOption key={version.version} selected={selected} onSelect={() => run(() => onChange(version.version))}>
+              <span className={cx(styles.pill, selected && styles.pillOn)}>{version.version}</span>
               <span className={styles.text}>
                 <span className={styles.titleRow}>
                   <span className={styles.title}>{version.title}</span>
-                  {version.latest && <span className={styles.latest}>최신</span>}
+                  {index === 0 && <span className={styles.latest}>최신</span>}
                 </span>
                 <span className={styles.sub}>{version.createdAt}</span>
               </span>

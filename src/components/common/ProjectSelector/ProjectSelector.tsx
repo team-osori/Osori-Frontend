@@ -16,6 +16,7 @@ export type ProjectSwitchOptions = {
 
 /** 프롬프트 버전 팝오버 설정. 주면 Select 대신 버전 기록 팝오버를 엽니다. */
 export type PromptVersionOptions = {
+  /** 최신 버전이 맨 앞 */
   versions: PromptVersion[]
   onCreate: () => void
   onShowHistory: () => void
@@ -53,8 +54,8 @@ export function ProjectSelector({
   const close = () => setOpenMenu(null)
   const toggle = (menu: Menu) => setOpenMenu((prev) => (prev === menu ? null : menu))
 
-  const currentVersion = promptVersions?.versions.find((v) => v.value === promptValue)
-  const promptLabel = currentVersion ? `${currentVersion.value}${currentVersion.latest ? ' (최신)' : ''}` : promptValue
+  const isLatest = promptVersions?.versions[0]?.version === promptValue
+  const promptLabel = isLatest ? `${promptValue} (최신)` : promptValue
 
   return (
     <div className={styles.card}>
