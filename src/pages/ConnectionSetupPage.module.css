@@ -1,0 +1,15 @@
+.page { container-type: inline-size; }
+
+/* 왼쪽 674 : 오른쪽 400 비율, 본문이 좁으면 한 줄로 쌓기 */
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 674fr) minmax(0, 400fr);
+  align-items: start;
+  gap: 16px 20px;
+  margin-top: 20px;
+}
+.column { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+
+@container (max-width: 900px) {
+  .grid { grid-template-columns: minmax(0, 1fr); }
+}
