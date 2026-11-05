@@ -4,13 +4,14 @@ import { Button, TextField } from '../../components/ui'
 import styles from './LoginPage.module.css'
 
 /** 01 로그인 — 좌측 브랜드 패널 + 우측 로그인 폼 */
-export function LoginPage() {
+export function LoginPage({ onLogin }: { onLogin?: () => void }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    // TODO: 인증 연동
+    // TODO: 인증 API 연동. 지금은 입력값과 무관하게 다음 화면으로 이동
+    onLogin?.()
   }
 
   return (
