@@ -4,7 +4,8 @@ import { ActionBar, PageHeader, ProjectSidebar } from '../components/common'
 import { AppLayout } from '../layouts/AppLayout'
 import { generateDraft } from '../features/questions/api'
 import { questionsFromCsv } from '../features/questions/csv'
-import { MOCK_DOC_OPTIONS, MOCK_DRAFT_COUNTS, MOCK_QUESTIONS } from '../features/questions/mock'
+import { MOCK_CHUNK_OPTIONS, MOCK_DOC_OPTIONS, MOCK_DRAFT_COUNTS, MOCK_QUESTIONS } from '../features/questions/mock'
+import { QuestionEditModal } from '../features/questions/QuestionEditModal'
 import type { Question } from '../features/questions/types'
 import { DraftCard, UploadCard } from '../features/questions/SourceCards'
 import { QuestionTable } from '../features/questions/QuestionTable'
@@ -38,6 +39,7 @@ export default function QuestionSetPage({
   const [docs, setDocs] = useState(['refund', 'shipping', 'order'])
   const [counts, setCounts] = useState(MOCK_DRAFT_COUNTS)
   const [generating, setGenerating] = useState(false)
+  const [editingId, setEditingId] = useState<string | null>(null)
   const [uploadMessage, setUploadMessage] = useState<{ text: string; error?: boolean }>()
 
   const tally = useMemo(
@@ -158,10 +160,24 @@ export default function QuestionSetPage({
             onApprove={(id, approved) => patch(id, { status: approved ? 'approved' : 'pending' })}
             onDelete={(id) => patch(id, { status: 'deleted' })}
             onRestore={(id) => patch(id, { status: 'pending' })}
-            onEdit={(id, change) => patch(id, change)}
+            onEdit={(q) => setEditingId(q.id)}
           />
         </section>
       </div>
+
+      <QuestionEditModal
+        question={questions.find((q) => q.id === editingId) ?? null}
+        chunkOptions={MOCK_CHUNK_OPTIONS}
+        onClose={() => setEditingId(null)}
+        onSave={(id, change) => {
+          patch(id, change)
+          setEditingId(null)
+        }}
+        onDelete={(id) => {
+          patch(id, { status: 'deleted' })
+          setEditingId(null)
+        }}
+      />
     </AppLayout>
   )
 }

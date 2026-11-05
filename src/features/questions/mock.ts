@@ -66,3 +66,11 @@ export const MOCK_DOC_OPTIONS = [
   { value: 'points', label: '적립금정책.pdf' },
   { value: 'order', label: '주문안내.pdf' },
 ]
+
+/** 질문에 연결할 수 있는 근거 청크 (정책 문서별 청크 번호) */
+export const MOCK_CHUNK_OPTIONS = [
+  ...Array.from({ length: 14 }, (_, i) => `환불정책.pdf #${i + 1}`),
+  ...Array.from({ length: 22 }, (_, i) => `배송안내.pdf #${i + 1}`),
+  ...Array.from({ length: 8 }, (_, i) => `적립금정책.pdf #${i + 1}`),
+  ...Array.from({ length: 17 }, (_, i) => `주문안내.pdf #${i + 1}`),
+]
