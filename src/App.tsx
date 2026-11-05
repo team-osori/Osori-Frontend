@@ -1,20 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ProjectNavContext, SidebarUserContext, type HomeMenu, type UserMenuActions } from './components/common'
 import { useToast } from './components/ui'
 import { useAuth } from './features/auth'
-import { buildProject, CreateProjectModal, type NewProject } from './features/project'
-import { MOCK_JUDGE_ITEMS } from './features/grading/mock'
-import { MOCK_REVIEW_QUESTIONS } from './features/questions/mock'
+import { CreateProjectModal, setupProject, toProject, useCurrentProject, useProjects, type NewProject } from './features/project'
 import { MOCK_MEMBERS, type Member } from './features/settings'
 import { useHashRoute } from './hooks/useHashRoute'
 import { errorMessage, isApiError, setSessionExpiredHandler } from './lib/api'
-import AbRunPage from './pages/AbRunPage'
-import CauseDiagnosisPage from './pages/CauseDiagnosisPage'
-import GradingResultsPage from './pages/GradingResultsPage'
-import HumanJudgePage from './pages/HumanJudgePage'
-import ImprovementApplyPage from './pages/ImprovementApplyPage'
 import { LoginPage } from './pages/Login'
-import { MOCK_INSTANCE_VERSION, MOCK_PROJECTS, MOCK_USER, ProjectListPage } from './pages/ProjectList'
+import { MOCK_INSTANCE_VERSION, MOCK_USER, ProjectListPage } from './pages/ProjectList'
 import ProjectSettingsPage from './pages/ProjectSettingsPage'
 import ScoringPage from './pages/ScoringPage'
 import WrongNotesPage from './pages/WrongNotesPage'
@@ -47,11 +40,14 @@ export default function App() {
     })
     return () => setSessionExpiredHandler(null)
   }, [navigate, toast])
-  const [projects, setProjects] = useState<Project[]>(MOCK_PROJECTS)
+  const projectList = useProjects({ enabled: auth.status === 'signedIn' })
+  const projects = useMemo(() => projectList.items.map(toProject), [projectList.items])
+  // 지금 연 프로젝트. 해시 경로에 ID가 없어서 새로고침해도 이어지도록 이 기기에 기억해 둠
+  const [currentProjectId, setCurrentProjectId] = useState<string | null>(readCurrentProjectId)
+  const [creating, setCreating] = useState(false)
+  const currentProject = useCurrentProject(currentProjectId, auth.status === 'signedIn')
   const [members, setMembers] = useState<Member[]>(MOCK_MEMBERS)
   const [createOpen, setCreateOpen] = useState(false)
-  // 사람 판정 화면을 열 때 먼저 보여줄 문항 (06 불안정 문항 패널에서 고른 문항)
-  const [judgeStartId, setJudgeStartId] = useState<string>()
   // 지금 연 프로젝트에서 어디까지 진행했는지(1~3). 이전 단계로 돌아가도 이미 연 단계는 잠기지 않게 함
   // TODO: 백엔드 프로젝트 진행 단계 API가 생기면 그 값으로 교체
   const [unlockedStage, setUnlockedStage] = useState(1)
@@ -62,18 +58,46 @@ export default function App() {
     if (stage) setUnlockedStage((prev) => Math.max(prev, stage))
   }, [route])
 
-  // TODO: 프로젝트 API 연동. 지금은 화면 안에서만 추가하고 1단계(시험지 만들기)로 이동
-  function createProject(input: NewProject) {
-    setProjects((prev) => [buildProject(input), ...prev])
-    setCreateOpen(false)
-    setUnlockedStage(1)
-    navigate(ROUTES.questions)
+  // 프로젝트를 고르지 않고 프로젝트 화면(설정 · 평가 단계)에 들어오면 목록으로 보냄
+  useEffect(() => {
+    const projectScreen = route === ROUTES.projectSettings || stageOf(route) !== undefined
+    if (auth.status === 'signedIn' && projectScreen && !currentProjectId) navigate(ROUTES.projects)
+  }, [auth.status, route, currentProjectId, navigate])
+
+  function selectProject(projectId: string | null) {
+    setCurrentProjectId(projectId)
+    writeCurrentProjectId(projectId)
   }
 
-  /** 프로젝트 목록에서 누르면 그 프로젝트가 진행 중인 단계의 화면을 엽니다. 완료된 프로젝트는 채점 결과 */
+  /** 프로젝트 · 서비스 · 연결 · 프롬프트 · 정책 문서를 만들고 1단계(시험지 만들기)로 이동 */
+  async function createProject(input: NewProject) {
+    if (creating) return
+    setCreating(true)
+    try {
+      const { project, warnings } = await setupProject(input)
+      projectList.reload()
+      selectProject(project.id)
+      setCreateOpen(false)
+      setUnlockedStage(1)
+      if (warnings.length > 0) {
+        toast.warning(`프로젝트는 만들었지만 일부를 저장하지 못했습니다. 프로젝트 설정에서 다시 해 주세요. (${warnings.join(' · ')})`)
+        navigate(ROUTES.projectSettings)
+      } else {
+        toast.success(`${project.name} 프로젝트를 만들었습니다.`)
+        navigate(ROUTES.questions)
+      }
+    } catch (error) {
+      toast.error(errorMessage(error, '프로젝트를 만들지 못했습니다. 잠시 후 다시 시도해 주세요.'))
+    } finally {
+      setCreating(false)
+    }
+  }
+
+  /** 프로젝트 목록에서 누르면 그 프로젝트가 진행 중인 단계의 화면을 엽니다. 완료된 프로젝트는 오답 노트 */
   function openProject(project: Project) {
+    selectProject(project.id)
     setUnlockedStage(project.status === 'done' ? STAGES.length : project.currentStep)
-    navigate(project.status === 'done' ? ROUTES.grading : (stageRoute(project.currentStep) ?? ROUTES.projects))
+    navigate(project.status === 'done' ? ROUTES.wrongNotes : (stageRoute(project.currentStep) ?? ROUTES.projects))
   }
 
   /** 레일 메뉴 이동. 휴지통은 아직 화면이 없음 */
@@ -129,10 +153,22 @@ export default function App() {
     userMenu,
   }
 
-  /** 불안정 문항에서 "판정하기"를 누르면 같은 질문의 사람 판정 항목부터 시작 */
-  function judgeFrom(question?: string) {
-    setJudgeStartId(question ? MOCK_JUDGE_ITEMS.find((i) => i.question === question)?.id : undefined)
-    navigate(ROUTES.judge)
+  function renderProjectSettings() {
+    // 프로젝트를 고르지 않았으면 아래 효과가 목록으로 보냄
+    if (!currentProjectId) return null
+    return (
+      <ProjectSettingsPage
+        key={currentProjectId}
+        projectId={currentProjectId}
+        stage={unlockedStage}
+        onProjectChange={projectList.reload}
+        onDeleted={() => {
+          selectProject(null)
+          projectList.reload()
+          navigate(ROUTES.projects)
+        }}
+      />
+    )
   }
 
   function renderScreen() {
@@ -140,6 +176,8 @@ export default function App() {
     if (auth.status === 'checking' || (auth.status === 'signedOut' && !isPublic)) return null
     switch (route) {
       case ROUTES.projects:
+        // 처음 불러오는 동안 빈 목록(온보딩)이 잠깐 보이지 않게 그리지 않음
+        if (projectList.loading && projects.length === 0) return null
         return <ProjectListPage {...listProps} projects={projects} />
       // API 연동 전, 프로젝트가 없는 상태(02-1)를 확인하기 위한 경로
       case '/projects/empty':
@@ -165,34 +203,21 @@ export default function App() {
       // 평가 3단계. 사이드바의 단계 · 프로젝트 설정 이동은 ProjectSidebar가 직접 처리합니다.
       // 1 시험지 만들기
       case ROUTES.questions:
-        return <QuestionSetPage onConfirm={() => navigate(ROUTES.scoring)} />
-      // API 연동 전, 문제가 이미 있는 시험지 검토 화면을 확인하기 위한 경로
-      case '/questions/sample':
-        return <QuestionSetPage initialQuestions={MOCK_REVIEW_QUESTIONS} onConfirm={() => navigate(ROUTES.scoring)} />
-      // 2 채점: A/B 실행 → 채점 결과 → 사람 판정
+        return currentProjectId ? (
+          <QuestionSetPage key={currentProjectId} projectId={currentProjectId} onConfirm={() => navigate(ROUTES.scoring)} />
+        ) : null
+      // 2 채점 → 3 오답 노트
       case ROUTES.scoring:
-        return <ScoringPage onFinish={() => navigate(ROUTES.wrongNotes)} />
+        return currentProjectId ? <ScoringPage key={currentProjectId} projectId={currentProjectId} onFinish={() => navigate(ROUTES.wrongNotes)} /> : null
       case ROUTES.wrongNotes:
-        return <WrongNotesPage onRetest={() => navigate(ROUTES.scoring)} />
-      case ROUTES.abRun:
-        return <AbRunPage onShowResults={() => navigate(ROUTES.grading)} />
-      case ROUTES.grading:
-        return <GradingResultsPage onJudge={(item) => judgeFrom(item?.question)} />
-      case ROUTES.judge:
-        return <HumanJudgePage key={judgeStartId} initialId={judgeStartId} onFinish={() => navigate(ROUTES.diagnosis)} />
-      // 3 오답 노트: 원인 진단 → 개선안 적용
-      case ROUTES.diagnosis:
-        return <CauseDiagnosisPage onApply={() => navigate(ROUTES.improvement)} />
-      case ROUTES.improvement:
-        // 재평가를 실행하면 채점 결과로 돌아가 새 버전의 결과를 봄
-        return <ImprovementApplyPage onReevaluate={() => navigate(ROUTES.grading)} />
+        return currentProjectId ? <WrongNotesPage key={currentProjectId} projectId={currentProjectId} onRetest={() => navigate(ROUTES.scoring)} /> : null
       // 예전 연결 설정 주소는 프로젝트 설정으로 (연결 정보는 이제 프로젝트 만들기 · 설정에서 다룸)
       case '/connection':
-        return <ProjectSettingsPage onDeleted={() => navigate(ROUTES.projects)} />
+        return renderProjectSettings()
 
       // 프로젝트 설정 (일반 · 서비스 연결 · 프롬프트 · 문서 · 채점자 · 멤버)
       case ROUTES.projectSettings:
-        return <ProjectSettingsPage onDeleted={() => navigate(ROUTES.projects)} />
+        return renderProjectSettings()
       default:
         return <LoginPage onLogin={login} />
     }
@@ -204,11 +229,36 @@ export default function App() {
       value={auth.user ? { name: auth.user.name, account: auth.user.loginId, menu: userMenu } : null}
     >
       <ProjectNavContext.Provider
-        value={{ projects, onCreateProject: () => setCreateOpen(true), onOpenProject: (p) => openProject(p as Project), unlockedStage }}
+        value={{
+          projects,
+          onCreateProject: () => setCreateOpen(true),
+          onOpenProject: (p) => openProject(p as Project),
+          unlockedStage,
+          current: currentProject,
+        }}
       >
         {renderScreen()}
-        <CreateProjectModal open={createOpen} onClose={() => setCreateOpen(false)} onSubmit={createProject} />
+        <CreateProjectModal open={createOpen} onClose={() => setCreateOpen(false)} onSubmit={createProject} submitting={creating} />
       </ProjectNavContext.Provider>
     </SidebarUserContext.Provider>
   )
+}
+
+const CURRENT_PROJECT_KEY = 'osori.currentProjectId'
+
+function readCurrentProjectId(): string | null {
+  try {
+    return localStorage.getItem(CURRENT_PROJECT_KEY)
+  } catch {
+    return null
+  }
+}
+
+function writeCurrentProjectId(projectId: string | null) {
+  try {
+    if (projectId) localStorage.setItem(CURRENT_PROJECT_KEY, projectId)
+    else localStorage.removeItem(CURRENT_PROJECT_KEY)
+  } catch {
+    // 저장소를 쓸 수 없는 환경이면 이번 화면에서만 기억함
+  }
 }

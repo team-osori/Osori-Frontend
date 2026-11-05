@@ -53,41 +53,6 @@
 .doc { background: rgba(168, 161, 230, 0.16); border-color: var(--color-cause-search-ink); color: var(--color-cause-search-ink); }
 .prompt { background: rgba(135, 201, 181, 0.16); border-color: var(--color-cause-prompt-ink); color: var(--color-cause-prompt-ink); }
 
-/* 원문 말풍선: 표시한 단어 위에 뜸 */
-.markWrap { position: relative; }
-.markTip { border-bottom-style: dotted; cursor: help; outline: none; }
-.markTip:focus-visible { box-shadow: 0 0 0 2px var(--color-focus-ring); }
-.tip {
-  position: absolute;
-  bottom: calc(100% + 10px);
-  left: 0;
-  z-index: 5;
-  display: flex;
-  width: max-content;
-  max-width: min(420px, 70vw);
-  flex-direction: column;
-  gap: 10px;
-  padding: 16px 20px 18px;
-  border: 1px solid var(--color-line);
-  border-radius: 14px;
-  background: #2c2c33;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
-  line-height: normal;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(4px);
-  transition: opacity 0.15s, transform 0.15s;
-}
-.markWrap:hover .tip,
-.markTip:focus-visible + .tip { opacity: 1; transform: none; }
-.tipLabel { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; }
-.tip_doc .tipLabel { color: var(--color-cause-search-ink); }
-.tip_prompt .tipLabel { color: var(--color-cause-prompt-ink); }
-.tipQuote { font-size: 15px; line-height: 1.75; color: var(--color-text); word-break: keep-all; white-space: normal; }
-@media (prefers-reduced-motion: reduce) {
-  .tip { transition: none; }
-}
-
 /* 수정 제안 */
 .suggest { margin-top: 8px; overflow: hidden; border: 1px solid var(--color-line); border-radius: 16px; background: var(--color-well); transition: border-color 0.2s; }
 .suggestOpen { border-color: rgba(207, 242, 107, 0.4); }
@@ -107,10 +72,21 @@
 .pillCross { font-style: normal; font-size: 13px; font-weight: 900; color: var(--color-wrong); }
 .chevron { transition: transform 0.2s; }
 .chevronOpen { transform: rotate(90deg); }
-.suggestBody { display: flex; align-items: flex-end; gap: 16px; padding: 0 22px 20px; animation: open 0.25s var(--ease-out, ease-out); }
+.suggestBody {
+  /* 바뀐 문장은 한 줄 전체를 쓰고, 이유와 적용 버튼은 그 아래 */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 12px 16px;
+  padding: 0 22px 20px;
+  animation: open 0.25s var(--ease-out, ease-out);
+}
+.suggestBody + .suggestBody { padding-top: 16px; border-top: 1px dashed var(--color-line); }
 @keyframes open { from { opacity: 0; transform: translateY(-4px); } }
-.diff { display: flex; flex: 1; flex-direction: column; gap: 6px; min-width: 0; font: var(--text-code); font-size: 15px; }
+.diff { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 6px; min-width: 0; font: var(--text-code); font-size: 15px; }
 .diff p { display: flex; gap: 10px; margin: 0; padding: 8px 12px; border-radius: 8px; }
+.diffText { flex: 1; min-width: 0; white-space: pre-wrap; word-break: keep-all; overflow-wrap: anywhere; line-height: 1.6; }
+.editReason { margin: 0; min-width: 0; font-size: 15px; line-height: 1.6; color: var(--color-text-secondary); word-break: keep-all; }
 .del { background: rgba(232, 138, 138, 0.1); color: #f2b3b3; text-decoration: line-through; text-decoration-color: rgba(232, 138, 138, 0.6); }
 .ins { background: rgba(143, 214, 168, 0.1); color: #bfead0; }
 .apply {
@@ -141,3 +117,20 @@
 .card { display: flex; flex: 1; flex-direction: column; }
 .cardBody { flex: 1; }
 .suggest, .notFixable { margin-top: auto; }
+
+/* 형광 표시한 정책 원문에 마우스를 올리면(또는 탭으로 포커스하면) 출처를 보여줌 */
+.sourced { position: relative; cursor: help; }
+.sourceTip {
+  position: absolute; left: 0; bottom: calc(100% + 8px); z-index: 20;
+  width: max-content; max-width: min(360px, 80vw);
+  padding: 8px 10px; border-radius: 8px;
+  background: var(--color-text); color: var(--color-bg);
+  font: var(--text-body-sm, 13px/1.4 sans-serif); font-weight: 500; white-space: normal; word-break: keep-all;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  opacity: 0; visibility: hidden; transform: translateY(4px);
+  transition: opacity 0.12s ease, transform 0.12s ease, visibility 0.12s;
+  pointer-events: none;
+}
+.sourced:hover .sourceTip, .sourced:focus .sourceTip, .sourced:focus-within .sourceTip {
+  opacity: 1; visibility: visible; transform: translateY(0);
+}

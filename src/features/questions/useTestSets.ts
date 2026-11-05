@@ -8,6 +8,7 @@ import {
   editQuestion,
   generateQuestions,
   getTestSetVersion,
+  importQuestionsCsv,
   listTestSetVersions,
   listTestSets,
   listQuestionHistory,
@@ -156,7 +157,14 @@ export function useTestSetVersion(
 
   /** 질문 자동 생성. count(1~50)와 categories(만들 질문 유형)는 생략하면 서버가 정합니다. */
   const generate = useCallback(
-    async (options: { count?: number; categories?: QuestionCategory[]; idempotencyKey?: string } = {}) => {
+    async (
+      options: {
+        count?: number
+        categories?: QuestionCategory[]
+        categoryCounts?: Partial<Record<QuestionCategory, number>>
+        idempotencyKey?: string
+      } = {},
+    ) => {
       const t = target()
       const { idempotencyKey, ...spec } = options
       const next = await generateQuestions(
@@ -166,6 +174,18 @@ export function useTestSetVersion(
         { expectedRevision: t.revision, ...spec },
         { idempotencyKey },
       )
+      setData(next)
+      return next
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [projectId, testSetId, versionId, version?.revision, setData],
+  )
+
+  /** CSV 가져오기. 한 행이라도 틀리면 아무것도 저장되지 않고 오류를 던집니다. */
+  const importCsv = useCallback(
+    async (file: File) => {
+      const t = target()
+      const next = await importQuestionsCsv(t.projectId, t.testSetId, t.versionId, file, t.revision)
       setData(next)
       return next
     },
@@ -194,6 +214,9 @@ export function useTestSetVersion(
     remove,
     review,
     generate,
+    importCsv,
     confirm,
+    /** 서버 응답으로 바로 바꿀 때 (예: 여러 요청을 이어서 보낸 뒤) */
+    setVersion: setData,
   }
 }

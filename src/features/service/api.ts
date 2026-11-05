@@ -30,6 +30,20 @@ export function getService(projectId: string, serviceId: string, extras: Request
   return api.get<ServiceResponse>(servicePath(projectId, serviceId), { signal: extras.signal })
 }
 
+/** 서비스 이름 · 설명 수정. expectedRevision은 서비스 자체의 revision입니다. */
+export function updateService(
+  projectId: string,
+  serviceId: string,
+  revision: number,
+  input: { name?: string; description?: string | null },
+  extras: RequestExtras = {},
+) {
+  const body: Record<string, unknown> = { expectedRevision: revision }
+  if (input.name !== undefined) body.name = input.name.trim()
+  if (input.description !== undefined) body.description = input.description?.trim() || null
+  return api.patch<ServiceResponse>(servicePath(projectId, serviceId), body, { signal: extras.signal })
+}
+
 /** 프로젝트에 연결된 서비스 하나. 아직 등록하지 않았으면 null */
 export async function getProjectService(projectId: string, extras: RequestExtras = {}): Promise<ServiceResponse | null> {
   const page = await listServices(projectId, extras)

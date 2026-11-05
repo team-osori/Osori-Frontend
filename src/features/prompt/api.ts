@@ -18,6 +18,9 @@ type PromptMeta = {
 export type PromptCreateInput = PromptMeta & { name: string; content: string }
 export type PromptVersionCreateInput = PromptMeta & {
   content: string
+  /** 수정 제안을 적용해 만드는 버전이면 그 제안과 선택 revision (content는 제안의 previewContent 그대로) */
+  suggestionId?: string
+  suggestionRevision?: number
   /** 어느 버전을 고쳐서 만드는지. 그 사이 다른 버전이 생겼으면 서버가 충돌로 거절합니다. */
   baseVersionId: string
 }
@@ -75,7 +78,12 @@ export function createPromptVersion(
 ) {
   return api.post<PromptVersion>(
     versionsPath(projectId, serviceId, promptId),
-    { content: input.content, baseVersionId: pathId(input.baseVersionId, '기준 버전 ID'), ...optionalMeta(input) },
+    {
+      content: input.content,
+      baseVersionId: pathId(input.baseVersionId, '기준 버전 ID'),
+      ...optionalMeta(input),
+      ...(input.suggestionId ? { suggestionId: input.suggestionId, suggestionRevision: input.suggestionRevision } : {}),
+    },
     { signal: extras.signal },
   )
 }

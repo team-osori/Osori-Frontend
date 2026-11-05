@@ -16,11 +16,6 @@ export const ROUTES = {
   questions: '/questions',
   scoring: '/scoring',
   wrongNotes: '/wrong-notes',
-  abRun: '/ab-run',
-  grading: '/grading',
-  judge: '/judge',
-  diagnosis: '/diagnosis',
-  improvement: '/improvement',
 } as const
 
 export type StageScreen = { route: string; label: string }
@@ -45,9 +40,6 @@ export const STAGES: Stage[] = [
     hint: '챗봇 답을 O / X로 채점',
     screens: [
       { route: ROUTES.scoring, label: '채점' },
-      { route: ROUTES.abRun, label: 'A/B 실행' },
-      { route: ROUTES.grading, label: '채점 결과' },
-      { route: ROUTES.judge, label: '사람 판정' },
     ],
   },
   {
@@ -55,8 +47,6 @@ export const STAGES: Stage[] = [
     hint: '틀린 이유를 보고 프롬프트 고치기',
     screens: [
       { route: ROUTES.wrongNotes, label: '오답 노트' },
-      { route: ROUTES.diagnosis, label: '원인 진단' },
-      { route: ROUTES.improvement, label: '개선안 적용' },
     ],
   },
 ]

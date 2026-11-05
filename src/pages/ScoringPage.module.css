@@ -161,3 +161,14 @@
 /* ---------- 한 화면에 들어오게 ---------- */
 .detail { padding: 32px 40px; }
 .detailBody { gap: 18px; }
+
+/* 응시 시작 */
+.start { display: flex; flex-direction: column; gap: 18px; max-width: 640px; padding: 32px 36px; }
+.startTitle { margin: 0; font: var(--text-title, 600 20px/1.4 inherit); }
+.startLead { margin: 0; font: var(--text-body-sm); color: var(--color-text-secondary); word-break: keep-all; }
+.startChecks { display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.startChecks li { display: flex; gap: 10px; align-items: flex-start; font: var(--text-label); }
+.startChecks li > span:first-child { width: 18px; text-align: center; font-weight: 700; }
+.startChecks small { display: block; margin-top: 2px; font: var(--text-caption); color: var(--color-text-secondary); }
+.checkOk > span:first-child { color: var(--color-correct); }
+.checkMissing > span:first-child { color: var(--color-wrong); }

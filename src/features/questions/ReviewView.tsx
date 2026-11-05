@@ -10,6 +10,9 @@ import uploadIcon from '../../assets/icons/stage/upload.svg'
 import warningIcon from '../../assets/icons/stage/warning.svg'
 import { CountTabs, Dot, Pager, Pill, SecondaryAction, StageCard, Well } from '../stage/StageUI'
 import { QUESTION_TYPES, type Question, type QuestionStatus } from './types'
+
+/** 처리 버튼을 누를 때 화면이 부르는 동작. 서버 요청이 끝나면 목록이 바뀜 */
+export type ReviewAction = 'approve' | 'unapprove' | 'delete' | 'restore'
 import styles from './review.module.css'
 
 type Tab = 'pending' | 'all' | 'approved' | 'deleted'
@@ -22,14 +25,18 @@ const STATUS: Record<QuestionStatus, { label: string; color: string }> = {
 
 type ReviewViewProps = {
   questions: Question[]
-  onPatch: (id: string, change: Partial<Question>) => void
+  onAction: (id: string, action: ReviewAction) => void
+  /** 요청 중인 질문. 버튼을 잠금 */
+  busyId?: string | null
+  /** 확정된 시험지는 고칠 수 없음 */
+  readOnly?: boolean
   onEdit: (question: Question) => void
   onDraft: () => void
   onUpload: () => void
 }
 
 /** 06 시험지 · 검토: 문제를 한 장씩 넘기며 승인 · 수정 · 삭제 */
-export function ReviewView({ questions, onPatch, onEdit, onDraft, onUpload }: ReviewViewProps) {
+export function ReviewView({ questions, onAction, busyId, readOnly = false, onEdit, onDraft, onUpload }: ReviewViewProps) {
   const [tab, setTab] = useState<Tab>('all')
   const [keyword, setKeyword] = useState('')
   const [index, setIndex] = useState(0)
@@ -57,8 +64,8 @@ export function ReviewView({ questions, onPatch, onEdit, onDraft, onUpload }: Re
   const question = list[current]
 
   /** 처리 후 다음 검토 필요 문제로 */
-  const settle = (id: string, status: QuestionStatus) => {
-    onPatch(id, { status })
+  const settle = (id: string, action: ReviewAction) => {
+    onAction(id, action)
     if (tab !== 'all') return // 검토 필요 탭 등은 목록에서 빠지며 자연히 다음 문제가 보임
     const next = list.findIndex((q, i) => i > current && q.status === 'pending')
     if (next !== -1) setIndex(next)
@@ -66,11 +73,11 @@ export function ReviewView({ questions, onPatch, onEdit, onDraft, onUpload }: Re
 
   const byType = QUESTION_TYPES.map((type) => ({
     type,
-    count: questions.filter((q) => q.type === type && q.status !== 'deleted').length,
+    count: questions.filter((q) => q.typeLabel === type && q.status !== 'deleted').length,
   }))
   const active = questions.filter((q) => q.status !== 'deleted').length
   const maxType = Math.max(1, ...byType.map((t) => t.count))
-  const unlabeled = questions.filter((q) => q.status !== 'deleted' && q.chunks.length === 0).length
+  const unlabeled = questions.filter((q) => q.status !== 'deleted' && q.evidence.length === 0).length
 
   return (
     <div className={styles.layout}>
@@ -104,8 +111,7 @@ export function ReviewView({ questions, onPatch, onEdit, onDraft, onUpload }: Re
                   <b>{current + 1}</b> / {list.length}
                 </span>
                 <span className={styles.divider} aria-hidden />
-                <Pill>{question.type}</Pill>
-                <Pill>{question.source === 'AI 초안' ? 'AI 생성' : '직접 업로드'}</Pill>
+                <Pill>{question.typeLabel}</Pill>
                 <Pill className={styles.status} dot={<Dot color={STATUS[question.status].color} />}>
                   {STATUS[question.status].label}
                 </Pill>
@@ -115,11 +121,11 @@ export function ReviewView({ questions, onPatch, onEdit, onDraft, onUpload }: Re
 
               <Well label="모범 답안" className={styles.answer}>
                 <p className={styles.expected}>
-                  {question.chunks.length > 0 ? (
-                    <span className={styles.grounded} title={`근거: ${question.chunks.join(', ')}`} tabIndex={0}>
+                  {question.evidenceLabels.length > 0 ? (
+                    <span className={styles.grounded} title={`근거: ${question.evidenceLabels.join(', ')}`} tabIndex={0}>
                       {question.expected}
                       <span className={styles.tooltip} role="tooltip">
-                        근거 · {question.chunks.join(', ')}
+                        근거 · {question.evidenceLabels.join(', ')}
                       </span>
                     </span>
                   ) : (
@@ -127,7 +133,7 @@ export function ReviewView({ questions, onPatch, onEdit, onDraft, onUpload }: Re
                   )}
                 </p>
                 <p className={styles.hint}>
-                  {question.chunks.length > 0 ? (
+                  {question.evidenceLabels.length > 0 ? (
                     <>
                       <span className={styles.hintLine} aria-hidden />
                       밑줄에 마우스를 올리면 근거 문서가 보입니다
@@ -135,38 +141,39 @@ export function ReviewView({ questions, onPatch, onEdit, onDraft, onUpload }: Re
                   ) : (
                     <>
                       <img src={warningIcon} alt="" width={14} height={14} />
-                      근거 문서가 연결되지 않았습니다. 수정에서 연결할 수 있어요.
+                      근거가 연결되지 않아 승인할 수 없습니다. 수정에서 연결해 주세요.
                     </>
                   )}
                 </p>
               </Well>
 
-              <div className={styles.actions}>
+              {!readOnly && <div className={styles.actions}>
                 {question.status === 'deleted' ? (
-                  <button type="button" className={styles.restore} onClick={() => settle(question.id, 'pending')}>
+                  <button type="button" className={styles.restore} disabled={busyId === question.id} onClick={() => settle(question.id, 'restore')}>
                     되살리기
                   </button>
                 ) : (
-                  <button type="button" className={styles.delete} onClick={() => settle(question.id, 'deleted')}>
+                  <button type="button" className={styles.delete} disabled={busyId === question.id} onClick={() => settle(question.id, 'delete')}>
                     <img src={trashIcon} alt="" width={18} height={18} />
                     삭제
                   </button>
                 )}
                 <span className={styles.spacer} />
-                <button type="button" className={styles.edit} onClick={() => onEdit(question)}>
+                <button type="button" className={styles.edit} disabled={busyId === question.id} onClick={() => onEdit(question)}>
                   <img src={pencilIcon} alt="" width={18} height={18} />
                   수정
                 </button>
                 <button
                   type="button"
                   className={cx(styles.approve, question.status === 'approved' && styles.approved)}
-                  onClick={() => settle(question.id, question.status === 'approved' ? 'pending' : 'approved')}
-                  disabled={question.status === 'deleted'}
+                  onClick={() => settle(question.id, question.status === 'approved' ? 'unapprove' : 'approve')}
+                  disabled={question.status === 'deleted' || busyId === question.id || (question.status !== 'approved' && question.evidence.length === 0)}
+                  title={question.evidence.length === 0 ? '근거를 연결해야 승인할 수 있습니다' : undefined}
                 >
                   <img src={checkIcon} alt="" width={20} height={20} />
                   {question.status === 'approved' ? '승인됨' : '승인'}
                 </button>
-              </div>
+              </div>}
             </div>
           </StageCard>
         ) : (
@@ -210,14 +217,14 @@ export function ReviewView({ questions, onPatch, onEdit, onDraft, onUpload }: Re
             근거 없는 질문 {unlabeled}개
           </p>
         )}
-        <div className={styles.sideActions}>
+        {!readOnly && <div className={styles.sideActions}>
           <SecondaryAction icon={sparkleIcon} onClick={onDraft}>
             AI로 더 만들기
           </SecondaryAction>
           <SecondaryAction icon={uploadIcon} onClick={onUpload}>
             CSV 올리기
           </SecondaryAction>
-        </div>
+        </div>}
       </aside>
     </div>
   )
