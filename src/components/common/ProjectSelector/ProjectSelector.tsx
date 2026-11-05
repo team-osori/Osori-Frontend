@@ -34,9 +34,10 @@ export function ProjectSelector({
         <Select
           id={selectId}
           size="sm"
+          fullWidth
           options={promptOptions}
           value={promptValue}
-          onChange={(e) => onPromptChange(e.target.value)}
+          onChange={onPromptChange}
         />
       </div>
       <div className={styles.row}>

@@ -1,0 +1,34 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  border: none;
+  background: none;
+  font: var(--text-body-sm);
+  color: var(--color-text);
+}
+.root:focus-visible { box-shadow: none; }
+.root:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--color-text-tertiary);
+  border-radius: 5px;
+  background: transparent;
+  color: var(--color-on-primary);
+  font-size: 12px;
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+.root:not(:disabled):hover .box { border-color: var(--color-text); }
+.root:focus-visible .box { box-shadow: 0 0 0 2px var(--color-focus-ring); }
+
+.checked .box,
+.checked:not(:disabled):hover .box { background: var(--color-primary); border-color: var(--color-primary); }

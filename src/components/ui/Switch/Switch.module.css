@@ -1,0 +1,40 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  border: none;
+  background: none;
+  font: var(--text-body-sm);
+  color: var(--color-text);
+}
+.root:focus-visible { box-shadow: none; }
+.root:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.track {
+  position: relative;
+  flex-shrink: 0;
+  width: 36px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-strong);
+  transition: background-color 0.2s;
+}
+.root:focus-visible .track { box-shadow: 0 0 0 2px var(--color-focus-ring); }
+.root:not(:disabled):hover .track { background: #46464f; }
+
+.thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-full);
+  background: var(--color-text);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.on .track,
+.on:not(:disabled):hover .track { background: var(--color-primary); }
+.on .thumb { transform: translateX(16px); }

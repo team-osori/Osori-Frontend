@@ -25,4 +25,4 @@
 .row { display: flex; align-items: center; min-height: 15px; }
 .label { flex-shrink: 0; width: 60px; font: var(--text-label); color: var(--color-text-secondary); }
 .value { font: var(--text-label); }
-.row > select { flex: 1; min-width: 0; }
+.row > div { flex: 1; min-width: 0; }
