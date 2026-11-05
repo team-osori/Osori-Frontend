@@ -16,6 +16,7 @@ export {
   type EvaluationInput,
   type EvaluationInputs,
   type EvaluationItem,
+  type EvaluationMode,
   type EvaluationItemQuery,
   type EvaluationItemSummary,
   type EvaluationSide,

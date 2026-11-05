@@ -11,7 +11,7 @@ import {
 } from '../../lib/api'
 import { servicePath } from '../service/api'
 
-/* 평가는 같은 질문 세트로 프롬프트 두 개(A, B)를 비교합니다.
+/* 평가는 같은 질문 세트로 프롬프트 두 개(A, B)를 비교하거나(COMPARE), 프롬프트 하나만 채점합니다(SINGLE).
  * 요청하면 바로 끝나지 않고 QUEUED 상태로 돌아오고, 같은 평가를 다시 조회해서 진행 상황을 확인합니다. */
 
 export type Evaluation = Schema<'EvaluationResponse'>
@@ -30,14 +30,25 @@ export type EvaluationCriterion = (typeof EVALUATION_CRITERIA)[number]
 export const EVALUATION_CHANGES = ['IMPROVED', 'WORSENED', 'UNCHANGED_PASS', 'UNCHANGED_FAIL', 'NOT_COMPARABLE'] as const
 export type EvaluationChange = (typeof EVALUATION_CHANGES)[number]
 
-export type EvaluationInput = {
+/** COMPARE는 A/B 두 프롬프트를 비교하고, SINGLE은 프롬프트 하나만 채점합니다. 서버 기본값은 COMPARE. */
+export type EvaluationMode = NonNullable<Schema<'EvaluationCreate'>['mode']>
+
+type EvaluationBase = {
   /** 평가할 때 쓴 연결 설정의 revision. 연결 테스트를 통과한 revision이어야 합니다. */
   connectionRevision: number
   /** 확정된(confirmed) 테스트셋 버전 */
   testSetVersionId: string
-  aPromptVersionId: string
-  bPromptVersionId: string
 }
+export type EvaluationInput =
+  | (EvaluationBase & { mode?: 'COMPARE'; aPromptVersionId: string; bPromptVersionId: string })
+  | (EvaluationBase & {
+      mode: 'SINGLE'
+      /**
+       * 채점할 프롬프트 버전. 생략하면 서버가 연결 설정에 이미 들어 있는 프롬프트를 쓰는 것으로 보입니다
+       * (평가 입력 기록에 useConfiguredPrompt 항목이 있음). 명세에 이 규칙이 적혀 있지 않아 실제 서버로 확인이 필요합니다.
+       */
+      promptVersionId?: string
+    })
 
 export type EvaluationItemQuery = PageQuery & {
   /** 이 기준에서 실패한 질문만 보기 등 기준별 필터 */
@@ -64,16 +75,28 @@ export function startEvaluation(
   input: EvaluationInput,
   extras: RequestExtras & { idempotencyKey?: string } = {},
 ) {
-  return api.post<Evaluation>(
-    evaluationsPath(projectId, serviceId),
-    {
-      connectionRevision: input.connectionRevision,
-      testSetVersionId: pathId(input.testSetVersionId, '테스트셋 버전 ID'),
-      aPromptVersionId: pathId(input.aPromptVersionId, 'A 프롬프트 버전 ID'),
-      bPromptVersionId: pathId(input.bPromptVersionId, 'B 프롬프트 버전 ID'),
-    },
-    { idempotencyKey: extras.idempotencyKey ?? createIdempotencyKey(), signal: extras.signal },
-  )
+  const common = {
+    connectionRevision: input.connectionRevision,
+    testSetVersionId: pathId(input.testSetVersionId, '테스트셋 버전 ID'),
+  }
+  // 모드에 맞는 값만 보냅니다. SINGLE에 A/B를 같이 보내면 서버가 어느 쪽을 쓸지 모호해집니다.
+  const body =
+    input.mode === 'SINGLE'
+      ? {
+          ...common,
+          mode: 'SINGLE' as const,
+          ...(input.promptVersionId ? { promptVersionId: pathId(input.promptVersionId, '프롬프트 버전 ID') } : {}),
+        }
+      : {
+          ...common,
+          mode: 'COMPARE' as const,
+          aPromptVersionId: pathId(input.aPromptVersionId, 'A 프롬프트 버전 ID'),
+          bPromptVersionId: pathId(input.bPromptVersionId, 'B 프롬프트 버전 ID'),
+        }
+  return api.post<Evaluation>(evaluationsPath(projectId, serviceId), body, {
+    idempotencyKey: extras.idempotencyKey ?? createIdempotencyKey(),
+    signal: extras.signal,
+  })
 }
 
 export function listEvaluations(projectId: string, serviceId: string, query: PageQuery & RequestExtras = {}) {
