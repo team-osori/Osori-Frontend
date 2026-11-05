@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ProjectNavContext, type HomeMenu, type UserMenuActions } from './components/common'
 import { buildProject, CreateProjectModal, type NewProject } from './features/project'
 import { MOCK_JUDGE_ITEMS } from './features/grading/mock'
 import { MOCK_MEMBERS, type Member } from './features/settings'
 import { useHashRoute } from './hooks/useHashRoute'
+import { setSessionExpiredHandler } from './lib/api'
 import AbRunPage from './pages/AbRunPage'
 import CauseDiagnosisPage from './pages/CauseDiagnosisPage'
 import ConnectionSetupPage from './pages/ConnectionSetupPage'
@@ -21,6 +22,12 @@ import type { Project } from './types/project'
 
 export default function App() {
   const [route, navigate] = useHashRoute(ROUTES.login)
+
+  // 토큰 갱신까지 실패하면(로그인 만료) 로그인 화면으로 보냄
+  useEffect(() => {
+    setSessionExpiredHandler(() => navigate(ROUTES.login))
+    return () => setSessionExpiredHandler(null)
+  }, [navigate])
   const [projects, setProjects] = useState<Project[]>(MOCK_PROJECTS)
   const [members, setMembers] = useState<Member[]>(MOCK_MEMBERS)
   const [createOpen, setCreateOpen] = useState(false)
