@@ -78,10 +78,11 @@ export function QuestionTable({ questions, onApprove, onDelete, onRestore, onEdi
                 </td>
                 <td data-label="출처">{q.source}</td>
                 <td data-label="근거 청크">
-                  {q.chunk ? (
+                  {q.chunks.length ? (
                     <span className={styles.chunk}>
                       <Icon name="fileXs" />
-                      {q.chunk}
+                      {q.chunks[0]}
+                      {q.chunks.length > 1 && <span className={styles.more}>외 {q.chunks.length - 1}</span>}
                     </span>
                   ) : (
                     <span className={styles.noLabel}>

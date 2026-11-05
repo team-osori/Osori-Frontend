@@ -81,6 +81,7 @@
 .deleted { opacity: 0.4; }
 
 .chunk { display: inline-flex; align-items: center; gap: 6px; color: var(--color-text); }
+.more { color: var(--color-text-secondary); }
 .noLabel { display: inline-flex; align-items: center; gap: 6px; color: var(--color-caution); }
 
 .actions { display: flex; align-items: center; justify-content: flex-end; gap: 6px; }

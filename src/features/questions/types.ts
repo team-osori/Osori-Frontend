@@ -11,8 +11,8 @@ export type Question = {
   text: string
   type: QuestionType
   source: QuestionSource
-  /** 연결된 근거 청크. 직접 업로드는 라벨이 없을 수 있음 */
-  chunk: string | null
+  /** 연결된 근거 청크. 직접 업로드는 라벨이 없을 수 있음(빈 배열) */
+  chunks: string[]
   expected: string
   status: QuestionStatus
 }

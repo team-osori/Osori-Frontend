@@ -17,7 +17,7 @@ export async function generateDraft(docNames: string[], counts: DraftCounts): Pr
         text: `[초안] ${doc} 기반 ${type} 질문 ${i + 1}`,
         type,
         source: 'AI 초안' as const,
-        chunk: `${doc} #${i + 1}`,
+        chunks: [`${doc} #${i + 1}`],
         expected: '검토 후 기대 동작을 입력하세요',
         status: 'pending' as const,
       }
