@@ -3,6 +3,7 @@ export { NavItem } from './NavItem/NavItem'
 export { StepItem, StepList, EVALUATION_STEPS, type StepStatus } from './StepItem/StepItem'
 export { ProjectSelector } from './ProjectSelector/ProjectSelector'
 export { UserProfile } from './UserProfile/UserProfile'
+export { UserMenu, type UserMenuActions } from './UserMenu/UserMenu'
 export {
   Sidebar,
   SidebarSectionLabel,
@@ -10,6 +11,7 @@ export {
   SidebarDivider,
   HomeSidebar,
   ProjectSidebar,
+  type HomeMenu,
 } from './Sidebar/Sidebar'
 export { ProjectCard, type ProjectStatus, type ProjectScores } from './ProjectCard/ProjectCard'
 export { ProjectCardGrid } from './ProjectCard/ProjectCardGrid'

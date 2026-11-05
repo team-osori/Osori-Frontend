@@ -3,11 +3,25 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-bold);
+}
+
+.md {
   width: 40px;
   height: 40px;
-  border-radius: var(--radius-full);
   background: var(--color-surface);
   border: 1px solid var(--color-primary);
   font: var(--text-body-sm);
   font-weight: var(--font-weight-bold);
 }
+
+.sm {
+  width: 36px;
+  height: 36px;
+  background: var(--color-surface-strong);
+  font: var(--text-label);
+  font-weight: var(--font-weight-bold);
+}
+
+.raised { background: var(--color-surface-strong); }
