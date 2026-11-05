@@ -81,3 +81,7 @@
 }
 .bold { font-weight: var(--font-weight-bold); }
 .sub { font: var(--text-caption); color: var(--color-text-secondary); }
+
+/* 검색창 아래 목록 */
+.listGap { margin-top: 8px; }
+.empty { margin: 0; padding: 16px 12px; font: var(--text-label); color: var(--color-text-secondary); }
