@@ -57,6 +57,9 @@ import messageDark from './message-dark.svg'
 import verdictFailSm from './verdict-fail-sm.svg'
 import verdictPassSm from './verdict-pass-sm.svg'
 import warningAmber from './warning-amber.svg'
+import checkAccent from './check-accent.svg'
+import gridSm from './grid-sm.svg'
+import fileText from './file-text.svg'
 
 export const icons = {
   arrowLeft,
@@ -117,6 +120,9 @@ export const icons = {
   verdictFailSm,
   verdictPassSm,
   warningAmber,
+  checkAccent,
+  gridSm,
+  fileText,
 }
 
 export type IconName = keyof typeof icons
