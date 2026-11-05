@@ -15,3 +15,4 @@
 .success { background: var(--color-success); }
 .warning { background: var(--color-warning); }
 .neutral { background: var(--color-neutral); }
+.danger { background: var(--color-danger); }

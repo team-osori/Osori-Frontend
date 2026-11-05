@@ -10,7 +10,8 @@ type SelectProps = {
   options: SelectOption[]
   value: string
   onChange: (value: string) => void
-  size?: 'md' | 'sm'
+  /** md: 툴바용 40px · sm: 사이드바용 30px · field: 폼 입력과 같은 44px */
+  size?: 'md' | 'sm' | 'field'
   /** 부모 폭을 꽉 채움 */
   fullWidth?: boolean
   /** 목록을 오른쪽 끝에 맞춰 엶 */

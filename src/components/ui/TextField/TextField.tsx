@@ -14,14 +14,39 @@ export function Field({ label, htmlFor, children }: { label: string; htmlFor?: s
   )
 }
 
-type TextFieldProps = InputHTMLAttributes<HTMLInputElement> & { label: string }
+type TextFieldProps = InputHTMLAttributes<HTMLInputElement> & {
+  label: string
+  /** 입력값 앞에 고정으로 붙는 글자 (예: Authorization: Bearer) */
+  prefix?: string
+  /** 코드·경로 입력용 고정폭 글꼴 */
+  mono?: boolean
+}
 
-export function TextField({ label, className, id, ...rest }: TextFieldProps) {
+export function TextField({ label, prefix, mono, className, id, ...rest }: TextFieldProps) {
   const autoId = useId()
   const inputId = id ?? autoId
+
+  if (prefix) {
+    return (
+      <Field label={label} htmlFor={inputId}>
+        <div className={cx(styles.control, styles.input, styles.withPrefix, className)}>
+          <span className={styles.prefix} aria-hidden>
+            {prefix}
+          </span>
+          <input
+            id={inputId}
+            className={cx(styles.bare, mono && styles.mono)}
+            aria-label={`${label} (${prefix})`}
+            {...rest}
+          />
+        </div>
+      </Field>
+    )
+  }
+
   return (
     <Field label={label} htmlFor={inputId}>
-      <input id={inputId} className={cx(styles.control, styles.input, className)} {...rest} />
+      <input id={inputId} className={cx(styles.control, styles.input, mono && styles.mono, className)} {...rest} />
     </Field>
   )
 }

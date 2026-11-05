@@ -5,24 +5,36 @@ import { Icon } from '../Icon/Icon'
 import styles from './Button.module.css'
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: 'primary' | 'secondary' | 'danger'
-  size?: 'md' | 'sm'
+  /** primary: 핑크 / secondary: 표면색 / tonal: 한 단계 밝은 표면색 / danger: 빨간 테두리 */
+  variant?: 'primary' | 'secondary' | 'tonal' | 'danger'
+  /** md 44px · sm 40px · xs 34px */
+  size?: 'md' | 'sm' | 'xs'
   icon?: IconName
+  /** 글자 뒤에 붙는 아이콘 (예: 다음 단계 →) */
+  iconEnd?: IconName
+  fullWidth?: boolean
 }
 
 export function Button({
   variant = 'primary',
   size = 'md',
   icon,
+  iconEnd,
+  fullWidth,
   className,
   children,
   type = 'button',
   ...rest
 }: ButtonProps) {
   return (
-    <button type={type} className={cx(styles.button, styles[variant], styles[size], className)} {...rest}>
+    <button
+      type={type}
+      className={cx(styles.button, styles[variant], styles[size], fullWidth && styles.full, className)}
+      {...rest}
+    >
       {icon && <Icon name={icon} />}
       {children}
+      {iconEnd && <Icon name={iconEnd} />}
     </button>
   )
 }

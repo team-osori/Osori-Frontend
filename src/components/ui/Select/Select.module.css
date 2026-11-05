@@ -39,6 +39,20 @@
 }
 .sm .trigger:hover { background: #42424d; }
 
+/* 폼 필드형: TextField와 같은 44px 입력 박스 */
+.field { display: flex; width: 100%; }
+.field .trigger {
+  height: 44px;
+  padding: 0 13px;
+  border-color: var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  font: var(--text-body-sm);
+}
+.field .trigger:hover { border-color: #4a4a56; }
+.field.open .trigger,
+.field .trigger:focus-visible { border-color: var(--color-border-focus); }
+
 /* 옵션 목록 */
 /* 위치는 Select.tsx에서 화면 기준(fixed)으로 계산 */
 .list {
