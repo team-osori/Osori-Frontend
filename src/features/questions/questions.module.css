@@ -146,3 +146,5 @@
   cursor: pointer;
 }
 .pickerHighlighted { background: var(--color-surface-strong); }
+
+.fieldLabel { margin: 0 0 8px; font: var(--text-label); color: var(--color-text-secondary); }
