@@ -142,6 +142,8 @@ type ProjectSidebarProps = {
   unlockedUntil?: number
   /** 프로젝트 설정 화면. 단계 강조 대신 설정 메뉴를 강조 */
   settingsActive?: boolean
+  /** 단계 번호(1~3)별 작은 글씨 (예: { 1: 'v1 · 67문항 확정' }) */
+  stageNotes?: Partial<Record<number, string>>
   /** 없으면 프로젝트 목록(#/projects)으로 이동 */
   onBack?: () => void
   /** 없으면 그 화면으로 이동 */
@@ -169,6 +171,7 @@ export function ProjectSidebar({
   current,
   unlockedUntil,
   settingsActive,
+  stageNotes,
   onBack,
   onSelect,
   onSettings,
@@ -232,6 +235,7 @@ export function ProjectSidebar({
         current={stage}
         currentRoute={settingsActive ? undefined : current}
         unlockedUntil={unlockedUntil}
+        notes={stageNotes}
         onSelect={onSelect ?? goTo}
       />
     </Sidebar>

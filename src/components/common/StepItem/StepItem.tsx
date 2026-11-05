@@ -17,10 +17,12 @@ type StepItemProps = {
   index: number
   label: string
   status: StepStatus
+  /** 상태 대신 보여줄 작은 글씨 (예: v1 · 67문항 확정) */
+  note?: string
   onClick?: () => void
 }
 
-export function StepItem({ index, label, status, onClick }: StepItemProps) {
+export function StepItem({ index, label, status, note, onClick }: StepItemProps) {
   return (
     <button
       type="button"
@@ -34,7 +36,7 @@ export function StepItem({ index, label, status, onClick }: StepItemProps) {
       </span>
       <span className={styles.texts}>
         <span className={styles.label}>{label}</span>
-        <span className={styles.status}>{STATUS_TEXT[status]}</span>
+        <span className={styles.status}>{note ?? STATUS_TEXT[status]}</span>
       </span>
       {status === 'locked' && <Icon name="lock" className={styles.lock} />}
     </button>
@@ -49,11 +51,13 @@ type StageListProps = {
   currentRoute?: string
   /** 이 단계까지 진행 가능(이후는 잠금). 기본값은 current */
   unlockedUntil?: number
+  /** 단계 번호(1~3)별 작은 글씨 */
+  notes?: Partial<Record<number, string>>
   onSelect?: (route: string) => void
 }
 
 /** 사이드바 평가 단계 목록. 현재 단계 아래에 그 단계의 화면들을 펼쳐 보여줍니다. */
-export function StageList({ stages, current, currentRoute, unlockedUntil = current, onSelect }: StageListProps) {
+export function StageList({ stages, current, currentRoute, unlockedUntil = current, notes, onSelect }: StageListProps) {
   return (
     <ol className={styles.list}>
       {stages.map((stage, i) => {
@@ -63,7 +67,7 @@ export function StageList({ stages, current, currentRoute, unlockedUntil = curre
         const showScreens = index === current && currentRoute && stage.screens.length > 1
         return (
           <li key={stage.label}>
-            <StepItem index={index} label={stage.label} status={status} onClick={() => onSelect?.(stage.screens[0].route)} />
+            <StepItem index={index} label={stage.label} status={status} note={notes?.[index]} onClick={() => onSelect?.(stage.screens[0].route)} />
             {showScreens && (
               <ul className={styles.screens}>
                 {stage.screens.map((screen) => (
