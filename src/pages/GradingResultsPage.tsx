@@ -12,10 +12,8 @@ import { UnstableDrawer } from '../features/grading/UnstableDrawer'
 import { VersionList } from '../features/grading/VersionList'
 import styles from '../features/grading/grading.module.css'
 
-const user = { name: '김QA', role: '어드민' }
 
 type GradingResultsPageProps = {
-  projectName?: string
   summary?: GradingSummary
   unstableItems?: UnstableItem[]
   /** 사람 판정 화면으로 이동 (문항을 고르면 그 문항부터) */
@@ -25,7 +23,6 @@ type GradingResultsPageProps = {
 
 /** 평가 4단계 · 자동 채점 결과 */
 export default function GradingResultsPage({
-  projectName = '모아몰 CS 챗봇',
   summary = MOCK_GRADING_SUMMARY,
   unstableItems = MOCK_UNSTABLE_ITEMS,
   onJudge,
@@ -47,12 +44,9 @@ export default function GradingResultsPage({
     <AppLayout
       sidebar={
         <ProjectSidebar
-          user={user}
-          projectName={projectName}
           promptVersions={summary.versions}
           promptValue={baseVersion}
           onPromptChange={setBaseVersion}
-          questionSet="v1 · 67문항"
           current={ROUTES.grading}
           unlockedUntil={3}
           onBack={onBack}

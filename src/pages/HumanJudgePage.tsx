@@ -11,10 +11,8 @@ import type { JudgeItem } from '../features/grading/types'
 import { useJudgeShortcuts } from '../features/grading/useJudgeShortcuts'
 import styles from '../features/grading/judge.module.css'
 
-const user = { name: '김QA', role: '어드민' }
 
 type HumanJudgePageProps = {
-  projectName?: string
   items?: JudgeItem[]
   /** 처음에 보여줄 문항. 없으면 판정 중인 문항, 그것도 없으면 첫 문항 */
   initialId?: string
@@ -25,7 +23,6 @@ type HumanJudgePageProps = {
 
 /** 평가 5단계 · 사람 판정 */
 export default function HumanJudgePage({
-  projectName = '모아몰 CS 챗봇',
   items: initialItems = MOCK_JUDGE_ITEMS,
   initialId,
   onFinish,
@@ -70,12 +67,9 @@ export default function HumanJudgePage({
       flush
       sidebar={
         <ProjectSidebar
-          user={user}
-          projectName={projectName}
           promptOptions={[{ value: 'ab', label: 'v1 vs v2' }]}
           promptValue="ab"
           onPromptChange={() => {}}
-          questionSet="v1 · 67문항"
           current={ROUTES.judge}
           unlockedUntil={3}
           onBack={onBack}

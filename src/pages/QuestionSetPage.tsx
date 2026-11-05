@@ -1,10 +1,9 @@
 import { useMemo, useState } from 'react'
-import { ErrorNotice, ProjectSidebar } from '../components/common'
+import { ErrorNotice, ProjectSidebar, useProjectNav } from '../components/common'
 import { Button, useToast } from '../components/ui'
 import { AppLayout } from '../layouts/AppLayout'
 import { errorMessage, isApiError, useApiQuery } from '../lib/api'
 import { ROUTES } from '../routes'
-import { getProject } from '../features/project'
 import { DEFAULT_DRAFT_COUNTS } from '../features/questions/draftCounts'
 import { editInput, inputOf, toQuestion, type QuestionEdit } from '../features/questions/questionView'
 import { QuestionEditModal } from '../features/questions/QuestionEditModal'
@@ -41,7 +40,8 @@ type QuestionSetPageProps = {
 /** 1단계 · 시험지 만들기 (05 시작 화면 → 문제 검토) */
 export default function QuestionSetPage({ projectId, onConfirm, onBack }: QuestionSetPageProps) {
   const toast = useToast()
-  const project = useApiQuery((signal) => getProject(projectId, { signal }), [projectId])
+  // 시험지를 만들거나 확정하면 사이드바 요약(시험지 상태 · 열린 단계)도 다시 불러옴
+  const refreshSummary = useProjectNav()?.current?.reload
 
   // 프로젝트의 시험지(가장 최근 것)와 그 최신 버전
   const testSets = useTestSets(projectId)
@@ -97,6 +97,7 @@ export default function QuestionSetPage({ projectId, onConfirm, onBack }: Questi
     if (testSet && version) return { testSetId: testSet.id, version }
     if (policyVersionIds.length === 0) throw new RangeError('정책 문서가 없습니다. 프로젝트 설정에서 정책 문서를 먼저 올려 주세요.')
     const created = await testSets.create({ name: TEST_SET_NAME, policyVersionIds })
+    refreshSummary?.()
     return { testSetId: created.testSet.id, version: created.version }
   }
 
@@ -196,6 +197,7 @@ export default function QuestionSetPage({ projectId, onConfirm, onBack }: Questi
       const confirmed = await confirmTestSetVersion(projectId, testSet.id, current.id, current.revision)
       set.setVersion(confirmed)
       setConfirmOpen(false)
+      refreshSummary?.()
       toast.success(`시험지 v${confirmed.version}를 확정했습니다.`)
       onConfirm?.()
     } catch (error) {
@@ -229,10 +231,6 @@ export default function QuestionSetPage({ projectId, onConfirm, onBack }: Questi
     <AppLayout
       sidebar={
         <ProjectSidebar
-          projectName={project.data?.name ?? ''}
-          promptOptions={[]}
-          promptValue=""
-          onPromptChange={() => {}}
           questionSet={
             version ? `v${version.version} · ${questions.length}문항${readOnly ? '' : ' (검토 중)'}` : '없음'
           }

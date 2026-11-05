@@ -9,12 +9,10 @@ import { MOCK_DIAGNOSES, MOCK_GRADING_SUMMARY } from '../features/grading/mock'
 import type { DiagnosisCause, FailureCause } from '../features/grading/types'
 import styles from '../features/grading/diagnosis.module.css'
 
-const user = { name: '김QA', role: '어드민' }
 
 type Filter = 'all' | FailureCause
 
 type CauseDiagnosisPageProps = {
-  projectName?: string
   items?: DiagnosisCause[]
   /** 필터에 보여줄 원인별 실패 건수. 06 자동 채점 결과의 가장 최근 버전 분포와 같은 값 */
   failureCounts?: Record<FailureCause, number>
@@ -25,7 +23,6 @@ type CauseDiagnosisPageProps = {
 
 /** 평가 6단계 · 원인 진단 */
 export default function CauseDiagnosisPage({
-  projectName = '모아몰 CS 챗봇',
   items: initialItems = MOCK_DIAGNOSES,
   failureCounts = MOCK_GRADING_SUMMARY.failures[MOCK_GRADING_SUMMARY.failures.length - 1].counts,
   onApply,
@@ -70,12 +67,9 @@ export default function CauseDiagnosisPage({
     <AppLayout
       sidebar={
         <ProjectSidebar
-          user={user}
-          projectName={projectName}
           promptVersions={versions}
           promptValue={baseVersion}
           onPromptChange={setBaseVersion}
-          questionSet="v1 · 67문항"
           current={ROUTES.diagnosis}
           unlockedUntil={3}
           onBack={onBack}

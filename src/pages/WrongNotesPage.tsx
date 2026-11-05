@@ -26,7 +26,6 @@ import styles from './WrongNotesPage.module.css'
 type Filter = 'all' | WrongCause
 
 type WrongNotesPageProps = {
-  projectName?: string
   nextVersion?: string
   initialItems?: WrongItem[]
   /** 고친 프롬프트로 다시 채점 */
@@ -36,7 +35,6 @@ type WrongNotesPageProps = {
 
 /** 08 3단계 · 오답 노트: 틀린 이유를 보고 프롬프트를 고쳐 다시 시험 */
 export default function WrongNotesPage({
-  projectName = '모아몰 CS 챗봇',
   nextVersion = 'v4',
   initialItems = MOCK_WRONG_ITEMS,
   onRetest,
@@ -73,11 +71,6 @@ export default function WrongNotesPage({
     <AppLayout
       sidebar={
         <ProjectSidebar
-          projectName={projectName}
-          promptOptions={[{ value: 'v3', label: 'v3 (최신)' }]}
-          promptValue="v3"
-          onPromptChange={() => {}}
-          questionSet="v1 · 67문항"
           current={ROUTES.wrongNotes}
           stageNotes={{ 1: 'v1 · 67문항 확정', 2: '18 / 18 채점' }}
           unlockedUntil={3}

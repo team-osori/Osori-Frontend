@@ -15,3 +15,4 @@ export {
   type ProjectUpdateInput,
 } from './api'
 export { useProjects } from './useProjects'
+export { useCurrentProject } from './useCurrentProject'

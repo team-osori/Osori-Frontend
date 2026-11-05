@@ -12,10 +12,8 @@ import { ReevaluationScopeCard } from '../features/improvement/ReevaluationScope
 import { ReevaluateModal } from '../features/improvement/ReevaluateModal'
 import styles from './ImprovementApplyPage.module.css'
 
-const user = { name: '김QA', role: '어드민' }
 
 type ImprovementApplyPageProps = {
-  projectName?: string
   plan?: ImprovementPlan
   /** v4를 저장만 하고 재평가는 실행하지 않음 */
   onSaveOnly?: (result: ImprovementApplyResult) => void
@@ -34,7 +32,6 @@ export type ImprovementApplyResult = {
 
 /** 평가 7단계 · 개선안 적용 */
 export default function ImprovementApplyPage({
-  projectName = '모아몰 CS 챗봇',
   plan = MOCK_IMPROVEMENT_PLAN,
   onSaveOnly,
   onReevaluate,
@@ -67,12 +64,9 @@ export default function ImprovementApplyPage({
     <AppLayout
       sidebar={
         <ProjectSidebar
-          user={user}
-          projectName={projectName}
           promptOptions={[{ value: plan.toVersion, label: `${plan.toVersion} (최신)` }]}
           promptValue={plan.toVersion}
           onPromptChange={() => {}}
-          questionSet={`v1 · ${plan.allCount}문항`}
           current={ROUTES.improvement}
           onBack={onBack}
           onSelect={onSelectScreen}

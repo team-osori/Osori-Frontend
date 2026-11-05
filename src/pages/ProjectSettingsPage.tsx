@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Tabs, useToast } from '../components/ui'
-import { DangerZone, EmptyState, ErrorNotice, PageHeader, ProjectInfoForm, ProjectSidebar } from '../components/common'
+import { DangerZone, EmptyState, ErrorNotice, PageHeader, ProjectInfoForm, ProjectSidebar, useProjectNav } from '../components/common'
 import { AppLayout } from '../layouts/AppLayout'
 import { errorMessage, isApiError, useApiQuery } from '../lib/api'
 import { stageRoute } from '../routes'
@@ -55,6 +55,8 @@ type ProjectSettingsPageProps = {
 /** 프로젝트 설정 (일반 · 서비스 연결 · 프롬프트 · 문서 · 채점자 · 멤버) */
 export default function ProjectSettingsPage({ projectId, stage = 1, onProjectChange, onDeleted, onBack }: ProjectSettingsPageProps) {
   const toast = useToast()
+  // 서비스 연결 · 프롬프트 · 이름을 바꾸면 사이드바 요약도 다시 불러옴
+  const refreshSummary = useProjectNav()?.current?.reload ?? (() => {})
   const [tab, setTab] = useState<Tab>('general')
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [deleting, setDeleting] = useState(false)
@@ -96,6 +98,7 @@ export default function ProjectSettingsPage({ projectId, stage = 1, onProjectCha
       const updated = await updateProject(projectId, info.revision, { name: value.name, description: value.description })
       project.setData(updated)
       onProjectChange?.()
+      refreshSummary()
       setSavedAt(new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }))
     } catch (error) {
       if (isApiError(error) && (error.status === 409 || error.status === 412)) project.reload()
@@ -194,6 +197,7 @@ export default function ProjectSettingsPage({ projectId, stage = 1, onProjectCha
                 onSaved={() => {
                   serviceQuery.reload()
                   connection.reload()
+                  refreshSummary()
                 }}
                 onTested={connection.reload}
               />
@@ -211,6 +215,7 @@ export default function ProjectSettingsPage({ projectId, stage = 1, onProjectCha
                   onSaved={() => {
                     prompts.reload()
                     prompt.reload()
+                    refreshSummary()
                   }}
                 />
               )}

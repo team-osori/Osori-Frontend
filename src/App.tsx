@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { ProjectNavContext, SidebarUserContext, type HomeMenu, type UserMenuActions } from './components/common'
 import { useToast } from './components/ui'
 import { useAuth } from './features/auth'
-import { CreateProjectModal, setupProject, toProject, useProjects, type NewProject } from './features/project'
+import { CreateProjectModal, setupProject, toProject, useCurrentProject, useProjects, type NewProject } from './features/project'
 import { MOCK_JUDGE_ITEMS } from './features/grading/mock'
 import { MOCK_MEMBERS, type Member } from './features/settings'
 import { useHashRoute } from './hooks/useHashRoute'
@@ -51,6 +51,7 @@ export default function App() {
   // 지금 연 프로젝트. 해시 경로에 ID가 없어서 새로고침해도 이어지도록 이 기기에 기억해 둠
   const [currentProjectId, setCurrentProjectId] = useState<string | null>(readCurrentProjectId)
   const [creating, setCreating] = useState(false)
+  const currentProject = useCurrentProject(currentProjectId, auth.status === 'signedIn')
   const [members, setMembers] = useState<Member[]>(MOCK_MEMBERS)
   const [createOpen, setCreateOpen] = useState(false)
   // 사람 판정 화면을 열 때 먼저 보여줄 문항 (06 불안정 문항 패널에서 고른 문항)
@@ -254,7 +255,13 @@ export default function App() {
       value={auth.user ? { name: auth.user.name, account: auth.user.loginId, menu: userMenu } : null}
     >
       <ProjectNavContext.Provider
-        value={{ projects, onCreateProject: () => setCreateOpen(true), onOpenProject: (p) => openProject(p as Project), unlockedStage }}
+        value={{
+          projects,
+          onCreateProject: () => setCreateOpen(true),
+          onOpenProject: (p) => openProject(p as Project),
+          unlockedStage,
+          current: currentProject,
+        }}
       >
         {renderScreen()}
         <CreateProjectModal open={createOpen} onClose={() => setCreateOpen(false)} onSubmit={createProject} submitting={creating} />

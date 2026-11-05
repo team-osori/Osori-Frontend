@@ -18,10 +18,8 @@ import { PromptDiffCard, RunProgressCard, VersionCard } from '../features/abRun/
 import { StopRunModal } from '../features/abRun/StopRunModal'
 import styles from './AbRunPage.module.css'
 
-const user = { name: '김QA', role: '어드민' }
 
 type AbRunPageProps = {
-  projectName?: string
   questionSet?: string
   /** 문항당 반복 횟수 · 채점자 수 */
   repeats?: number
@@ -32,7 +30,6 @@ type AbRunPageProps = {
 
 /** 평가 3단계 · 프롬프트 A/B 실행 */
 export default function AbRunPage({
-  projectName = '모아몰 CS 챗봇',
   questionSet = 'v1 · 67문항',
   repeats = 3,
   graders = 2,
@@ -54,12 +51,9 @@ export default function AbRunPage({
     <AppLayout
       sidebar={
         <ProjectSidebar
-          user={user}
-          projectName={projectName}
           promptOptions={[{ value: 'ab', label: `${versions.base} vs ${versions.candidate}` }]}
           promptValue="ab"
           onPromptChange={() => {}}
-          questionSet={questionSet}
           current={ROUTES.abRun}
           onBack={onBack}
         />

@@ -17,14 +17,13 @@ const COLOR: Record<Verdict | 'none' | 'current', string> = {
 }
 
 type ScoringPageProps = {
-  projectName?: string
   initialItems?: ScoreItem[]
   /** 다 채점하고 오답 노트로 */
   onFinish?: (items: ScoreItem[]) => void
 }
 
 /** 07 2단계 · 채점: 챗봇 답을 채점 기준과 비교해 맞음 / 틀림 */
-export default function ScoringPage({ projectName = '모아몰 CS 챗봇', initialItems = MOCK_SCORE_ITEMS, onFinish }: ScoringPageProps) {
+export default function ScoringPage({ initialItems = MOCK_SCORE_ITEMS, onFinish }: ScoringPageProps) {
   const [items, setItems] = useState(initialItems)
   const [index, setIndex] = useState(() => Math.max(0, initialItems.findIndex((i) => i.verdict === null)))
   const [answerOpen, setAnswerOpen] = useState(false)
@@ -68,11 +67,6 @@ export default function ScoringPage({ projectName = '모아몰 CS 챗봇', initi
     <AppLayout
       sidebar={
         <ProjectSidebar
-          projectName={projectName}
-          promptOptions={[{ value: 'v3', label: 'v3 (최신)' }]}
-          promptValue="v3"
-          onPromptChange={() => {}}
-          questionSet="v1 · 67문항"
           current={ROUTES.scoring}
           stageNotes={{ 1: 'v1 · 67문항 확정', 2: `${items.length - left} / ${items.length} 채점` }}
           unlockedUntil={2}
