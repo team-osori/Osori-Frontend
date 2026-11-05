@@ -101,6 +101,8 @@ export type EvaluationItemQuery = PageQuery & {
   resultStatus?: EvaluationResultStatus
   /** 문제 종류별 필터 */
   issueKind?: EvaluationIssueKind
+  /** 화면 상태별 필터 (예: INCORRECT 오답만) */
+  screenStatus?: ScreenStatus
 } & (
     | {
         /** 기준별 필터 */
@@ -269,9 +271,9 @@ export function listEvaluationItems(
   evaluationId: string,
   query: EvaluationItemQuery & RequestExtras = {},
 ) {
-  const { signal, limit, cursor, criterion, resultStatus, issueKind, change } = query
+  const { signal, limit, cursor, criterion, resultStatus, issueKind, change, screenStatus } = query
   return api.get<Page<EvaluationItemSummary>>(`${evaluationPath(projectId, serviceId, evaluationId)}/items`, {
-    query: { limit, cursor, criterion, resultStatus, issueKind, change },
+    query: { limit, cursor, criterion, resultStatus, issueKind, change, screenStatus },
     signal,
   })
 }

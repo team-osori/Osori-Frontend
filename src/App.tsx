@@ -210,7 +210,7 @@ export default function App() {
       case ROUTES.scoring:
         return currentProjectId ? <ScoringPage key={currentProjectId} projectId={currentProjectId} onFinish={() => navigate(ROUTES.wrongNotes)} /> : null
       case ROUTES.wrongNotes:
-        return <WrongNotesPage onRetest={() => navigate(ROUTES.scoring)} />
+        return currentProjectId ? <WrongNotesPage key={currentProjectId} projectId={currentProjectId} onRetest={() => navigate(ROUTES.scoring)} /> : null
       // 예전 연결 설정 주소는 프로젝트 설정으로 (연결 정보는 이제 프로젝트 만들기 · 설정에서 다룸)
       case '/connection':
         return renderProjectSettings()
