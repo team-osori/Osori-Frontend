@@ -64,26 +64,9 @@ export function StageList({ stages, current, currentRoute, unlockedUntil = curre
         const index = i + 1
         const status: StepStatus =
           index < current ? 'done' : index === current ? (currentRoute ? 'current' : 'todo') : index <= unlockedUntil ? 'todo' : 'locked'
-        const showScreens = index === current && currentRoute && stage.screens.length > 1
         return (
           <li key={stage.label}>
             <StepItem index={index} label={stage.label} status={status} note={notes?.[index]} onClick={() => onSelect?.(stage.screens[0].route)} />
-            {showScreens && (
-              <ul className={styles.screens}>
-                {stage.screens.map((screen) => (
-                  <li key={screen.route}>
-                    <button
-                      type="button"
-                      className={cx(styles.screen, screen.route === currentRoute && styles.screenActive)}
-                      aria-current={screen.route === currentRoute ? 'page' : undefined}
-                      onClick={() => onSelect?.(screen.route)}
-                    >
-                      {screen.label}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
           </li>
         )
       })}
