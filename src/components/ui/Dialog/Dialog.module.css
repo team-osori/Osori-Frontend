@@ -1,0 +1,98 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(14, 14, 18, 0.66);
+  animation: fade 0.15s ease-out;
+}
+
+/* ---------- 모달 ---------- */
+.modal {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: calc(100vh - 32px);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-surface);
+  box-shadow: 0 24px 32px rgba(0, 0, 0, 0.5);
+  animation: rise 0.18s ease-out;
+}
+.sm { max-width: 480px; }
+.md { max-width: 520px; }
+.lg { max-width: 640px; }
+
+.header { display: flex; align-items: center; gap: 10px; padding: 24px 28px 0; }
+.title { flex: 1; margin: 0; font: 20px / 24px var(--font-family); font-weight: var(--font-weight-bold); }
+.close {
+  display: inline-flex;
+  flex-shrink: 0;
+  margin-right: 2px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  opacity: 0.8;
+}
+.close:hover { opacity: 1; }
+
+.body { display: flex; flex-direction: column; gap: 16px; padding: 20px 28px 24px; overflow-y: auto; }
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 28px;
+  border-top: 1px solid var(--color-border);
+}
+.footerStart { margin-right: auto; }
+.footerEnd { display: flex; gap: 8px; margin-left: auto; }
+
+/* 본문 문장 */
+.text { margin: 0; font: var(--text-body); line-height: 24px; word-break: keep-all; }
+
+/* ---------- 오른쪽 패널 ---------- */
+.drawerOverlay { align-items: stretch; justify-content: flex-end; padding: 0; }
+.drawer {
+  display: flex;
+  flex-direction: column;
+  width: min(560px, 100%);
+  height: 100%;
+  overflow: hidden;
+  border-left: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: -24px 0 32px rgba(0, 0, 0, 0.4);
+  animation: slide 0.2s ease-out;
+}
+.drawer .header { padding: 28px 28px 0 29px; }
+.drawerDescription {
+  margin: 0;
+  padding: 16px 28px 20px 29px;
+  border-bottom: 1px solid var(--color-border);
+  font: var(--text-body-sm);
+  line-height: 22.5px;
+  color: var(--color-text-secondary);
+  word-break: keep-all;
+}
+.drawer .body { flex: 1; gap: 10px; padding: 20px 28px 28px 29px; }
+
+@keyframes fade { from { opacity: 0; } }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+@keyframes slide { from { transform: translateX(24px); opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay, .modal, .drawer { animation: none; }
+}
+@media (max-width: 560px) {
+  .header { padding: 20px 20px 0; }
+  .body { padding: 16px 20px 20px; }
+  .footer { padding: 14px 20px; }
+  .drawer .header, .drawer .body { padding-left: 20px; padding-right: 20px; }
+  .drawerDescription { padding-left: 20px; padding-right: 20px; }
+}
