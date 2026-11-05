@@ -66,7 +66,9 @@ export const TESTSET_RULES = {
   /** 한 번에 만들 수 있는 질문 수 */
   generateCount: { min: 1, max: 50, default: 10 },
   /** 질문 생성 때 고를 수 있는 유형 (생략하면 서버가 정함) */
-  categories: ['normal', 'exception', 'boundary', 'ambiguous'] as const satisfies readonly QuestionCategory[],
+  categories: ['normal', 'ambiguous', 'missing_document', 'policy_trap', 'exception', 'boundary'] as const satisfies readonly QuestionCategory[],
+  /** 버전 하나에 넣을 수 있는 질문 수 */
+  versionQuestionsMax: 200,
 } as const
 
 const testSetsPath = (projectId: string) => `/api/projects/${pathId(projectId, '프로젝트 ID')}/testsets`
@@ -241,8 +243,10 @@ export function generateQuestions(
   input: {
     expectedRevision: number
     count?: number
-    /** 만들 질문 유형. 1~4개를 고르고, 생략하면 서버가 정합니다. */
+    /** 만들 질문 유형. 생략하면 서버가 정합니다. categoryCounts와 함께 보낼 수 없습니다. */
     categories?: QuestionCategory[]
+    /** 유형별 개수 (합계 1~50). 0인 유형은 만들지 않습니다. */
+    categoryCounts?: Partial<Record<QuestionCategory, number>>
   },
   extras: RequestExtras & { idempotencyKey?: string } = {},
 ) {
@@ -253,10 +257,31 @@ export function generateQuestions(
       ...(input.count !== undefined ? { count: input.count } : {}),
       // 빈 배열은 서버가 거절하므로(1개 이상) 고르지 않은 것으로 보고 보내지 않음
       ...(input.categories?.length ? { categories: input.categories } : {}),
+      ...(input.categoryCounts ? { categoryCounts: input.categoryCounts } : {}),
     },
     { idempotencyKey: extras.idempotencyKey ?? createIdempotencyKey(), signal: extras.signal },
   )
 }
+
+/**
+ * CSV로 질문 가져오기. UTF-8 CSV(최대 2MiB · 200행), 헤더는 question,category,modelAnswer 또는 질문,유형,모범 답안.
+ * 한 행이라도 틀리면 아무것도 저장하지 않고 행별 오류를 돌려줍니다. 가져온 질문은 근거 미연결 · 미검토 상태입니다.
+ */
+export function importQuestionsCsv(
+  projectId: string,
+  testSetId: string,
+  versionId: string,
+  file: File,
+  expectedRevision: number,
+  extras: RequestExtras = {},
+) {
+  const form = new FormData()
+  form.append('file', file)
+  form.append('expectedRevision', String(expectedRevision))
+  return api.post<TestSetVersion>(`${questionsPath(projectId, testSetId, versionId)}/import`, form, { signal: extras.signal })
+}
+
+export const CSV_RULES = { maxBytes: 2 * 1024 * 1024, maxRows: 200 } as const
 
 /* ---------- 확정 · 스냅샷 ---------- */
 

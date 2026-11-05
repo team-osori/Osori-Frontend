@@ -4,7 +4,7 @@ export { StepItem, StageList, type StepStatus } from './StepItem/StepItem'
 export { ProjectSelector } from './ProjectSelector/ProjectSelector'
 export { type ProjectSwitchItem } from './ProjectSelector/ProjectSwitcher'
 export { type PromptVersion } from './ProjectSelector/PromptVersionPicker'
-export { ProjectNavContext, type ProjectNav } from './Sidebar/ProjectNavContext'
+export { ProjectNavContext, useProjectNav, type CurrentProjectSummary, type ProjectNav } from './Sidebar/ProjectNavContext'
 export { UserProfile } from './UserProfile/UserProfile'
 export { UserMenu, type UserMenuActions } from './UserMenu/UserMenu'
 export {

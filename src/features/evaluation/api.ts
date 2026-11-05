@@ -21,6 +21,11 @@ export type EvaluationSummary = Schema<'EvaluationSummary'>
 export type EvaluationItemSummary = Schema<'EvaluationItemSummary'>
 export type EvaluationItem = Schema<'EvaluationItemResponse'>
 export type EvaluationSide = Schema<'EvaluationSide'>
+/** 채점 화면 칸 전체(단일 평가 전용). 문항별 화면 상태 · 담당자 O/X를 답변 원문 없이 한 번에 줍니다. */
+export type GradingBoard = Schema<'GradingBoard'>
+export type GradingTile = Schema<'GradingTile'>
+export type ScreenStatus = GradingTile['screenStatus']
+export type ScreenCounts = Schema<'ScreenCounts'>
 
 /**
  * 서버가 요약 · 항목 결과에 실제로 담아 주는 평가 기준 3가지.
@@ -53,6 +58,18 @@ export type ItemReviewInput = {
   verdict: ReviewVerdict
   reason: string
 }
+
+/** 답변 전체 O/X 판정 기록 (조건별 판정과 별개) */
+export type AnswerReview = Schema<'AnswerReviewOut'>
+export type AnswerReviewInput = {
+  /** 항목을 마지막으로 본 reviewRevision (처음이면 0). 조건별 판정과 같은 revision을 함께 씁니다. */
+  expectedRevision: number
+  /** 어느 쪽 답변을 판정하는지. 서버 기본값은 a */
+  side?: 'a' | 'b'
+  verdict: ReviewVerdict
+  /** 선택. 비워 두면 보내지 않습니다. */
+  reason?: string
+}
 export type EvaluationRerunInput = { connectionRevision: number; promptVersionId?: string }
 
 /** A에서 B로 바뀌며 결과가 어떻게 달라졌는지 */
@@ -84,6 +101,8 @@ export type EvaluationItemQuery = PageQuery & {
   resultStatus?: EvaluationResultStatus
   /** 문제 종류별 필터 */
   issueKind?: EvaluationIssueKind
+  /** 화면 상태별 필터 (예: INCORRECT 오답만) */
+  screenStatus?: ScreenStatus
 } & (
     | {
         /** 기준별 필터 */
@@ -252,9 +271,9 @@ export function listEvaluationItems(
   evaluationId: string,
   query: EvaluationItemQuery & RequestExtras = {},
 ) {
-  const { signal, limit, cursor, criterion, resultStatus, issueKind, change } = query
+  const { signal, limit, cursor, criterion, resultStatus, issueKind, change, screenStatus } = query
   return api.get<Page<EvaluationItemSummary>>(`${evaluationPath(projectId, serviceId, evaluationId)}/items`, {
-    query: { limit, cursor, criterion, resultStatus, issueKind, change },
+    query: { limit, cursor, criterion, resultStatus, issueKind, change, screenStatus },
     signal,
   })
 }
@@ -313,6 +332,67 @@ export function reviewItem(
       conditionId: pathId(input.conditionId, '조건 ID'),
       verdict: input.verdict,
       reason: input.reason.trim(),
+    },
+    { signal: extras.signal },
+  )
+}
+
+/** 대기 · 진행 중인 평가 중단. 이미 받은 결과는 남고, 이미 보낸 호출은 결과 불확실로 표시됩니다. */
+export function cancelEvaluation(projectId: string, serviceId: string, evaluationId: string, extras: RequestExtras = {}) {
+  return api.post<Evaluation>(`${evaluationPath(projectId, serviceId, evaluationId)}/cancel`, {}, { signal: extras.signal })
+}
+
+/** 중단한 평가에서 아직 호출하지 않은 문항만 이어서 실행. 연결 설정 revision이 실행 때와 같아야 합니다. */
+export function resumeEvaluation(
+  projectId: string,
+  serviceId: string,
+  evaluationId: string,
+  connectionRevision: number,
+  extras: RequestExtras = {},
+) {
+  return api.post<Evaluation>(`${evaluationPath(projectId, serviceId, evaluationId)}/resume`, { connectionRevision }, { signal: extras.signal })
+}
+
+/** 채점 화면 칸(최대 200문항). 단일 평가만 됩니다(비교 평가는 409). */
+export function getGradingBoard(projectId: string, serviceId: string, evaluationId: string, extras: RequestExtras = {}) {
+  return api.get<GradingBoard>(`${evaluationPath(projectId, serviceId, evaluationId)}/grading`, { signal: extras.signal })
+}
+
+/** 항목의 답변 전체 O/X 판정 기록 목록 */
+export function listAnswerReviews(
+  projectId: string,
+  serviceId: string,
+  evaluationId: string,
+  itemId: string,
+  query: PageQuery & RequestExtras = {},
+) {
+  const { signal, limit, cursor } = query
+  return api.get<Page<AnswerReview>>(`${itemPath(projectId, serviceId, evaluationId, itemId)}/answer-reviews`, {
+    query: { limit, cursor },
+    signal,
+  })
+}
+
+/**
+ * 항목의 답변 전체에 사람이 O/X 판정을 남깁니다. 조건별 판정(reviewItem)과 revision을 함께 쓰므로
+ * 그 사이 누가 어느 쪽이든 판정했으면 409로 거절됩니다. 조건별 판정과 엇갈리면 서버가 검토 필요로 표시합니다.
+ */
+export function reviewAnswer(
+  projectId: string,
+  serviceId: string,
+  evaluationId: string,
+  itemId: string,
+  input: AnswerReviewInput,
+  extras: RequestExtras = {},
+) {
+  const reason = input.reason?.trim()
+  return api.post<AnswerReview>(
+    `${itemPath(projectId, serviceId, evaluationId, itemId)}/answer-reviews`,
+    {
+      expectedRevision: input.expectedRevision,
+      ...(input.side ? { side: input.side } : {}),
+      verdict: input.verdict,
+      ...(reason ? { reason } : {}),
     },
     { signal: extras.signal },
   )

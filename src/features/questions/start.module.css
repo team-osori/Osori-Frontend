@@ -62,3 +62,6 @@
   .choice { min-height: 0; }
   .types, .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+.modalHint { margin: 8px 0 0; font: var(--text-caption); color: var(--color-text-secondary); }
+.modalError { margin: 8px 0 0; font: var(--text-caption); color: var(--color-danger); }

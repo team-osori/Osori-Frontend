@@ -1,6 +1,7 @@
 import { useRef, type CSSProperties } from 'react'
 import { cx } from '../../lib/cx'
 import { Button, Icon, Modal, MultiSelect, StatTile, Sticker, type SelectOption } from '../../components/ui'
+import { DRAFT_TOTAL_MAX } from './draftCounts'
 import { QUESTION_TYPES, type DraftCounts, type QuestionType } from './types'
 import styles from './start.module.css'
 
@@ -109,6 +110,10 @@ type DraftModalProps = {
   onCountsChange: (counts: DraftCounts) => void
   generating: boolean
   onGenerate: () => void
+  /** 시험지가 이미 있으면 문서를 바꿀 수 없음 (시험지를 만들 때 정한 문서로 생성) */
+  docsLocked?: boolean
+  /** 생성 실패 문구 */
+  error?: string
 }
 
 /** 정책 문서와 유형별 개수를 골라 문제 초안 만들기 */
@@ -122,6 +127,8 @@ export function DraftModal({
   onCountsChange,
   generating,
   onGenerate,
+  docsLocked = false,
+  error,
 }: DraftModalProps) {
   const total = QUESTION_TYPES.reduce((sum, t) => sum + counts[t], 0)
   return (
@@ -136,7 +143,7 @@ export function DraftModal({
           <Button variant="tonal" size="xs" onClick={onClose}>
             취소
           </Button>
-          <Button size="xs" icon="sparkleSm" onClick={onGenerate} disabled={generating || total === 0 || docs.length === 0}>
+          <Button size="xs" icon="sparkleSm" onClick={onGenerate} disabled={generating || total === 0 || total > DRAFT_TOTAL_MAX || docs.length === 0}>
             {generating ? '만드는 중…' : `문제 ${total}개 만들기`}
           </Button>
         </>
@@ -150,7 +157,7 @@ export function DraftModal({
           placeholder="정책 문서를 선택하세요"
           options={docOptions}
           value={docs}
-          onChange={onDocsChange}
+          onChange={docsLocked ? () => {} : onDocsChange}
           summary={(selected) =>
             selected.length > 1 ? `${selected[0].label} 외 ${selected.length - 1}개 문서` : selected[0].label
           }
@@ -164,11 +171,23 @@ export function DraftModal({
               key={type}
               label={type}
               value={counts[type]}
-              max={200}
+              max={DRAFT_TOTAL_MAX}
               onChange={(n) => onCountsChange({ ...counts, [type]: n })}
             />
           ))}
         </div>
+        <p className={total > DRAFT_TOTAL_MAX ? styles.modalError : styles.modalHint}>
+          {total > DRAFT_TOTAL_MAX
+            ? `한 번에 ${DRAFT_TOTAL_MAX}개까지 만들 수 있습니다. (지금 ${total}개)`
+            : docsLocked
+              ? '이 시험지를 만들 때 고른 문서로 만듭니다. 만든 문제는 모두 검토가 필요합니다.'
+              : '만든 문제는 모두 검토가 필요합니다. 문서마다 근거가 함께 붙습니다.'}
+        </p>
+        {error && (
+          <p className={styles.modalError} role="alert">
+            {error}
+          </p>
+        )}
       </div>
     </Modal>
   )

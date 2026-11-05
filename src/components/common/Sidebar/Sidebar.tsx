@@ -40,8 +40,8 @@ export function Sidebar({ user, userMenu, children, panelFooter }: SidebarProps)
   const nav = useProjectNav()
   const signedIn = useSidebarUser()
   const base = user ?? nav?.user
-  // 로그인한 사용자가 있으면 그 이름 · 계정 메뉴가 우선 (역할은 아직 API에 없어 화면 값 유지)
-  const me = signedIn ? { role: base?.role ?? '멤버', ...base, name: signedIn.name, email: signedIn.account } : base
+  // 로그인한 사용자가 있으면 그 이름 · 계정 메뉴가 우선
+  const me = signedIn ? { ...base, name: signedIn.name, email: signedIn.account } : base
   const menu = signedIn?.menu ?? userMenu ?? nav?.userMenu
   const email = me?.email
 
@@ -55,13 +55,12 @@ export function Sidebar({ user, userMenu, children, panelFooter }: SidebarProps)
       {me && (
         <div className={styles.account}>
           {menu && email ? (
-            <UserMenu name={me.name} role={me.role} email={email} {...menu} />
+            <UserMenu name={me.name} email={email} {...menu} />
           ) : (
             <span className={styles.profile}>
               <span className={styles.avatar}>{me.name.slice(0, 1)}</span>
               <span className={styles.who}>
                 <b>{me.name}</b>
-                {me.role}
               </span>
             </span>
           )}
@@ -102,15 +101,16 @@ export function SidebarCreateButton({ onClick, children = '새 프로젝트' }: 
 
 type ProjectSidebarProps = {
   user?: User
-  projectName: string
+  /** 생략하면 App이 알려주는 지금 프로젝트 값 (아래 host · questionSet · 프롬프트도 같음) */
+  projectName?: string
   /** 평가 대상 서비스 주소 (프로젝트 이름 아래 작은 글씨) */
   host?: string
   /** promptVersions를 주면 쓰지 않음 */
   promptOptions?: SelectOption[]
-  promptValue: string
-  onPromptChange: (value: string) => void
+  promptValue?: string
+  onPromptChange?: (value: string) => void
   /** 시험지 상태 (예: "없음", "v1 · 67문항") */
-  questionSet: string
+  questionSet?: string
   /** 지금 보고 있는 화면 경로 (routes.ts) */
   current?: string
   /** 이 단계(1~3)까지 진행 가능. 이후는 잠금. 기본값은 현재 단계 */
@@ -128,21 +128,21 @@ type ProjectSidebarProps = {
   onProjectClick?: () => void
   /** 주면 프롬프트 칸이 버전 기록 팝오버로 바뀝니다. 최신 버전이 맨 앞 */
   promptVersions?: PromptVersion[]
-  /** 없으면 새 버전을 만드는 개선안 적용 화면으로 이동 */
+  /** 없으면 프로젝트 설정(프롬프트)으로 이동 */
   onCreateVersion?: () => void
-  /** 없으면 버전 목록이 있는 채점 결과 화면으로 이동 */
+  /** 없으면 오답 노트로 이동 */
   onShowVersionHistory?: () => void
   userMenu?: UserMenuActions
 }
 
 export function ProjectSidebar({
   user,
-  projectName,
-  host = 'cs-bot.moamall.internal',
-  promptOptions,
-  promptValue,
-  onPromptChange,
-  questionSet,
+  projectName: projectNameProp,
+  host: hostProp,
+  promptOptions: promptOptionsProp,
+  promptValue: promptValueProp,
+  onPromptChange = () => {},
+  questionSet: questionSetProp,
   current,
   unlockedUntil,
   settingsActive,
@@ -157,11 +157,18 @@ export function ProjectSidebar({
   userMenu,
 }: ProjectSidebarProps) {
   const nav = useProjectNav()
+  const summary = nav?.current
+  const projectName = projectNameProp ?? summary?.name ?? ''
+  const host = hostProp ?? summary?.host
+  const questionSet = questionSetProp ?? summary?.questionSet ?? '없음'
+  // 화면이 프롬프트 칸을 정하지 않으면 최신 버전만 보여줌
+  const promptOptions = promptOptionsProp ?? (promptVersions ? undefined : summary?.promptLabel ? [{ value: 'latest', label: `${summary.promptLabel} (최신)` }] : [])
+  const promptValue = promptValueProp ?? 'latest'
   // 프로젝트 목록을 App이 내려줄 때만 프로젝트 전환 팝오버를 씀
   const projectSwitch: ProjectSwitchOptions | undefined = nav
     ? {
         projects: nav.projects,
-        currentId: nav.projects.find((p) => p.name === projectName)?.id,
+        currentId: summary?.id ?? nav.projects.find((p) => p.name === projectName)?.id,
         onSelect: (project) => (nav.onOpenProject ? nav.onOpenProject(project) : goTo(stageRoute(project.currentStep))),
         onCreate: nav.onCreateProject,
         onShowAll: () => goTo(ROUTES.projects),
@@ -169,7 +176,7 @@ export function ProjectSidebar({
     : undefined
   const stage = (current && stageOf(current)) || 1
   // 화면이 정한 값 · 프로젝트에서 이미 연 단계 · 지금 단계 중 가장 큰 값까지 열림
-  const reach = Math.max(stage, unlockedUntil ?? stage, nav?.unlockedStage ?? 0)
+  const reach = Math.max(stage, unlockedUntil ?? stage, nav?.unlockedStage ?? 0, summary?.unlockedStage ?? 0)
 
   return (
     <Sidebar
@@ -201,8 +208,8 @@ export function ProjectSidebar({
         promptVersions={
           promptVersions && {
             versions: promptVersions,
-            onCreate: onCreateVersion ?? (() => goTo(ROUTES.improvement)),
-            onShowHistory: onShowVersionHistory ?? (() => goTo(ROUTES.grading)),
+            onCreate: onCreateVersion ?? (() => goTo(ROUTES.projectSettings)),
+            onShowHistory: onShowVersionHistory ?? (() => goTo(ROUTES.wrongNotes)),
           }
         }
       />

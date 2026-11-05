@@ -15,6 +15,23 @@ export type ProjectNav = {
   unlockedStage?: number
   user?: { name: string; role: string; email: string }
   userMenu?: UserMenuActions
+  /** 지금 연 프로젝트 요약. 화면이 따로 넘기지 않으면 사이드바가 이 값을 씀 */
+  current?: CurrentProjectSummary
+}
+
+export type CurrentProjectSummary = {
+  id: string
+  name: string
+  /** 평가 대상 서비스 주소. 연결 설정이 없으면 undefined */
+  host?: string
+  /** 최신 프롬프트 버전 이름 (예: "v3"). 없으면 undefined */
+  promptLabel?: string
+  /** 시험지 상태 (예: "v1 · 67문항", "없음") */
+  questionSet: string
+  /** 서버가 알려주는 열린 단계(1~3) */
+  unlockedStage: number
+  /** 시험지 · 프롬프트를 바꾼 화면이 부르면 요약을 다시 불러옴 */
+  reload: () => void
 }
 
 export const ProjectNavContext = createContext<ProjectNav | null>(null)
