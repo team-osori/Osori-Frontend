@@ -2,4 +2,8 @@ export { api, apiRequest, createIdempotencyKey, setSessionExpiredHandler, type R
 export { ApiError, NETWORK_ERROR, errorMessage, isApiError } from './ApiError'
 export { clearTokens, getTokens, onTokensChange, setTokens, type Tokens } from './tokens'
 export { useApiMutation, useApiQuery } from './hooks'
+export { fetchAllPages, usePagedList, type PagedOptions } from './paged'
+export { PollingTimeoutError, pollUntil, type PollOptions } from './polling'
+export { getHealth, getReady, type HealthStatus } from './health'
+export { isValidId, pathId, revisionTag, type RequestExtras } from './path'
 export type { DataEnvelope, ErrorDetail, FieldError, Page, PageQuery, Schema } from './types'

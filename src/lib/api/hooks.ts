@@ -21,8 +21,8 @@ export function useApiQuery<T>(load: (signal: AbortSignal) => Promise<T>, deps: 
   useEffect(() => {
     const controller = new AbortController()
     setState((prev) => ({ ...prev, error: undefined, loading: true }))
-    loadRef
-      .current(controller.signal)
+    // 잘못된 ID처럼 요청 전에 던지는 오류도 렌더 오류가 아니라 error로 보이게 Promise로 감쌈
+    new Promise<T>((resolve) => resolve(loadRef.current(controller.signal)))
       .then((data) => {
         if (!controller.signal.aborted) setState({ data, error: undefined, loading: false })
       })
