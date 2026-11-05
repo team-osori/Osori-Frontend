@@ -6,6 +6,7 @@ import { generateDraft } from '../features/questions/api'
 import { questionsFromCsv } from '../features/questions/csv'
 import { MOCK_CHUNK_OPTIONS, MOCK_DOC_OPTIONS, MOCK_DRAFT_COUNTS, MOCK_QUESTIONS } from '../features/questions/mock'
 import { QuestionEditModal } from '../features/questions/QuestionEditModal'
+import { ConfirmSetModal } from '../features/questions/ConfirmSetModal'
 import type { Question } from '../features/questions/types'
 import { DraftCard, UploadCard } from '../features/questions/SourceCards'
 import { QuestionTable } from '../features/questions/QuestionTable'
@@ -39,6 +40,7 @@ export default function QuestionSetPage({
   const [docs, setDocs] = useState(['refund', 'shipping', 'order'])
   const [counts, setCounts] = useState(MOCK_DRAFT_COUNTS)
   const [generating, setGenerating] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [uploadMessage, setUploadMessage] = useState<{ text: string; error?: boolean }>()
 
@@ -110,7 +112,7 @@ export default function QuestionSetPage({
         >
           <Button
             disabled={!canConfirm}
-            onClick={() => onConfirm?.(questions.filter((q) => q.status === 'approved'))}
+            onClick={() => setConfirmOpen(true)}
           >
             질문 세트 {setVersion}로 확정
           </Button>
@@ -164,6 +166,19 @@ export default function QuestionSetPage({
           />
         </section>
       </div>
+
+      <ConfirmSetModal
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        version={setVersion}
+        approved={tally.approved}
+        deleted={tally.deleted}
+        unlabeled={questions.filter((q) => q.status === 'approved' && q.chunks.length === 0).length}
+        onConfirm={() => {
+          setConfirmOpen(false)
+          onConfirm?.(questions.filter((q) => q.status === 'approved'))
+        }}
+      />
 
       <QuestionEditModal
         question={questions.find((q) => q.id === editingId) ?? null}
