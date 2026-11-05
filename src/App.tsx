@@ -3,15 +3,9 @@ import { ProjectNavContext, SidebarUserContext, type HomeMenu, type UserMenuActi
 import { useToast } from './components/ui'
 import { useAuth } from './features/auth'
 import { CreateProjectModal, setupProject, toProject, useCurrentProject, useProjects, type NewProject } from './features/project'
-import { MOCK_JUDGE_ITEMS } from './features/grading/mock'
 import { MOCK_MEMBERS, type Member } from './features/settings'
 import { useHashRoute } from './hooks/useHashRoute'
 import { errorMessage, isApiError, setSessionExpiredHandler } from './lib/api'
-import AbRunPage from './pages/AbRunPage'
-import CauseDiagnosisPage from './pages/CauseDiagnosisPage'
-import GradingResultsPage from './pages/GradingResultsPage'
-import HumanJudgePage from './pages/HumanJudgePage'
-import ImprovementApplyPage from './pages/ImprovementApplyPage'
 import { LoginPage } from './pages/Login'
 import { MOCK_INSTANCE_VERSION, MOCK_USER, ProjectListPage } from './pages/ProjectList'
 import ProjectSettingsPage from './pages/ProjectSettingsPage'
@@ -54,8 +48,6 @@ export default function App() {
   const currentProject = useCurrentProject(currentProjectId, auth.status === 'signedIn')
   const [members, setMembers] = useState<Member[]>(MOCK_MEMBERS)
   const [createOpen, setCreateOpen] = useState(false)
-  // 사람 판정 화면을 열 때 먼저 보여줄 문항 (06 불안정 문항 패널에서 고른 문항)
-  const [judgeStartId, setJudgeStartId] = useState<string>()
   // 지금 연 프로젝트에서 어디까지 진행했는지(1~3). 이전 단계로 돌아가도 이미 연 단계는 잠기지 않게 함
   // TODO: 백엔드 프로젝트 진행 단계 API가 생기면 그 값으로 교체
   const [unlockedStage, setUnlockedStage] = useState(1)
@@ -101,11 +93,11 @@ export default function App() {
     }
   }
 
-  /** 프로젝트 목록에서 누르면 그 프로젝트가 진행 중인 단계의 화면을 엽니다. 완료된 프로젝트는 채점 결과 */
+  /** 프로젝트 목록에서 누르면 그 프로젝트가 진행 중인 단계의 화면을 엽니다. 완료된 프로젝트는 오답 노트 */
   function openProject(project: Project) {
     selectProject(project.id)
     setUnlockedStage(project.status === 'done' ? STAGES.length : project.currentStep)
-    navigate(project.status === 'done' ? ROUTES.grading : (stageRoute(project.currentStep) ?? ROUTES.projects))
+    navigate(project.status === 'done' ? ROUTES.wrongNotes : (stageRoute(project.currentStep) ?? ROUTES.projects))
   }
 
   /** 레일 메뉴 이동. 휴지통은 아직 화면이 없음 */
@@ -161,12 +153,6 @@ export default function App() {
     userMenu,
   }
 
-  /** 불안정 문항에서 "판정하기"를 누르면 같은 질문의 사람 판정 항목부터 시작 */
-  function judgeFrom(question?: string) {
-    setJudgeStartId(question ? MOCK_JUDGE_ITEMS.find((i) => i.question === question)?.id : undefined)
-    navigate(ROUTES.judge)
-  }
-
   function renderProjectSettings() {
     // 프로젝트를 고르지 않았으면 아래 효과가 목록으로 보냄
     if (!currentProjectId) return null
@@ -220,23 +206,11 @@ export default function App() {
         return currentProjectId ? (
           <QuestionSetPage key={currentProjectId} projectId={currentProjectId} onConfirm={() => navigate(ROUTES.scoring)} />
         ) : null
-      // 2 채점: A/B 실행 → 채점 결과 → 사람 판정
+      // 2 채점 → 3 오답 노트
       case ROUTES.scoring:
         return currentProjectId ? <ScoringPage key={currentProjectId} projectId={currentProjectId} onFinish={() => navigate(ROUTES.wrongNotes)} /> : null
       case ROUTES.wrongNotes:
         return <WrongNotesPage onRetest={() => navigate(ROUTES.scoring)} />
-      case ROUTES.abRun:
-        return currentProjectId ? <AbRunPage key={currentProjectId} projectId={currentProjectId} onShowResults={() => navigate(ROUTES.grading)} /> : null
-      case ROUTES.grading:
-        return <GradingResultsPage onJudge={(item) => judgeFrom(item?.question)} />
-      case ROUTES.judge:
-        return <HumanJudgePage key={judgeStartId} initialId={judgeStartId} onFinish={() => navigate(ROUTES.diagnosis)} />
-      // 3 오답 노트: 원인 진단 → 개선안 적용
-      case ROUTES.diagnosis:
-        return <CauseDiagnosisPage onApply={() => navigate(ROUTES.improvement)} />
-      case ROUTES.improvement:
-        // 재평가를 실행하면 채점 결과로 돌아가 새 버전의 결과를 봄
-        return <ImprovementApplyPage onReevaluate={() => navigate(ROUTES.grading)} />
       // 예전 연결 설정 주소는 프로젝트 설정으로 (연결 정보는 이제 프로젝트 만들기 · 설정에서 다룸)
       case '/connection':
         return renderProjectSettings()

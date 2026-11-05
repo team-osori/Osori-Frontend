@@ -129,9 +129,9 @@ type ProjectSidebarProps = {
   onProjectClick?: () => void
   /** 주면 프롬프트 칸이 버전 기록 팝오버로 바뀝니다. 최신 버전이 맨 앞 */
   promptVersions?: PromptVersion[]
-  /** 없으면 새 버전을 만드는 개선안 적용 화면으로 이동 */
+  /** 없으면 프로젝트 설정(프롬프트)으로 이동 */
   onCreateVersion?: () => void
-  /** 없으면 버전 목록이 있는 채점 결과 화면으로 이동 */
+  /** 없으면 오답 노트로 이동 */
   onShowVersionHistory?: () => void
   userMenu?: UserMenuActions
 }
@@ -209,8 +209,8 @@ export function ProjectSidebar({
         promptVersions={
           promptVersions && {
             versions: promptVersions,
-            onCreate: onCreateVersion ?? (() => goTo(ROUTES.improvement)),
-            onShowHistory: onShowVersionHistory ?? (() => goTo(ROUTES.grading)),
+            onCreate: onCreateVersion ?? (() => goTo(ROUTES.projectSettings)),
+            onShowHistory: onShowVersionHistory ?? (() => goTo(ROUTES.wrongNotes)),
           }
         }
       />
