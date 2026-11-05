@@ -47,7 +47,7 @@ export default function App() {
     })
     return () => setSessionExpiredHandler(null)
   }, [navigate, toast])
-  const projectList = useProjects()
+  const projectList = useProjects({ enabled: auth.status === 'signedIn' })
   const projects = useMemo(() => projectList.items.map(toProject), [projectList.items])
   // 지금 연 프로젝트. 해시 경로에 ID가 없어서 새로고침해도 이어지도록 이 기기에 기억해 둠
   const [currentProjectId, setCurrentProjectId] = useState<string | null>(readCurrentProjectId)

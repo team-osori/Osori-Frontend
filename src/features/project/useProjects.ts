@@ -7,11 +7,13 @@ import { createProject, listProjects, PROJECT_PAGE_SIZE, type ProjectCreateInput
  *
  * const { items, hasMore, loadMore, create, reload } = useProjects()
  */
-export function useProjects(pageSize = PROJECT_PAGE_SIZE) {
+export function useProjects({ pageSize = PROJECT_PAGE_SIZE, enabled = true }: { pageSize?: number; enabled?: boolean } = {}) {
   const list = usePagedList<ProjectResponse>({
     fetchPage: ({ cursor, signal }) => listProjects({ limit: pageSize, cursor, signal }),
     getKey: (project) => project.id,
-    deps: [pageSize],
+    // 로그인하면 다시 불러오고, 로그아웃 상태에서는 요청하지 않음(401로 세션 만료 처리가 되지 않게)
+    deps: [pageSize, enabled],
+    enabled,
   })
 
   /** 만든 프로젝트를 목록 맨 앞에 바로 추가하고 돌려줌. 실패하면 오류를 던짐(호출한 쪽에서 화면에 표시) */
