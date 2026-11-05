@@ -28,6 +28,15 @@ import trashSm from './trash-sm.svg'
 import upload from './upload.svg'
 import uploadLg from './upload-lg.svg'
 import warning from './warning.svg'
+import close from './close.svg'
+import fileChip from './file-chip.svg'
+import xSm from './x-sm.svg'
+import plusXs from './plus-xs.svg'
+import trashDangerSm from './trash-danger-sm.svg'
+import warningLg from './warning-lg.svg'
+import verdictPass from './verdict-pass.svg'
+import verdictFail from './verdict-fail.svg'
+import chevronRightAccent from './chevron-right-accent.svg'
 
 export const icons = {
   arrowLeft,
@@ -60,6 +69,15 @@ export const icons = {
   upload,
   uploadLg,
   warning,
+  close,
+  fileChip,
+  xSm,
+  plusXs,
+  trashDangerSm,
+  warningLg,
+  verdictPass,
+  verdictFail,
+  chevronRightAccent,
 }
 
 export type IconName = keyof typeof icons

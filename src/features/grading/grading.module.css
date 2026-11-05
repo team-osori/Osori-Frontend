@@ -1,0 +1,45 @@
+/* ---------- 반복 판정 표시 ---------- */
+.verdicts { display: inline-flex; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.verdict {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+}
+.pass { background: rgba(74, 222, 128, 0.18); }
+.fail { background: rgba(255, 107, 107, 0.18); }
+
+/* ---------- 불안정 문항 카드 ---------- */
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+}
+.itemHead { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.question { margin: 0; font: var(--text-body); font-weight: var(--font-weight-bold); word-break: keep-all; }
+.itemFoot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.runs { font: var(--text-label); color: var(--color-text-secondary); }
+.judge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  padding: 0;
+  border: none;
+  background: none;
+  font: var(--text-label);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+.judge:hover { text-decoration: underline; }
+
+/* ---------- 자동 채점 결과 (임시) ---------- */
+.callout { margin-top: 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; }
+.calloutText { display: flex; flex: 1 1 280px; flex-direction: column; gap: 4px; }
+.calloutTitle { display: flex; align-items: center; gap: 8px; margin: 0; font: var(--text-title); font-weight: var(--font-weight-bold); }
+.calloutDesc { margin: 0; font: var(--text-body-sm); color: var(--color-text-secondary); word-break: keep-all; }

@@ -8,6 +8,7 @@ import type { ImprovementPlan, ReevaluationScope } from '../features/improvement
 import { PromptDiffCard } from '../features/improvement/PromptDiffCard'
 import { SuggestionsCard } from '../features/improvement/SuggestionsCard'
 import { ReevaluationScopeCard } from '../features/improvement/ReevaluationScopeCard'
+import { ReevaluateModal } from '../features/improvement/ReevaluateModal'
 import styles from './ImprovementApplyPage.module.css'
 
 const user = { name: '김QA', role: '어드민' }
@@ -44,6 +45,7 @@ export default function ImprovementApplyPage({
   )
   const [scope, setScope] = useState<ReevaluationScope>(plan.scope)
   const [memo, setMemo] = useState(plan.versionMemo)
+  const [confirmOpen, setConfirmOpen] = useState(false)
 
   const toggleSuggestion = (id: string, checked: boolean) => {
     setSelected((prev) => {
@@ -110,11 +112,26 @@ export default function ImprovementApplyPage({
           <Button variant="secondary" onClick={() => onSaveOnly?.(result())}>
             {plan.toVersion} 저장만
           </Button>
-          <Button icon="sparkle" onClick={() => onReevaluate?.(result())}>
+          <Button icon="sparkle" onClick={() => setConfirmOpen(true)}>
             {plan.toVersion}로 재평가 실행
           </Button>
         </ReevaluationBar>
       </div>
+
+      <ReevaluateModal
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        fromVersion={plan.fromVersion}
+        toVersion={plan.toVersion}
+        questionSet={scope === 'all' ? `v1 · ${plan.allCount}문항` : `실패한 ${plan.failedCount}문항`}
+        repeats={3}
+        graders={2}
+        appliedTitles={plan.suggestions.filter((s) => selected.has(s.id)).map((s) => s.title)}
+        onConfirm={() => {
+          setConfirmOpen(false)
+          onReevaluate?.(result())
+        }}
+      />
     </AppLayout>
   )
 }

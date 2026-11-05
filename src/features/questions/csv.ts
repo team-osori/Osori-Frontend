@@ -73,7 +73,7 @@ export function questionsFromCsv(text: string): CsvImportResult {
       text: r[qi].trim(),
       type: toType(r[ti] ?? ''),
       source: '직접 업로드',
-      chunk: null,
+      chunks: [],
       expected: (r[ei] ?? '').trim(),
       status: 'pending',
     }))

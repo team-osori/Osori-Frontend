@@ -38,3 +38,8 @@
 /* Edge 비밀번호 보기 아이콘 등 브라우저 기본 장식 제거 */
 .control::-ms-reveal, .bare::-ms-reveal { display: none; }
 .textarea { display: block; height: 88px; padding: 11px 14px; line-height: 22.5px; resize: none; }
+
+.textareaSm { height: 72px; }
+.danger,
+.danger:hover,
+.danger:focus { border-color: var(--color-danger); }
