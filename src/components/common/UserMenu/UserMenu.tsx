@@ -3,8 +3,8 @@ import { createPortal } from 'react-dom'
 import { Avatar, Divider, Icon } from '../../ui'
 import styles from './UserMenu.module.css'
 
-/** 레일의 아바타 버튼 오른쪽으로 띄우는 간격 */
-const GAP_RIGHT = 12
+/** 계정 버튼 위로 띄우는 간격 */
+const GAP_ABOVE = 10
 
 export type UserMenuActions = {
   /** 인스턴스 버전 표시 (예: v1.4.2) */
@@ -15,7 +15,7 @@ export type UserMenuActions = {
 
 type UserMenuProps = UserMenuActions & { name: string; role: string; email: string }
 
-/** 아이콘 레일 하단 아바타. 누르면 계정 설정 · 인스턴스 정보 · 로그아웃 메뉴가 오른쪽에 열립니다. */
+/** 사이드바 맨 아래 계정 버튼. 누르면 계정 설정 · 인스턴스 정보 · 로그아웃 메뉴가 위로 열립니다. */
 export function UserMenu({ name, role, email, instanceVersion, onAccountSettings, onLogout }: UserMenuProps) {
   const [open, setOpen] = useState(false)
   const [position, setPosition] = useState<CSSProperties>()
@@ -30,8 +30,8 @@ export function UserMenu({ name, role, email, instanceVersion, onAccountSettings
       const rect = triggerRef.current?.getBoundingClientRect()
       if (!rect) return
       setPosition({
-        left: rect.right + GAP_RIGHT,
-        bottom: Math.max(8, window.innerHeight - rect.bottom),
+        left: Math.max(8, rect.left),
+        bottom: window.innerHeight - rect.top + GAP_ABOVE,
       })
     }
     place()
@@ -91,7 +91,14 @@ export function UserMenu({ name, role, email, instanceVersion, onAccountSettings
         aria-expanded={open}
         aria-controls={open ? popoverId : undefined}
       >
-        {name.slice(0, 1)}
+        <span className={styles.avatar} aria-hidden>
+          {name.slice(0, 1)}
+        </span>
+        <span className={styles.who}>
+          <b>{name}</b>
+          {role}
+        </span>
+        <Icon name="chevronUpDown" />
       </button>
 
       {open &&

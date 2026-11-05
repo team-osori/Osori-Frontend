@@ -1,19 +1,36 @@
-/* 레일 하단의 둥근 아바타 버튼 */
+/* 사이드바 맨 아래 계정 버튼: 아바타 + 이름 · 역할 */
 .trigger {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 12px;
+  background: none;
+  color: var(--color-text);
+  text-align: left;
+  transition: background-color 0.15s;
+}
+.trigger:hover,
+.trigger[aria-expanded='true'] { background: rgba(255, 255, 255, 0.04); }
+.trigger > img { margin-left: auto; opacity: 0.5; }
+.avatar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  padding: 0;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
   border: 1.5px solid rgba(255, 255, 255, 0.3);
   border-radius: var(--radius-full);
   background: var(--color-chip);
-  font-size: 16px;
+  font-size: 14px;
   font-weight: var(--font-weight-bold);
-  color: var(--color-text);
 }
-.trigger:hover, .trigger[aria-expanded='true'] { border-color: var(--color-primary); }
+.trigger[aria-expanded='true'] .avatar { border-color: var(--color-primary); }
+.who { display: flex; flex-direction: column; gap: 2px; min-width: 0; font-size: 13px; color: var(--color-text-secondary); }
+.who b { overflow: hidden; font-size: 15px; color: var(--color-text); text-overflow: ellipsis; white-space: nowrap; }
 
 .popover {
   position: fixed;
@@ -27,8 +44,8 @@
 }
 
 @keyframes pop {
-  from { opacity: 0; transform: translateX(-4px); }
-  to { opacity: 1; transform: translateX(0); }
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .header { display: flex; align-items: center; gap: 10px; padding: 17px 20px 18px; }
