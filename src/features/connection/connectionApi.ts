@@ -3,6 +3,7 @@ import {
   createIdempotencyKey,
   pathId,
   pollUntil,
+  revisionTag,
   type PollOptions,
   type RequestExtras,
   type Schema,
@@ -13,8 +14,17 @@ import { servicePath } from '../service/api'
  * (같은 폴더의 api.ts는 화면 목업용 임시 함수라서 이름을 구분했습니다.) */
 
 export type ConnectionResponse = Schema<'ConnectionResponse'>
+/**
+ * 서버가 받는 실행 방식. 명세에는 그냥 문자열이라고만 적혀 있지만 실제 서버는 이 두 값만 받습니다(그 외는 400 UNSUPPORTED_EXECUTION_MODE).
+ * 이름으로 보면 PROMPT_BODY는 요청 본문에 시스템 프롬프트를 실어 보내는 방식(promptPointer 사용),
+ * CONNECTION_ONLY는 챗봇이 자기 프롬프트를 쓰는 방식으로 보이지만 두 값의 정확한 차이는 확인하지 못했습니다.
+ */
+export const EXECUTION_MODES = ['PROMPT_BODY', 'CONNECTION_ONLY'] as const
+export type ExecutionMode = (typeof EXECUTION_MODES)[number]
 /** 연결 설정을 저장할 때 보내는 값. expectedRevision은 saveConnection이 채웁니다. */
-export type ConnectionInput = Omit<Schema<'ConnectionPut'>, 'expectedRevision'>
+export type ConnectionInput = Omit<Schema<'ConnectionPut'>, 'expectedRevision' | 'executionMode'> & {
+  executionMode: ExecutionMode
+}
 export type SecretResponse = Schema<'SecretResponse'>
 export type ConnectionTest = Schema<'ConnectionTestResponse'>
 export type ConnectionTestInput = { connectionRevision: number; question: string; promptVersionId?: string | null }
@@ -66,7 +76,7 @@ export function putSecret(projectId: string, serviceId: string, secret: string, 
 
 /** 인증 키 삭제. revision을 If-Match로 보냅니다. */
 export function deleteSecret(projectId: string, serviceId: string, revision: number, extras: RequestExtras = {}) {
-  return api.delete(`${connectionPath(projectId, serviceId)}/secret`, { ifMatch: revision, signal: extras.signal })
+  return api.delete(`${connectionPath(projectId, serviceId)}/secret`, { ifMatch: revisionTag(revision), signal: extras.signal })
 }
 
 /* ---------- 연결 테스트 (비동기) ---------- */

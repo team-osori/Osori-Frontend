@@ -2,6 +2,7 @@ import {
   api,
   createIdempotencyKey,
   pathId,
+  revisionTag,
   type Page,
   type PageQuery,
   type RequestExtras,
@@ -204,7 +205,7 @@ export function deleteQuestion(
   extras: RequestExtras = {},
 ) {
   return api.delete(questionPath(projectId, testSetId, versionId, questionId), {
-    ifMatch: revision,
+    ifMatch: revisionTag(revision),
     signal: extras.signal,
   })
 }

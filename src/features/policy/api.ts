@@ -1,4 +1,4 @@
-import { api, pathId, type Page, type PageQuery, type RequestExtras, type Schema } from '../../lib/api'
+import { api, pathId, revisionTag, type Page, type PageQuery, type RequestExtras, type Schema } from '../../lib/api'
 
 /** 프로젝트의 정책 문서. 본문과 그 안의 평가 규칙(rules)은 버전으로 관리하며, 한 번 만든 버전은 고칠 수 없습니다. */
 export type Policy = Schema<'PolicyOut'>
@@ -50,7 +50,7 @@ export function getPolicy(projectId: string, policyId: string, extras: RequestEx
 
 /** 정책 삭제. 마지막으로 본 revision을 If-Match로 보내, 그 사이 바뀐 정책을 지우지 않게 합니다. */
 export function deletePolicy(projectId: string, policyId: string, revision: number, extras: RequestExtras = {}) {
-  return api.delete(policyPath(projectId, policyId), { ifMatch: revision, signal: extras.signal })
+  return api.delete(policyPath(projectId, policyId), { ifMatch: revisionTag(revision), signal: extras.signal })
 }
 
 export function createPolicyVersion(
