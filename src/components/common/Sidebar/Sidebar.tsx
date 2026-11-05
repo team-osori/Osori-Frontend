@@ -40,8 +40,8 @@ export function Sidebar({ user, userMenu, children, panelFooter }: SidebarProps)
   const nav = useProjectNav()
   const signedIn = useSidebarUser()
   const base = user ?? nav?.user
-  // 로그인한 사용자가 있으면 그 이름 · 계정 메뉴가 우선 (역할은 아직 API에 없어 화면 값 유지)
-  const me = signedIn ? { role: base?.role ?? '멤버', ...base, name: signedIn.name, email: signedIn.account } : base
+  // 로그인한 사용자가 있으면 그 이름 · 계정 메뉴가 우선
+  const me = signedIn ? { ...base, name: signedIn.name, email: signedIn.account } : base
   const menu = signedIn?.menu ?? userMenu ?? nav?.userMenu
   const email = me?.email
 
@@ -55,13 +55,12 @@ export function Sidebar({ user, userMenu, children, panelFooter }: SidebarProps)
       {me && (
         <div className={styles.account}>
           {menu && email ? (
-            <UserMenu name={me.name} role={me.role} email={email} {...menu} />
+            <UserMenu name={me.name} email={email} {...menu} />
           ) : (
             <span className={styles.profile}>
               <span className={styles.avatar}>{me.name.slice(0, 1)}</span>
               <span className={styles.who}>
                 <b>{me.name}</b>
-                {me.role}
               </span>
             </span>
           )}

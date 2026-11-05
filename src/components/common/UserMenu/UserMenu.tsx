@@ -14,10 +14,10 @@ export type UserMenuActions = {
   onLogout?: () => void
 }
 
-type UserMenuProps = UserMenuActions & { name: string; role: string; email: string }
+type UserMenuProps = UserMenuActions & { name: string; email: string }
 
 /** 사이드바 맨 아래 계정 버튼. 누르면 이름 · 아이디와 로그아웃 메뉴가 위로 열립니다. */
-export function UserMenu({ name, role, email, onLogout }: UserMenuProps) {
+export function UserMenu({ name, email, onLogout }: UserMenuProps) {
   const [open, setOpen] = useState(false)
   const [position, setPosition] = useState<CSSProperties>()
   const triggerRef = useRef<HTMLButtonElement>(null)
@@ -87,7 +87,7 @@ export function UserMenu({ name, role, email, onLogout }: UserMenuProps) {
         type="button"
         className={styles.trigger}
         onClick={() => setOpen((v) => !v)}
-        aria-label={`${name} (${role}) 계정 메뉴`}
+        aria-label={`${name} 계정 메뉴`}
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-controls={open ? popoverId : undefined}
@@ -97,7 +97,6 @@ export function UserMenu({ name, role, email, onLogout }: UserMenuProps) {
         </span>
         <span className={styles.who}>
           <b>{name}</b>
-          {role}
         </span>
         <Icon name="chevronUpDown" />
       </button>
