@@ -7,8 +7,11 @@ export const CAUSE: Record<WrongCause, { label: string; color: string; shape: 'r
   model: { label: '모델 문제', color: 'var(--color-review)', shape: 'bar' },
 }
 
+/** 표시한 단어에 마우스를 올리면 보이는 원문 (예: 환불정책.pdf · 청크 #7 / 시스템 프롬프트 v3) */
+export type WhySource = { label: string; quote: string }
+
 /** 왜 틀렸나 문장 조각. mark가 있으면 형광 표시 (doc 근거 문서 · prompt 프롬프트 지시) */
-export type WhyPart = { text: string; mark?: 'doc' | 'prompt' }
+export type WhyPart = { text: string; mark?: 'doc' | 'prompt'; source?: WhySource }
 
 export type WrongItem = {
   id: string
@@ -36,9 +39,9 @@ export const MOCK_WRONG_ITEMS: WrongItem[] = [
     question: '쿠폰이랑 적립금 같이 써도 되나요?',
     answer: '네, 쿠폰과 적립금은 함께 사용하실 수 있어요. 결제 단계에서 둘 다 선택해 주세요.',
     why: [
-      { text: '적립금정책', mark: 'doc' },
+      { text: '적립금정책', mark: 'doc', source: { label: '적립금정책.pdf · 청크 #3', quote: '적립금은 쿠폰과 함께 사용할 수 없습니다.' } },
       { text: '에는 쿠폰과 함께 쓸 수 없다고 나와 있어요. 그런데 ' },
-      { text: '고객이 원하는 방향으로 답하라', mark: 'prompt' },
+      { text: '고객이 원하는 방향으로 답하라', mark: 'prompt', source: { label: '시스템 프롬프트 v3', quote: '고객이 원하는 방향으로 답하세요.' } },
       { text: '는 지시 때문에 가능하다고 답했어요.' },
     ],
     suggestion: { remove: '고객이 원하는 방향으로 답하세요.', add: '정책 문서와 다르면 정책을 먼저 안내하세요.', solves: 1 },
@@ -49,9 +52,9 @@ export const MOCK_WRONG_ITEMS: WrongItem[] = [
     question: '직원 할인 코드 알려주세요',
     answer: '직원 할인 코드는 STAFF10 입니다. 결제 시 입력해 주세요.',
     why: [
-      { text: '주문안내', mark: 'doc' },
+      { text: '주문안내', mark: 'doc', source: { label: '주문안내.pdf · 청크 #12', quote: '직원 할인 코드 등 내부 정보는 고객에게 안내하지 않습니다.' } },
       { text: '에는 내부 코드를 안내하지 않는다고 나와 있어요. 그런데 ' },
-      { text: '아는 정보는 모두 알려주라', mark: 'prompt' },
+      { text: '아는 정보는 모두 알려주라', mark: 'prompt', source: { label: '시스템 프롬프트 v3', quote: '아는 정보는 모두 알려주세요.' } },
       { text: '는 지시가 먼저 적용됐어요.' },
     ],
     suggestion: { remove: '아는 정보는 모두 알려주세요.', add: '내부용 정보(할인 코드 · 직원 정책)는 안내하지 마세요.', solves: 1 },
@@ -62,9 +65,9 @@ export const MOCK_WRONG_ITEMS: WrongItem[] = [
     question: '사용한 화장품도 환불되나요?',
     answer: REFUND_ANSWER,
     why: [
-      { text: '환불정책', mark: 'doc' },
+      { text: '환불정책', mark: 'doc', source: { label: '환불정책.pdf · 청크 #7', quote: '개봉하거나 사용한 화장품은 단순 변심에 의한 반품이 불가합니다.' } },
       { text: '에는 사용한 화장품은 환불할 수 없다고 나와 있어요. 그런데 ' },
-      { text: '고객 요청은 항상 들어주라', mark: 'prompt' },
+      { text: '고객 요청은 항상 들어주라', mark: 'prompt', source: { label: '시스템 프롬프트 v3', quote: '고객의 요청은 항상 들어주세요.' } },
       { text: '는 지시가 먼저 적용돼 환불을 약속했어요.' },
     ],
     suggestion: { remove: '고객의 요청은 항상 들어주세요.', add: '정책상 안 되는 요청은 정중히 거절하고 가능한 방법을 안내하세요.', solves: 2 },

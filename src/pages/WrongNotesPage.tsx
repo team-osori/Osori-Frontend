@@ -7,7 +7,7 @@ import { ROUTES } from '../routes'
 import chevronIcon from '../assets/icons/stage/chevron-right.svg'
 import chevronSmIcon from '../assets/icons/stage/chevron-right-sm.svg'
 import trendIcon from '../assets/icons/stage/trend-arrow.svg'
-import { CAUSE, MOCK_APPLIED, MOCK_WRONG_ITEMS, type WrongCause, type WrongItem } from '../features/wrongNotes/mock'
+import { CAUSE, MOCK_APPLIED, MOCK_WRONG_ITEMS, type WhyPart, type WrongCause, type WrongItem } from '../features/wrongNotes/mock'
 import {
   CountTabs,
   Dot,
@@ -186,15 +186,7 @@ export default function WrongNotesPage({
               <section className={styles.why}>
                 <SectionLabel>왜 틀렸나</SectionLabel>
                 <p className={styles.whyText}>
-                  {item.why.map((part, i) =>
-                    part.mark ? (
-                      <mark key={i} className={cx(styles.mark, styles[part.mark])}>
-                        {part.text}
-                      </mark>
-                    ) : (
-                      <span key={i}>{part.text}</span>
-                    ),
-                  )}
+                  {item.why.map((part, i) => (part.mark ? <WhyMark key={i} part={part} id={`${item.id}-why-${i}`} /> : <span key={i}>{part.text}</span>))}
                 </p>
               </section>
 
@@ -256,5 +248,41 @@ export default function WrongNotesPage({
         />
       </div>
     </AppLayout>
+  )
+}
+
+/** 문서 · 말풍선 아이콘 (글자색을 따라감) */
+const SOURCE_ICON = {
+  doc: (
+    <svg width="14" height="14" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M8.1 1.1H3.3a1.1 1.1 0 0 0-1.1 1.1v8.6a1.1 1.1 0 0 0 1.1 1.1h6.4a1.1 1.1 0 0 0 1.1-1.1V3.8L8.1 1.1Z" />
+      <path d="M7.6 1.1v2.2a1.1 1.1 0 0 0 1.1 1h2.1M5.4 4.9H4.3M8.7 7H4.3M8.7 9.2H4.3" />
+    </svg>
+  ),
+  prompt: (
+    <svg width="14" height="14" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M13.1 9.4a1.3 1.3 0 0 1-1.2 1.2H4.4l-2.5 2.5v-10a1.3 1.3 0 0 1 1.2-1.2h8.8a1.3 1.3 0 0 1 1.2 1.2v6.3Z" />
+      <path d="M8.1 5H4.4M10.6 7.5H4.4" />
+    </svg>
+  ),
+}
+
+/** 왜 틀렸나의 형광 표시. 원문이 있으면 마우스를 올리거나 포커스하면 위에 원문 말풍선이 뜸 */
+function WhyMark({ part, id }: { part: WhyPart; id: string }) {
+  const kind = part.mark ?? 'doc'
+  if (!part.source) return <mark className={cx(styles.mark, styles[kind])}>{part.text}</mark>
+  return (
+    <span className={styles.markWrap}>
+      <mark className={cx(styles.mark, styles[kind], styles.markTip)} tabIndex={0} aria-describedby={id}>
+        {part.text}
+      </mark>
+      <span id={id} role="tooltip" className={cx(styles.tip, styles[`tip_${kind}`])}>
+        <span className={styles.tipLabel}>
+          {SOURCE_ICON[kind]}
+          {part.source.label}
+        </span>
+        <span className={styles.tipQuote}>“{part.source.quote}”</span>
+      </span>
+    </span>
   )
 }

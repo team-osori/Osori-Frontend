@@ -53,6 +53,41 @@
 .doc { background: rgba(168, 161, 230, 0.16); border-color: var(--color-cause-search-ink); color: var(--color-cause-search-ink); }
 .prompt { background: rgba(135, 201, 181, 0.16); border-color: var(--color-cause-prompt-ink); color: var(--color-cause-prompt-ink); }
 
+/* 원문 말풍선: 표시한 단어 위에 뜸 */
+.markWrap { position: relative; }
+.markTip { border-bottom-style: dotted; cursor: help; outline: none; }
+.markTip:focus-visible { box-shadow: 0 0 0 2px var(--color-focus-ring); }
+.tip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 0;
+  z-index: 5;
+  display: flex;
+  width: max-content;
+  max-width: min(420px, 70vw);
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 20px 18px;
+  border: 1px solid var(--color-line);
+  border-radius: 14px;
+  background: #2c2c33;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+  line-height: normal;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(4px);
+  transition: opacity 0.15s, transform 0.15s;
+}
+.markWrap:hover .tip,
+.markTip:focus-visible + .tip { opacity: 1; transform: none; }
+.tipLabel { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; }
+.tip_doc .tipLabel { color: var(--color-cause-search-ink); }
+.tip_prompt .tipLabel { color: var(--color-cause-prompt-ink); }
+.tipQuote { font-size: 15px; line-height: 1.75; color: var(--color-text); word-break: keep-all; white-space: normal; }
+@media (prefers-reduced-motion: reduce) {
+  .tip { transition: none; }
+}
+
 /* 수정 제안 */
 .suggest { margin-top: 8px; overflow: hidden; border: 1px solid var(--color-line); border-radius: 16px; background: var(--color-well); transition: border-color 0.2s; }
 .suggestOpen { border-color: rgba(207, 242, 107, 0.4); }
