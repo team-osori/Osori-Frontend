@@ -1,0 +1,12 @@
+.fields { display: flex; flex-direction: column; gap: var(--space-4); }
+
+.note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: var(--space-4) 0 0;
+  font: var(--text-label);
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.note img { margin-top: 2px; }
