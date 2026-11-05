@@ -25,3 +25,6 @@
 
 .sm { height: 36px; }
 .sm .input { font: var(--text-label); }
+
+.inset { background: var(--color-bg); }
+.inset .input { font: var(--text-label); }
