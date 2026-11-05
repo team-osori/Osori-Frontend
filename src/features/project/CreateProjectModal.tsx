@@ -10,6 +10,10 @@ export type NewProject = {
   description: string
   /** 평가할 챗봇 서비스 주소 */
   endpointUrl: string
+  /** Authorization: Bearer 뒤에 붙는 토큰 (선택) */
+  authToken: string
+  /** 응답에서 답변 · 근거를 읽을 위치 (선택) */
+  responsePath: string
   systemPrompt: string
   policyDocs: PolicyDoc[]
 }
@@ -63,6 +67,10 @@ function CreateProjectForm({ onClose, onSubmit }: Omit<CreateProjectModalProps, 
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [endpointUrl, setEndpointUrl] = useState('')
+  const [authToken, setAuthToken] = useState('')
+  const [responsePath, setResponsePath] = useState('')
+  // 평가할 서비스: ▼를 누르면 아래로 연결 정보 입력칸이 펼쳐짐
+  const [serviceOpen, setServiceOpen] = useState(false)
   const [systemPrompt, setSystemPrompt] = useState('')
   const [docs, setDocs] = useState<PolicyDoc[]>([])
 
@@ -80,6 +88,8 @@ function CreateProjectForm({ onClose, onSubmit }: Omit<CreateProjectModalProps, 
       name: name.trim(),
       description: description.trim(),
       endpointUrl: endpointUrl.trim(),
+      authToken: authToken.trim(),
+      responsePath: responsePath.trim(),
       systemPrompt: systemPrompt.trim(),
       policyDocs: docs,
     })
@@ -97,7 +107,7 @@ function CreateProjectForm({ onClose, onSubmit }: Omit<CreateProjectModalProps, 
   return (
     <Modal
       open
-      size="lg"
+      size="xl"
       title="새 프로젝트"
       onClose={onClose}
       subheader={<Stepper step={step} />}
@@ -149,24 +159,61 @@ function CreateProjectForm({ onClose, onSubmit }: Omit<CreateProjectModalProps, 
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
-            <div className={styles.service}>
-              <span className={styles.serviceLabel}>
-                <Icon name="server" />
-                평가할 서비스
-              </span>
-              <input
-                className={styles.serviceInput}
-                name="endpointUrl"
-                aria-label="평가할 서비스 주소"
-                placeholder="https://cs-bot.example.com/v1/chat"
-                autoComplete="off"
-                spellCheck={false}
-                value={endpointUrl}
-                onChange={(e) => setEndpointUrl(e.target.value)}
-              />
-              <span className={cx(styles.serviceState, endpointUrl.trim() && styles.serviceOn)} aria-hidden />
+            <div className={cx(styles.service, serviceOpen && styles.serviceOpen)}>
+              <button
+                type="button"
+                className={styles.serviceHead}
+                aria-expanded={serviceOpen}
+                aria-controls="create-project-service"
+                onClick={() => setServiceOpen((v) => !v)}
+              >
+                <span className={styles.serviceLabel}>
+                  <Icon name="server" />
+                  평가할 서비스
+                </span>
+                <span className={cx(styles.serviceHost, !endpointUrl.trim() && styles.serviceHostEmpty)}>
+                  {endpointUrl.trim() ? hostOf(endpointUrl.trim()) : '연결할 주소를 입력하세요'}
+                </span>
+                <span className={styles.caret} aria-hidden />
+              </button>
+              {/* 닫혀 있어도 입력값은 유지. 닫히면 칸이 접혀서 포커스도 안 감 */}
+              <div id="create-project-service" className={styles.serviceBody} inert={!serviceOpen}>
+                <div className={styles.serviceFields}>
+                  <TextField
+                    label="엔드포인트 URL"
+                    name="endpointUrl"
+                    type="url"
+                    inputMode="url"
+                    autoComplete="off"
+                    spellCheck={false}
+                    placeholder="https://cs-bot.example.com/v1/chat"
+                    value={endpointUrl}
+                    onChange={(e) => setEndpointUrl(e.target.value)}
+                  />
+                  <div className={styles.serviceRow}>
+                    <TextField
+                      label="인증 헤더"
+                      name="authToken"
+                      prefix="Bearer"
+                      type="password"
+                      autoComplete="off"
+                      placeholder="토큰"
+                      value={authToken}
+                      onChange={(e) => setAuthToken(e.target.value)}
+                    />
+                    <TextField
+                      label="응답에서 읽을 위치"
+                      name="responsePath"
+                      autoComplete="off"
+                      spellCheck={false}
+                      placeholder="답변 $.answer · 근거 $.contexts"
+                      value={responsePath}
+                      onChange={(e) => setResponsePath(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
-            <p className={styles.note}>프로젝트 하나에 서비스 하나를 연결합니다. 인증 토큰 · 응답 경로는 프로젝트 설정에서 바꿀 수 있습니다.</p>
           </>
         ) : (
           <>
