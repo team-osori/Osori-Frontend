@@ -4,9 +4,11 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  margin: var(--space-4) 0 0;
+  /* 문구가 입력창 폭보다 조금 길어서, Figma처럼 한 줄이 되도록 오른쪽 여백(28px) 안으로 16px 늘림 */
+  margin: var(--space-4) -16px 0 0;
   font: var(--text-label);
   line-height: 1.5;
   color: var(--color-text-secondary);
+  word-break: keep-all;
 }
 .note img { margin-top: 2px; }
