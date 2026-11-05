@@ -10,9 +10,11 @@
   font: var(--text-body-sm);
   color: var(--color-text);
   outline: none;
+  transition: border-color 0.15s;
 }
 .control::placeholder { color: var(--color-text-tertiary); }
-.control:focus { border-color: var(--color-primary); }
+.control:hover { border-color: #4a4a56; }
+.control:focus { border-color: var(--color-border-focus); }
 
 .input { height: 44px; }
-.textarea { display: block; height: 88px; padding: 11px 14px; line-height: 22.5px; resize: vertical; }
+.textarea { display: block; height: 88px; padding: 11px 14px; line-height: 22.5px; resize: none; }

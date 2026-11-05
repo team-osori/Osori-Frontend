@@ -6,8 +6,12 @@
   padding: 0 12px;
   border-radius: var(--radius-md);
   background: var(--color-surface);
+  border: 1px solid transparent;
+  transition: border-color 0.15s;
+  cursor: text;
 }
-.wrap:focus-within { outline: 2px solid var(--color-primary); }
+.wrap:focus-within { border-color: var(--color-border-focus); }
+.input::-webkit-search-cancel-button { display: none; }
 
 .input {
   flex: 1;
