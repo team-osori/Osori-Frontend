@@ -57,15 +57,24 @@ function FieldMessage({ id, error, hint, hintTone = 'neutral' }: MessageProps & 
 
 /** input 기본 속성 size(글자 수)는 쓰지 않고, 같은 이름으로 화면 크기를 받습니다. */
 type TextFieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> &
-  MessageProps & { label: string; size?: FieldSize }
+  MessageProps & {
+    label: string
+    /** lg는 로그인·회원가입처럼 입력창이 큰 화면용 (48px) */
+    size?: FieldSize
+    /** 입력값 앞에 고정으로 붙는 글자 (예: Authorization: Bearer) */
+    prefix?: string
+    /** 코드·경로 입력용 고정폭 글꼴 */
+    mono?: boolean
+  }
 
-/** size="lg"는 로그인·회원가입처럼 입력창이 큰 화면용 (48px) */
 export function TextField({
   label,
   size = 'md',
   error,
   hint,
   hintTone,
+  prefix,
+  mono,
   className,
   id,
   'aria-describedby': describedBy,
@@ -75,16 +84,43 @@ export function TextField({
   const inputId = id ?? autoId
   const messageId = `${inputId}-message`
   const hasMessage = Boolean(error || hint)
+  const controlClass = cx(
+    styles.control,
+    styles.input,
+    size === 'lg' && styles.inputLg,
+    error && styles.invalid,
+    className,
+  )
+  const a11y = {
+    'aria-invalid': error ? (true as const) : undefined,
+    'aria-describedby': cx(describedBy, hasMessage && messageId) || undefined,
+  }
+  const message = <FieldMessage id={messageId} error={error} hint={hint} hintTone={hintTone} />
+
+  if (prefix) {
+    return (
+      <Field label={label} htmlFor={inputId} size={size}>
+        <div className={cx(controlClass, styles.withPrefix)}>
+          <span className={styles.prefix} aria-hidden>
+            {prefix}
+          </span>
+          <input
+            id={inputId}
+            className={cx(styles.bare, mono && styles.mono)}
+            aria-label={`${label} (${prefix})`}
+            {...a11y}
+            {...rest}
+          />
+        </div>
+        {message}
+      </Field>
+    )
+  }
+
   return (
     <Field label={label} htmlFor={inputId} size={size}>
-      <input
-        id={inputId}
-        className={cx(styles.control, styles.input, size === 'lg' && styles.inputLg, error && styles.invalid, className)}
-        aria-invalid={error ? true : undefined}
-        aria-describedby={cx(describedBy, hasMessage && messageId) || undefined}
-        {...rest}
-      />
-      <FieldMessage id={messageId} error={error} hint={hint} hintTone={hintTone} />
+      <input id={inputId} className={cx(controlClass, mono && styles.mono)} {...a11y} {...rest} />
+      {message}
     </Field>
   )
 }

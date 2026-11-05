@@ -57,10 +57,10 @@ function CreateProjectForm({ onClose, onSubmit }: Omit<CreateProjectModalProps, 
         </p>
       </ModalBody>
       <ModalFooter>
-        <Button variant="muted" onClick={onClose}>
+        <Button variant="tonal" className={styles.cancel} onClick={onClose}>
           취소
         </Button>
-        <Button type="submit" icon="arrowRight" iconPosition="end" disabled={!trimmedName}>
+        <Button type="submit" iconEnd="arrowRight" disabled={!trimmedName}>
           만들고 연결 설정으로
         </Button>
       </ModalFooter>

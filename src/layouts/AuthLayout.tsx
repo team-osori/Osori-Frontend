@@ -33,7 +33,7 @@ export function AuthLayout({ title, subtitle, submitLabel, onSubmit, children, f
 
           <div className={styles.fields}>{children}</div>
 
-          <Button type="submit" size="lg" className={styles.submit} disabled={submitting}>
+          <Button type="submit" size="lg" fullWidth disabled={submitting}>
             {submitLabel}
           </Button>
 

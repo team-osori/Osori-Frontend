@@ -62,7 +62,7 @@ export function SettingsPage({
             <>
               <div className={styles.toolbar}>
                 <h2 className={styles.count}>멤버 {members.length}</h2>
-                <Button icon="plusDark" iconPosition="end">
+                <Button iconEnd="plusDark">
                   멤버 초대
                 </Button>
               </div>

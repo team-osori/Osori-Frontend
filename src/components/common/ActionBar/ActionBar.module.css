@@ -1,0 +1,20 @@
+/* 본문 하단에 붙어 따라다니는 진행 상태 + 다음 단계 버튼 */
+.bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 16px;
+  min-height: 76px;
+  padding: 16px var(--page-padding-x);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(36, 36, 42, 0.55);
+  backdrop-filter: blur(12px);
+}
+.statusGroup { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.status { display: flex; align-items: center; gap: 6px; font: var(--text-body-sm); white-space: nowrap; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 12px 16px; margin-left: auto; }
+.hint { font: var(--text-label); color: var(--color-text-secondary); }

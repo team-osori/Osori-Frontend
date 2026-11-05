@@ -12,3 +12,6 @@
   word-break: keep-all;
 }
 .note img { margin-top: 2px; }
+
+/* 취소 버튼은 Figma에서 굵지 않은 글씨와 18px 좌우 여백 */
+.cancel { padding: 0 18px; font-weight: var(--font-weight-regular); }

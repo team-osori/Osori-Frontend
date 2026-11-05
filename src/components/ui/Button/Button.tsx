@@ -5,30 +5,36 @@ import { Icon } from '../Icon/Icon'
 import styles from './Button.module.css'
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  /** muted: 카드·모달처럼 secondary와 배경이 같은 곳에서 쓰는 취소 버튼 */
-  variant?: 'primary' | 'secondary' | 'muted' | 'danger'
-  /** lg는 로그인·회원가입처럼 큰 입력창과 함께 쓰는 48px 버튼 */
-  size?: 'lg' | 'md' | 'sm'
+  /** primary 핑크 · secondary 표면색 · tonal 한 단계 밝은 표면색 · success 연한 초록 · danger 빨간 테두리 */
+  variant?: 'primary' | 'secondary' | 'tonal' | 'success' | 'danger'
+  /** lg 48px(로그인·회원가입) · md 44px · sm 40px · xs 34px · xxs 32px(표 안 버튼) */
+  size?: 'lg' | 'md' | 'sm' | 'xs' | 'xxs'
   icon?: IconName
-  /** 아이콘을 글자 앞(start) 또는 뒤(end)에 놓음 */
-  iconPosition?: 'start' | 'end'
+  /** 글자 뒤에 붙는 아이콘 (예: 다음 단계 →) */
+  iconEnd?: IconName
+  fullWidth?: boolean
 }
 
 export function Button({
   variant = 'primary',
   size = 'md',
   icon,
-  iconPosition = 'start',
+  iconEnd,
+  fullWidth,
   className,
   children,
   type = 'button',
   ...rest
 }: ButtonProps) {
   return (
-    <button type={type} className={cx(styles.button, styles[variant], styles[size], className)} {...rest}>
-      {icon && iconPosition === 'start' && <Icon name={icon} />}
+    <button
+      type={type}
+      className={cx(styles.button, styles[variant], styles[size], fullWidth && styles.full, className)}
+      {...rest}
+    >
+      {icon && <Icon name={icon} />}
       {children}
-      {icon && iconPosition === 'end' && <Icon name={icon} />}
+      {iconEnd && <Icon name={iconEnd} />}
     </button>
   )
 }

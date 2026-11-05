@@ -4,9 +4,12 @@
   background: var(--color-surface-strong);
   overflow: hidden;
 }
+.md { height: 8px; border-radius: 4px; }
 .fill {
   height: 100%;
-  border-radius: var(--radius-xs);
+  border-radius: inherit;
   background: var(--color-primary);
   transition: width 0.3s;
 }
+/* 이미 끝난 쪽(비교 기준 등)을 차분하게 표시 */
+.muted .fill { background: #5a5a66; }

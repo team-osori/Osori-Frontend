@@ -1,0 +1,59 @@
+/* 연결 설정 화면 카드 공용 스타일 */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  container-type: inline-size;
+}
+
+/* 서비스 엔드포인트: 236 : 378 비율 2열, 좁으면 1열 */
+.fields {
+  display: grid;
+  grid-template-columns: minmax(0, 236fr) minmax(0, 378fr);
+  gap: 14px 16px;
+}
+@container (max-width: 520px) {
+  .fields { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* 정책 문서 목록: 2열, 좁으면 1열 */
+.docs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+  gap: 10px;
+}
+.empty {
+  margin: 0;
+  padding: 18px;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  font: var(--text-label);
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+.hiddenInput { display: none; }
+
+/* 연결 테스트 결과 */
+.resultGroup { display: flex; flex-direction: column; gap: 14px; }
+.result { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; font: var(--text-label); }
+.resultOk { color: var(--color-success); font-weight: var(--font-weight-bold); }
+.resultFail { color: var(--color-danger); font-weight: var(--font-weight-bold); }
+.resultMeta { color: var(--color-text-secondary); }
+
+.answer {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 16px 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+}
+.answerLabel { font: var(--text-caption); line-height: 19px; color: var(--color-text-secondary); }
+.answerText { margin: 0; font: var(--text-body-sm); line-height: 22.5px; word-break: keep-all; }
+
+.chunks { display: flex; flex-direction: column; gap: 6px; }
+.chunksLabel { margin: 0; font: var(--text-caption); color: var(--color-text-secondary); }
+.chunkList { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; }
+
+.note { margin: 0; font: var(--text-label); line-height: 19.5px; color: var(--color-text-secondary); word-break: keep-all; }

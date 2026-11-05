@@ -1,7 +1,8 @@
-import { useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react'
+import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
 import { createPortal } from 'react-dom'
 import { cx } from '../../../lib/cx'
 import { Icon } from '../Icon/Icon'
+import { usePopover } from './usePopover'
 import styles from './Select.module.css'
 
 export type SelectOption = { value: string; label: string }
@@ -10,20 +11,20 @@ type SelectProps = {
   options: SelectOption[]
   value: string
   onChange: (value: string) => void
-  /** row: 표 안에서 쓰는 작은 선택 상자 (34px, 테두리) */
-  size?: 'md' | 'sm' | 'row'
+  /** md: 툴바용 40px · sm: 사이드바용 30px · field: 폼 입력과 같은 44px · row: 표 안에서 쓰는 34px */
+  size?: 'md' | 'sm' | 'field' | 'row'
   /** 부모 폭을 꽉 채움 */
   fullWidth?: boolean
   /** 목록을 오른쪽 끝에 맞춰 엶 */
   align?: 'start' | 'end'
+  /** 강조 테두리 (예: 비교 대상 버전) */
+  accent?: boolean
   /** value가 옵션에 없을 때 표시 */
   placeholder?: string
   id?: string
   ariaLabel?: string
   className?: string
 }
-
-const LIST_GAP = 6
 
 /** 브라우저 기본 select 대신 쓰는 커스텀 드롭다운 (키보드: ↑↓ Home End Enter Esc) */
 export function Select({
@@ -34,13 +35,13 @@ export function Select({
   fullWidth,
   align = 'start',
   placeholder = '선택',
+  accent,
   id,
   ariaLabel,
   className,
 }: SelectProps) {
   const [open, setOpen] = useState(false)
   const [highlight, setHighlight] = useState(0)
-  const [listStyle, setListStyle] = useState<CSSProperties>()
   const rootRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const listRef = useRef<HTMLUListElement>(null)
@@ -50,41 +51,8 @@ export function Select({
   const selected = selectedIndex >= 0 ? options[selectedIndex] : undefined
 
   // 목록은 body에 portal로 띄움: 스크롤 영역·transform(드로어) 안에서도 잘리거나 어긋나지 않게
-  useLayoutEffect(() => {
-    if (!open) return
-    const place = () => {
-      const rect = triggerRef.current?.getBoundingClientRect()
-      if (!rect) return
-      const below = window.innerHeight - rect.bottom - LIST_GAP - 8
-      const above = rect.top - LIST_GAP - 8
-      const openUp = below < 160 && above > below
-      setListStyle({
-        position: 'fixed',
-        minWidth: rect.width,
-        maxHeight: Math.min(240, openUp ? above : below),
-        ...(openUp ? { bottom: window.innerHeight - rect.top + LIST_GAP } : { top: rect.bottom + LIST_GAP }),
-        ...(align === 'end' ? { right: window.innerWidth - rect.right } : { left: rect.left }),
-      })
-    }
-    place()
-    window.addEventListener('resize', place)
-    window.addEventListener('scroll', place, true)
-    return () => {
-      window.removeEventListener('resize', place)
-      window.removeEventListener('scroll', place, true)
-    }
-  }, [open, align])
-
-  // 바깥 클릭 시 닫기
-  useEffect(() => {
-    if (!open) return
-    const onPointerDown = (e: PointerEvent) => {
-      const target = e.target as Node
-      if (!rootRef.current?.contains(target) && !listRef.current?.contains(target)) setOpen(false)
-    }
-    document.addEventListener('pointerdown', onPointerDown)
-    return () => document.removeEventListener('pointerdown', onPointerDown)
-  }, [open])
+  const close = useCallback(() => setOpen(false), [])
+  const listStyle = usePopover({ open, onClose: close, triggerRef, rootRef, popoverRef: listRef, align })
 
   // 키보드로 하이라이트가 목록 밖에 있으면 보이게 스크롤
   useEffect(() => {
@@ -147,7 +115,7 @@ export function Select({
   return (
     <div
       ref={rootRef}
-      className={cx(styles.root, styles[size], fullWidth && styles.full, open && styles.open, className)}
+      className={cx(styles.root, styles[size], fullWidth && styles.full, open && styles.open, accent && styles.accent, className)}
     >
       <button
         ref={triggerRef}
@@ -174,7 +142,7 @@ export function Select({
             id={listId}
             role="listbox"
             aria-label={ariaLabel}
-            className={cx(styles.list, size !== 'md' && styles.listSm)}
+            className={cx(styles.list, (size === 'sm' || size === 'row') && styles.listSm)}
             style={listStyle}
           >
             {options.map((option, index) => {

@@ -1,0 +1,23 @@
+.zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 149px;
+  padding: 24px 16px;
+  border: 1px dashed rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text);
+  text-align: center;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+.zone:hover { border-color: rgba(255, 255, 255, 0.5); }
+.zone:focus-visible { box-shadow: none; border-color: var(--color-border-focus); }
+.dragging { border-color: var(--color-primary); background: rgba(255, 76, 216, 0.06); }
+
+.title { margin-top: 4px; font: var(--text-body-sm); }
+.hint { font: var(--text-caption); color: var(--color-text-tertiary); }
+.hiddenInput { display: none; }

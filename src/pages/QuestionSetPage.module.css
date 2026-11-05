@@ -1,0 +1,14 @@
+.page { display: flex; flex-direction: column; gap: 24px; container-type: inline-size; }
+
+/* 직접 업로드 · AI 초안: 2열, 좁으면 1열 */
+.sources {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 16px;
+}
+@container (max-width: 900px) {
+  .sources { grid-template-columns: minmax(0, 1fr); }
+}
+
+.list { display: flex; flex-direction: column; gap: 24px; }

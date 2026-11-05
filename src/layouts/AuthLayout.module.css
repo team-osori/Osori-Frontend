@@ -49,10 +49,6 @@
   margin-bottom: var(--space-6);
 }
 
-.submit {
-  width: 100%;
-}
-
 .switch {
   margin: var(--space-5) 0 0;
   font: var(--text-body-sm);
