@@ -85,19 +85,18 @@
   font-size: 14px;
   font-weight: 700;
 }
-.more img { transition: transform 0.2s; }
-.up { transform: rotate(-90deg); }
+/* 2줄 반만 보이고 아래는 흐려짐 → 전체는 모달로 */
 .answerText {
-  display: -webkit-box;
+  max-height: calc(2.5em * 1.65);
   margin: 0;
   overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 6;
   font-size: 21px;
   line-height: 1.65;
   word-break: keep-all;
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent);
+  mask-image: linear-gradient(to bottom, #000 55%, transparent);
 }
-.expanded { -webkit-line-clamp: unset; }
+.fullAnswer { margin: 0; font-size: 19px; line-height: 1.9; word-break: keep-all; }
 
 .block { display: flex; flex-direction: column; gap: 10px; }
 .criteria { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none; }
@@ -156,6 +155,17 @@
 .layout { flex: 1; align-items: stretch; }
 .detail { display: flex; flex-direction: column; }
 .detailBody { flex: 1; }
-.answer { flex: 1; }
 .actions { margin-top: auto; }
 .toNotes { margin-top: auto; }
+
+/* ---------- 한 화면에 들어오게 ---------- */
+/* 문항 칸은 비율 대신 남은 높이를 나눠 가짐 (화면이 낮으면 칸이 납작해짐) */
+.sheet { min-height: 0; }
+.grid { flex: 1; grid-auto-rows: minmax(64px, 1fr); }
+.seat { aspect-ratio: auto; height: 100%; max-height: 122px; }
+.detail { padding: 32px 40px; }
+.detailBody { gap: 18px; }
+@media (max-width: 1180px) {
+  .grid { grid-auto-rows: auto; }
+  .seat { aspect-ratio: 1; height: auto; }
+}
