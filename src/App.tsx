@@ -5,6 +5,7 @@ import ConnectionSetupPage from './pages/ConnectionSetupPage'
 import QuestionSetPage from './pages/QuestionSetPage'
 import AbRunPage from './pages/AbRunPage'
 import ProjectSettingsPage from './pages/ProjectSettingsPage'
+import GradingResultsPage from './pages/GradingResultsPage'
 
 export default function App() {
   const [route, navigate] = useHashRoute('/login')
@@ -21,7 +22,9 @@ export default function App() {
     case '/questions':
       return <QuestionSetPage onBack={() => navigate('/projects')} onConfirm={() => navigate('/ab-run')} />
     case '/ab-run':
-      return <AbRunPage onBack={() => navigate('/projects')} />
+      return <AbRunPage onBack={() => navigate('/projects')} onShowResults={() => navigate('/grading')} />
+    case '/grading':
+      return <GradingResultsPage onBack={() => navigate('/projects')} />
     case '/settings':
       return <ProjectSettingsPage onBack={() => navigate('/projects')} onDeleted={() => navigate('/projects')} />
     default:
