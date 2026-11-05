@@ -10,7 +10,11 @@ import {
   getTestSetVersion,
   listTestSetVersions,
   listTestSets,
+  listQuestionHistory,
+  listTestSetVersionHistory,
   reviewQuestion,
+  type QuestionCategory,
+  type QuestionHistory,
   type QuestionInput,
   type ReviewDecision,
   type TestSet,
@@ -52,6 +56,27 @@ export function useTestSetVersions(projectId: string | undefined, testSetId: str
     getKey: (version) => version.id,
     deps: [projectId, testSetId],
     enabled: Boolean(projectId && testSetId),
+  })
+}
+
+/**
+ * 버전의 변경 이력(지운 질문 포함). questionId를 주면 그 질문의 이력만 봅니다.
+ * 질문을 고치거나 검토한 뒤 최신 이력을 보려면 reload를 부르세요.
+ */
+export function useQuestionHistory(
+  projectId: string | undefined,
+  testSetId: string | undefined,
+  versionId: string | undefined,
+  questionId?: string,
+) {
+  return usePagedList<QuestionHistory>({
+    fetchPage: ({ cursor, signal }) =>
+      questionId
+        ? listQuestionHistory(projectId!, testSetId!, versionId!, questionId, { limit: PAGE_SIZE, cursor, signal })
+        : listTestSetVersionHistory(projectId!, testSetId!, versionId!, { limit: PAGE_SIZE, cursor, signal }),
+    getKey: (entry) => entry.id,
+    deps: [projectId, testSetId, versionId, questionId],
+    enabled: Boolean(projectId && testSetId && versionId),
   })
 }
 
@@ -129,15 +154,17 @@ export function useTestSetVersion(
     [projectId, testSetId, versionId, version?.revision, setData],
   )
 
+  /** 질문 자동 생성. count(1~50)와 categories(만들 질문 유형)는 생략하면 서버가 정합니다. */
   const generate = useCallback(
-    async (count?: number, options: { idempotencyKey?: string } = {}) => {
+    async (options: { count?: number; categories?: QuestionCategory[]; idempotencyKey?: string } = {}) => {
       const t = target()
+      const { idempotencyKey, ...spec } = options
       const next = await generateQuestions(
         t.projectId,
         t.testSetId,
         t.versionId,
-        { expectedRevision: t.revision, count },
-        options,
+        { expectedRevision: t.revision, ...spec },
+        { idempotencyKey },
       )
       setData(next)
       return next

@@ -24,7 +24,13 @@ export type TestSetDetail = Schema<'TestSetDetail'>
 export type TestSetVersion = Schema<'TestSetVersionOut'>
 export type TestSetVersionSummary = Schema<'TestSetVersionSummary'>
 export type TestQuestion = Schema<'QuestionOut'>
+/** 질문 유형: normal · exception · boundary(경계) · ambiguous */
 export type QuestionCategory = NonNullable<Schema<'QuestionWrite'>['category']>
+/** 질문에 붙는 세부 판정 조건. 평가 기준(retrieval · grounding · response · policy) 하나에 연결되고, 꼭 해야 하는 일(required)이거나 하면 안 되는 일(forbidden)입니다. */
+export type ExpectedCondition = Schema<'ExpectedCondition'>
+/** 질문이 만들어지고 고쳐지고 검토된 기록 한 건 */
+export type QuestionHistory = Schema<'QuestionHistoryOut'>
+export type QuestionHistoryAction = QuestionHistory['action']
 export type QuestionReviewStatus = TestQuestion['reviewStatus']
 /** 질문 한 건의 내용. 수정(PATCH)도 일부 항목이 아니라 전체 값을 보냅니다. */
 export type QuestionInput = Omit<Schema<'QuestionWrite'>, 'expectedRevision'>
@@ -53,8 +59,13 @@ export const TESTSET_RULES = {
   ruleKeysMax: 100,
   evidenceQuoteMax: 10_000,
   reviewNoteMax: 2000,
+  changeNoteMax: 2000,
+  expectedConditionsMax: 30,
+  expectedConditionDescriptionMax: 2000,
   /** 한 번에 만들 수 있는 질문 수 */
   generateCount: { min: 1, max: 50, default: 10 },
+  /** 질문 생성 때 고를 수 있는 유형 (생략하면 서버가 정함) */
+  categories: ['normal', 'exception', 'boundary', 'ambiguous'] as const satisfies readonly QuestionCategory[],
 } as const
 
 const testSetsPath = (projectId: string) => `/api/projects/${pathId(projectId, '프로젝트 ID')}/testsets`
@@ -226,12 +237,22 @@ export function generateQuestions(
   projectId: string,
   testSetId: string,
   versionId: string,
-  input: { expectedRevision: number; count?: number },
+  input: {
+    expectedRevision: number
+    count?: number
+    /** 만들 질문 유형. 1~4개를 고르고, 생략하면 서버가 정합니다. */
+    categories?: QuestionCategory[]
+  },
   extras: RequestExtras & { idempotencyKey?: string } = {},
 ) {
   return api.post<TestSetVersion>(
     `${questionsPath(projectId, testSetId, versionId)}/generate`,
-    { expectedRevision: input.expectedRevision, ...(input.count !== undefined ? { count: input.count } : {}) },
+    {
+      expectedRevision: input.expectedRevision,
+      ...(input.count !== undefined ? { count: input.count } : {}),
+      // 빈 배열은 서버가 거절하므로(1개 이상) 고르지 않은 것으로 보고 보내지 않음
+      ...(input.categories?.length ? { categories: input.categories } : {}),
+    },
     { idempotencyKey: extras.idempotencyKey ?? createIdempotencyKey(), signal: extras.signal },
   )
 }
@@ -262,5 +283,39 @@ export function getEvaluationSnapshot(
 ) {
   return api.get<EvaluationSnapshot>(`${versionPath(projectId, testSetId, versionId)}/evaluation-snapshot`, {
     signal: extras.signal,
+  })
+}
+
+/* ---------- 이력 ---------- */
+
+/**
+ * 버전 전체의 변경 이력(지워진 질문 포함). 추가만 되는 기록이라 지운 질문의 흔적도 남습니다.
+ * 각 기록의 before/after는 서버가 정한 자유 형식 객체입니다.
+ */
+export function listTestSetVersionHistory(
+  projectId: string,
+  testSetId: string,
+  versionId: string,
+  query: PageQuery & RequestExtras = {},
+) {
+  const { signal, limit, cursor } = query
+  return api.get<Page<QuestionHistory>>(`${versionPath(projectId, testSetId, versionId)}/history`, {
+    query: { limit, cursor },
+    signal,
+  })
+}
+
+/** 질문 하나의 변경 이력 */
+export function listQuestionHistory(
+  projectId: string,
+  testSetId: string,
+  versionId: string,
+  questionId: string,
+  query: PageQuery & RequestExtras = {},
+) {
+  const { signal, limit, cursor } = query
+  return api.get<Page<QuestionHistory>>(`${questionPath(projectId, testSetId, versionId, questionId)}/history`, {
+    query: { limit, cursor },
+    signal,
   })
 }
