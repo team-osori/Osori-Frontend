@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { TextField } from '../../components/ui'
-import { AuthHint, AuthLayout, AuthSwitch } from '../../layouts/AuthLayout'
+import { AuthLayout, AuthSwitch } from '../../layouts/AuthLayout'
 
 type Credentials = { email: string; password: string }
 
@@ -36,30 +36,25 @@ export function LoginPage({ onLogin, initialEmail = '', initialError }: LoginPag
       submitLabel="로그인"
       onSubmit={handleSubmit}
       submitting={submitting}
-      footer={
-        <>
-          <AuthSwitch prompt="계정이 없으신가요?" linkLabel="회원가입" href="#/signup" />
-          <AuthHint>비밀번호를 잊으셨나요? 인스턴스 관리자에게 문의하세요.</AuthHint>
-        </>
-      }
+      footer={<AuthSwitch prompt="계정이 없으신가요?" linkLabel="회원가입" href="#/signup" />}
     >
       <TextField
         label="이메일"
-        size="lg"
+        size="md"
         type="email"
         name="email"
         autoComplete="email"
-        placeholder="이메일을 입력하세요"
+        placeholder="name@company.com"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
       <TextField
         label="비밀번호"
-        size="lg"
+        size="md"
         type="password"
         name="password"
         autoComplete="current-password"
-        placeholder="비밀번호를 입력하세요"
+        placeholder="비밀번호"
         value={password}
         error={error}
         onChange={(e) => {

@@ -60,13 +60,13 @@ export function SignupPage({ onSignup }: SignupPageProps) {
       title="회원가입"
       subtitle="이 인스턴스에서 쓸 계정을 만드세요."
       submitLabel="계정 만들기"
+      footer={<AuthSwitch prompt="이미 계정이 있으신가요?" linkLabel="로그인" href="#/login" />}
       onSubmit={handleSubmit}
       submitting={submitting}
-      footer={<AuthSwitch prompt="이미 계정이 있으신가요?" linkLabel="로그인" href="#/login" />}
     >
       <TextField
         label="이름"
-        size="lg"
+        size="md"
         name="name"
         autoComplete="name"
         placeholder="이름을 입력하세요"
@@ -76,7 +76,7 @@ export function SignupPage({ onSignup }: SignupPageProps) {
       />
       <TextField
         label="이메일"
-        size="lg"
+        size="md"
         type="email"
         name="email"
         autoComplete="email"
@@ -87,7 +87,7 @@ export function SignupPage({ onSignup }: SignupPageProps) {
       />
       <TextField
         label="비밀번호"
-        size="lg"
+        size="md"
         type="password"
         name="password"
         autoComplete="new-password"
@@ -100,7 +100,7 @@ export function SignupPage({ onSignup }: SignupPageProps) {
       />
       <TextField
         label="비밀번호 확인"
-        size="lg"
+        size="md"
         type="password"
         name="passwordConfirm"
         autoComplete="new-password"
