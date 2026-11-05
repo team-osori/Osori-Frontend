@@ -4,7 +4,7 @@ import { useToast } from './components/ui'
 import { useAuth } from './features/auth'
 import { buildProject, CreateProjectModal, type NewProject } from './features/project'
 import { MOCK_JUDGE_ITEMS } from './features/grading/mock'
-import { MOCK_QUESTIONS } from './features/questions/mock'
+import { MOCK_REVIEW_QUESTIONS } from './features/questions/mock'
 import { MOCK_MEMBERS, type Member } from './features/settings'
 import { useHashRoute } from './hooks/useHashRoute'
 import { errorMessage, isApiError, setSessionExpiredHandler } from './lib/api'
@@ -16,6 +16,8 @@ import ImprovementApplyPage from './pages/ImprovementApplyPage'
 import { LoginPage } from './pages/Login'
 import { MOCK_INSTANCE_VERSION, MOCK_PROJECTS, MOCK_USER, ProjectListPage } from './pages/ProjectList'
 import ProjectSettingsPage from './pages/ProjectSettingsPage'
+import ScoringPage from './pages/ScoringPage'
+import WrongNotesPage from './pages/WrongNotesPage'
 import QuestionSetPage from './pages/QuestionSetPage'
 import { SettingsPage } from './pages/Settings'
 import { SignupPage, type SignupErrors } from './pages/Signup'
@@ -152,11 +154,15 @@ export default function App() {
       // 평가 3단계. 사이드바의 단계 · 프로젝트 설정 이동은 ProjectSidebar가 직접 처리합니다.
       // 1 시험지 만들기
       case ROUTES.questions:
-        return <QuestionSetPage onConfirm={() => navigate(ROUTES.abRun)} />
+        return <QuestionSetPage onConfirm={() => navigate(ROUTES.scoring)} />
       // API 연동 전, 문제가 이미 있는 시험지 검토 화면을 확인하기 위한 경로
       case '/questions/sample':
-        return <QuestionSetPage initialQuestions={MOCK_QUESTIONS} onConfirm={() => navigate(ROUTES.abRun)} />
+        return <QuestionSetPage initialQuestions={MOCK_REVIEW_QUESTIONS} onConfirm={() => navigate(ROUTES.scoring)} />
       // 2 채점: A/B 실행 → 채점 결과 → 사람 판정
+      case ROUTES.scoring:
+        return <ScoringPage onFinish={() => navigate(ROUTES.wrongNotes)} />
+      case ROUTES.wrongNotes:
+        return <WrongNotesPage onRetest={() => navigate(ROUTES.scoring)} />
       case ROUTES.abRun:
         return <AbRunPage onShowResults={() => navigate(ROUTES.grading)} />
       case ROUTES.grading:

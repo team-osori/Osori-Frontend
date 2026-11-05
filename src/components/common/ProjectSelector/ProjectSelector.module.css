@@ -1,8 +1,7 @@
 .card {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 2px 4px 4px;
+  padding: 0;
 }
 
 .header {
@@ -11,29 +10,30 @@
   justify-content: space-between;
   gap: 8px;
   width: 100%;
-  margin-bottom: -2px;
-  padding: 0;
+  padding: 0 12px;
   border: none;
   background: none;
-  font: var(--text-body-sm);
+  font-size: 20px;
+  line-height: 27px;
   font-weight: var(--font-weight-bold);
   text-align: left;
 }
 
 .name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.host { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; font-size: 11px; color: var(--color-text-tertiary); }
-.hostDot { width: 5px; height: 5px; border-radius: 50%; background: var(--color-primary); }
+.host { display: flex; align-items: center; gap: 8px; margin: 8px 0 16px; padding: 0 12px; font-size: 14px; line-height: 17px; color: rgba(255, 255, 255, 0.55); }
+.hostDot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-correct); }
 
 .row {
   display: flex;
   align-items: center;
-  min-height: 32px;
-  padding: 0 4px 0 10px;
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
+  min-height: 50px;
+  padding: 0 8px 0 14px;
+  border-radius: 12px 12px 0 0;
+  background: var(--color-well);
 }
-.label { flex-shrink: 0; width: 48px; font: var(--text-caption); color: var(--color-text-tertiary); }
-.value { font: var(--text-caption); font-weight: var(--font-weight-bold); }
+.row + .row { border-top: 1px solid var(--color-line); border-radius: 0 0 12px 12px; }
+.label { flex-shrink: 0; width: 64px; font-size: 15px; line-height: 19px; color: rgba(255, 255, 255, 0.55); }
+.value { font-size: 15px; line-height: 19px; }
 .row > div { flex: 1; min-width: 0; }
 
 /* 프롬프트 버전 팝오버를 여는 버튼 (Select sm과 같은 모양) */

@@ -30,7 +30,7 @@
 .primary { background: var(--color-primary); color: var(--color-on-primary); }
 /* 아이콘 파일 색과 상관없이 라임 버튼 위 아이콘은 글자색(검정)으로 */
 .primary img { filter: brightness(0); opacity: 0.85; }
-.primary:not(:disabled):hover { filter: brightness(1.08); box-shadow: 0 6px 20px -6px rgba(180, 244, 97, 0.55); }
+.primary:not(:disabled):hover { filter: brightness(1.08); box-shadow: 0 6px 20px -6px rgba(207, 242, 107, 0.55); }
 
 .secondary { background: var(--color-surface); color: var(--color-text); }
 .secondary:not(:disabled):hover { background: var(--color-surface-strong); }

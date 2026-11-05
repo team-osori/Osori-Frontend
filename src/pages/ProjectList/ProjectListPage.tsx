@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react'
 import {
   EmptyState,
   NavItem,
-  PageHeader,
   PROJECT_STATUS_LABEL,
   ProjectTable,
   Sidebar,
@@ -17,6 +16,7 @@ import {
 import { Button, SearchInput, Sticker } from '../../components/ui'
 import { AppLayout } from '../../layouts/AppLayout'
 import type { CurrentUser, Project } from '../../types/project'
+import { StageHeader } from '../../features/stage/StageUI'
 import { Onboarding } from './Onboarding'
 import styles from './ProjectListPage.module.css'
 
@@ -82,11 +82,13 @@ export function ProjectListPage({ user, projects, onCreateProject, onOpenProject
       }
     >
       <div className={styles.page}>
-        <PageHeader
-          title="전체 프로젝트"
-          count={projects.length}
-          actions={
-            projects.length > 0 && (
+        <StageHeader
+          title={
+            <>
+              전체 프로젝트 <span className={styles.count}>{projects.length}</span>
+            </>
+          }
+          aside={projects.length > 0 && (
               <>
                 <SearchInput
                   size="sm"
@@ -94,7 +96,7 @@ export function ProjectListPage({ user, projects, onCreateProject, onOpenProject
                   className={styles.search}
                   value={keyword}
                   onChange={(e) => setKeyword(e.target.value)}
-                />
+        />
                 <Button size="xs" icon="plusSm" onClick={onCreateProject}>
                   새 프로젝트
                 </Button>
@@ -121,7 +123,8 @@ export function ProjectListPage({ user, projects, onCreateProject, onOpenProject
           />
         )}
 
-        <Sticker name="paperclipLime" width={92} motion="sway" rot={-58} className={styles.clip} />
+        {/* 목록이 있을 때만 (빈 상태 카드를 가리지 않게) */}
+        {projects.length > 0 && <Sticker name="paperclipLime" width={92} motion="sway" rot={-58} className={styles.clip} />}
       </div>
     </AppLayout>
   )

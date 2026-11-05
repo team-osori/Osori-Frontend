@@ -15,3 +15,8 @@
 
 .message { margin: -12px 0 0; font: var(--text-label); color: var(--color-success); }
 .error { margin: -12px 0 0; font: var(--text-label); color: var(--color-danger); }
+
+.lead { margin: -8px 0 0; font: var(--text-body); color: var(--color-text-secondary); }
+/* 하단 검토 진행 막대 */
+.progress { display: block; width: 240px; height: 8px; overflow: hidden; border-radius: 4px; background: var(--color-chip); }
+.progress > span { display: block; height: 100%; background: rgba(255, 255, 255, 0.75); transition: width 0.3s var(--ease-out); }

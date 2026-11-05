@@ -3,13 +3,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 44px;
+  height: 44px;
   padding: 0;
-  border: 1px solid var(--color-border);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
   border-radius: var(--radius-full);
-  background: var(--color-surface-strong);
-  font: var(--text-caption);
+  background: var(--color-chip);
+  font-size: 16px;
   font-weight: var(--font-weight-bold);
   color: var(--color-text);
 }

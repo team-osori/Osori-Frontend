@@ -1,41 +1,61 @@
-.root { display: flex; flex-direction: column; gap: 12px; }
+/* 02-1 프로젝트 목록 · 빈 상태 (Figma 330:3368) */
+.root { display: flex; flex-direction: column; gap: 20px; }
 
 .hero {
   display: flex;
   align-items: center;
-  gap: 20px;
-  padding: 24px 28px;
-  border: 1px solid var(--color-border-soft);
-  border-radius: var(--radius-xl);
-  background: var(--color-surface);
+  gap: 32px;
+  padding: 40px 44px;
+  border-radius: 18px;
+  background: var(--color-card);
 }
 .heroArt { flex-shrink: 0; height: auto; }
-.heroText { display: flex; flex: 1; flex-direction: column; gap: 6px; min-width: 0; }
-.heroTitle { margin: 0; font-size: 18px; line-height: 1.3; font-weight: var(--font-weight-bold); letter-spacing: -0.02em; }
-.heroDesc { margin: 0; font: var(--text-label); color: var(--color-text-secondary); }
+.heroText { display: flex; flex: 1; flex-direction: column; gap: 12px; min-width: 0; }
+.heroTitle { margin: 0; font-size: clamp(26px, 2.4vw, 36px); line-height: 1.22; font-weight: 900; word-break: keep-all; }
+.heroDesc { margin: 0; font-size: clamp(16px, 1.35vw, 20px); line-height: 1.2; color: rgba(255, 255, 255, 0.7); }
+.create {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-shrink: 0;
+  height: 64px;
+  padding: 0 30px;
+  border: none;
+  border-radius: 12px;
+  background: var(--color-primary);
+  font-size: 19px;
+  line-height: 23px;
+  font-weight: 700;
+  color: #000;
+  transition: filter 0.15s, transform 0.12s;
+}
+.create:hover { filter: brightness(1.06); }
+.create:active { transform: scale(0.97); }
 
-.stages { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 0; padding: 0; list-style: none; }
-
+.stages { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin: 0; padding: 0; list-style: none; }
 .stage {
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: clamp(220px, 30vh, 300px);
-  padding: 20px 22px 24px;
-  border: 1px solid var(--color-border-soft);
-  border-radius: var(--radius-xl);
-  background: var(--color-surface);
+  min-height: clamp(460px, 60vh, 590px);
+  padding: 36px;
   overflow: hidden;
+  border-radius: 18px;
+  background: var(--color-card);
+  transition: transform 0.3s var(--ease-out, ease-out);
 }
-.stage { transition: transform 0.3s var(--ease-out), border-color 0.3s; }
-.stage:hover { transform: translateY(-4px); border-color: rgba(255, 255, 255, 0.14); }
-.number { font: var(--text-caption); color: var(--color-text-tertiary); font-variant-numeric: tabular-nums; }
-.art { margin: 18px 0 auto; height: auto; transition: transform 0.4s var(--ease-spring); }
-.stageTitle { margin: 24px 0 8px; font-size: 18px; line-height: 1.3; font-weight: var(--font-weight-bold); letter-spacing: -0.02em; }
-.stageDesc { margin: 0; font: var(--text-label); line-height: 1.6; color: var(--color-text-secondary); word-break: keep-all; }
+.stage:hover { transform: translateY(-4px); }
+.number { font-size: 18px; line-height: 21px; font-weight: 700; color: rgba(255, 255, 255, 0.5); }
+.art { position: absolute; max-width: none; pointer-events: none; transition: transform 0.4s var(--ease-spring, ease); }
+.stage:hover .art { transform: rotate(-4deg) translateY(-6px); }
+.stageText { position: relative; display: flex; flex-direction: column; gap: 18px; margin-top: auto; }
+.stageTitle { margin: 0; font-size: clamp(26px, 2.2vw, 32px); line-height: 1.22; font-weight: 900; }
+.stageDesc { margin: 0; max-width: 280px; font-size: 19px; line-height: 30.4px; color: rgba(255, 255, 255, 0.7); word-break: keep-all; }
 
-@media (max-width: 860px) {
+@media (max-width: 1100px) {
   .hero { flex-wrap: wrap; }
   .stages { grid-template-columns: 1fr; }
-  .stage { min-height: 0; }
+  .stage { min-height: 320px; }
+  .art { transform: scale(0.8); transform-origin: top right; }
 }
