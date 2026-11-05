@@ -29,7 +29,32 @@
   border-radius: var(--radius-md);
   background: var(--color-surface);
 }
-.serviceHead { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 0 18px 0 20px; }
+.serviceHead {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 14px;
+  min-height: 64px;
+  padding: 0 20px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--color-text);
+  text-align: left;
+}
+.serviceHead:hover .caret { border-top-color: var(--color-text); }
+/* 펼침 삼각형: 닫히면 ▶, 열리면 ▼ */
+.caret {
+  flex-shrink: 0;
+  width: 0;
+  height: 0;
+  border-top: 9px solid var(--color-text-secondary);
+  border-right: 6px solid transparent;
+  border-left: 6px solid transparent;
+  transform: rotate(-90deg);
+  transition: transform 0.2s ease, border-color 0.15s;
+}
+.serviceOpen .caret { transform: none; }
 .serviceLabel { display: inline-flex; flex: 1; align-items: center; gap: 10px; font: var(--text-body); font-weight: var(--font-weight-bold); }
 .serviceLabel img { width: 20px; height: 20px; opacity: 0.85; }
 .serviceHost { min-width: 0; overflow: hidden; font: var(--text-caption); color: var(--color-text-secondary); text-overflow: ellipsis; white-space: nowrap; }
@@ -42,7 +67,7 @@
 .serviceOpen .serviceFields { padding-bottom: 20px; }
 .serviceRow { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
 @media (prefers-reduced-motion: reduce) {
-  .serviceBody, .serviceFields { transition: none; }
+  .serviceBody, .serviceFields, .caret { transition: none; }
 }
 
 /* ---------- 2 프롬프트 · 정책 문서 ---------- */

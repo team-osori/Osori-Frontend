@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Dropzone } from '../../components/common'
-import { Button, Icon, Modal, Sticker, Switch, TextArea, TextField } from '../../components/ui'
+import { Button, Icon, Modal, Sticker, TextArea, TextField } from '../../components/ui'
 import { cx } from '../../lib/cx'
 import type { PolicyDoc } from '../connection/types'
 import styles from './CreateProjectModal.module.css'
@@ -69,7 +69,7 @@ function CreateProjectForm({ onClose, onSubmit }: Omit<CreateProjectModalProps, 
   const [endpointUrl, setEndpointUrl] = useState('')
   const [authToken, setAuthToken] = useState('')
   const [responsePath, setResponsePath] = useState('')
-  // 평가할 서비스 토글: 켜면 아래로 연결 정보 입력칸이 펼쳐짐
+  // 평가할 서비스: ▼를 누르면 아래로 연결 정보 입력칸이 펼쳐짐
   const [serviceOpen, setServiceOpen] = useState(false)
   const [systemPrompt, setSystemPrompt] = useState('')
   const [docs, setDocs] = useState<PolicyDoc[]>([])
@@ -160,7 +160,13 @@ function CreateProjectForm({ onClose, onSubmit }: Omit<CreateProjectModalProps, 
               onChange={(e) => setDescription(e.target.value)}
             />
             <div className={cx(styles.service, serviceOpen && styles.serviceOpen)}>
-              <div className={styles.serviceHead}>
+              <button
+                type="button"
+                className={styles.serviceHead}
+                aria-expanded={serviceOpen}
+                aria-controls="create-project-service"
+                onClick={() => setServiceOpen((v) => !v)}
+              >
                 <span className={styles.serviceLabel}>
                   <Icon name="server" />
                   평가할 서비스
@@ -168,10 +174,10 @@ function CreateProjectForm({ onClose, onSubmit }: Omit<CreateProjectModalProps, 
                 <span className={cx(styles.serviceHost, !endpointUrl.trim() && styles.serviceHostEmpty)}>
                   {endpointUrl.trim() ? hostOf(endpointUrl.trim()) : '연결할 주소를 입력하세요'}
                 </span>
-                <Switch checked={serviceOpen} onChange={setServiceOpen} ariaLabel="평가할 서비스 연결 정보 펼치기" />
-              </div>
+                <span className={styles.caret} aria-hidden />
+              </button>
               {/* 닫혀 있어도 입력값은 유지. 닫히면 칸이 접혀서 포커스도 안 감 */}
-              <div className={styles.serviceBody} inert={!serviceOpen}>
+              <div id="create-project-service" className={styles.serviceBody} inert={!serviceOpen}>
                 <div className={styles.serviceFields}>
                   <TextField
                     label="엔드포인트 URL"
